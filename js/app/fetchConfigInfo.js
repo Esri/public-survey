@@ -49,33 +49,7 @@ define([], function () {
                 deferred = $.Deferred();
             }
 
-            $.getJSON(filename, function (data) {
-                deferred.resolve((data && data.values) || {});
-            }).fail(deferred.reject);
-
-            return deferred;
-        },
-
-        /**
-         * Extracts parameters from app in the ArcGIS Online environment.
-         * @param {string} arcgisUrl URL to arcgis items, e.g., "http://www.arcgis.com/sharing/content/items/"
-         * @param {string} appId AGOL id of application
-         * @param {object} [deferred] Deferred to use for fetch notification; if not supplied, function creates one
-         * @return {object} Deferred indicating when parameters are ready; successful resolution includes object with
-         * app's data section contents
-         */
-        getParamsFromOnlineApp: function (arcgisUrl, appId, deferred) {
-            if (!deferred) {
-                deferred = $.Deferred();
-            }
-
-            if (fetchConfigInfo._isUsableString(appId)) {
-                $.getJSON(arcgisUrl + appId + "/data?f=json&callback=?", function (data) {
-                    deferred.resolve((data && data.values) || {});
-                }).fail(deferred.reject);
-            } else {
-                deferred.resolve({});
-            }
+            $.getJSON(filename, deferred.resolve).fail(deferred.reject);
 
             return deferred;
         },
