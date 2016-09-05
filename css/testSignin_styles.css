@@ -1,0 +1,153 @@
+/** @license
+ | Copyright 2015 Esri
+ |
+ | Licensed under the Apache License, Version 2.0 (the "License");
+ | you may not use this file except in compliance with the License.
+ | You may obtain a copy of the License at
+ |
+ |    http://www.apache.org/licenses/LICENSE-2.0
+ |
+ | Unless required by applicable law or agreed to in writing, software
+ | distributed under the License is distributed on an "AS IS" BASIS,
+ | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ | See the License for the specific language governing permissions and
+ | limitations under the License.
+ */
+
+/* ---------- general page ---------- */
+
+.mainContent {
+    min-height: 200px;
+    background-color: lightgray;
+    overflow: auto;
+}
+.sidebarContent {
+    overflow-y: auto;
+}
+
+.repad {
+    padding: 8px !important;
+}
+
+@media only screen and (min-width: 768px) {
+    .conditionalPageFill {
+        height: 100%;
+        min-height: 100%;
+    }
+}
+
+/* ---------- bootstrap overrides ---------- */
+
+.btn {
+    margin: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    border-radius: 0px;
+    max-width: 100%;
+    white-space: normal;
+}
+.btn:hover, .btn:focus {
+    color: #007ac2;
+    background-color: #e2f1fb;
+}
+.btn.active {
+    color: #fff;
+    background-color: #007ac2;
+    border: 1px solid #007ac2;
+    box-shadow: none;
+    cursor: default;
+}
+.btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus, input[type="radio"]:focus {
+    outline: none;
+}
+.checkbox, .radio {
+    margin-top: 0px;
+}
+.importantQuestion {
+    display: inline-block;
+    vertical-align: text-top;
+}
+.radio {
+    margin-bottom: 5px;
+}
+.radio+.radio {
+    margin-top: 0px;
+}
+.dropdown-group {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+}
+.number-input {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+    padding-left: 4px;
+    max-width: 100%;
+}
+.text-input {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+    padding-left: 4px;
+    width: 100%;
+}
+.modal-header {
+    font-weight: bolder;
+}
+
+.image-before {
+    padding-bottom: 4px;
+    max-width: 100%;
+}
+.image-after {
+    padding-top: 4px;
+    max-width: 100%;
+}
+
+/* ---------- buttons ---------- */
+
+.half-width-btn {
+    width: 46%;
+}
+
+.full-width-btn {
+    width: 98%;
+}
+
+.link-btn {
+    color: #007ac2;
+    font-size: 14px;
+    font-weight: bold;
+    background: none;
+    border-style: none;
+}
+.link-btn:hover, .link-btn:focus {
+    color: #007ac2;
+    background-color: #d0e3fd;
+}
+
+.highlight-btn {
+    color: #fff;
+    background-color: #007ac2;
+}
+
+.pull-right {
+    float: right;
+}
+

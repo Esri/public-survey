@@ -14,17 +14,21 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define([],
-    function () {
+define(["lib/i18n.min!nls/testSignin_resources.js"],
+    function (i18n) {
     "use strict";
     var content;
     content = {
         //------------------------------------------------------------------------------------------------------------//
 
+        _config: {},
+
         //------------------------------------------------------------------------------------------------------------//
 
         init: function (config) {
             var contentReady = $.Deferred();
+
+            content._config = config;
 
             contentReady.resolve();
 
@@ -35,10 +39,13 @@ define([],
             var contentReady = $.Deferred();
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/content.html", {
+            $("body").loadTemplate("js/app/" + content._config.appParams.appName + "_content.html", {
             }, {
                 prepend: true,
                 complete: function () {
+
+                    content._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
+
                     contentReady.resolve();
                 }
             });
@@ -56,10 +63,30 @@ define([],
                     thenDo && thenDo(thenDoArg);
                 });
             }
-        }
+        },
 
         //------------------------------------------------------------------------------------------------------------//
 
+        _activateButton: function (id, label, tooltip) {
+            var btn = $("#" + id);
+            btn.on("click", content._buttonPublish);
+
+            btn = btn[0];
+            if (label) {
+                btn.innerHTML = label;
+            }
+            if (tooltip) {
+                btn.title = tooltip;
+            }
+
+            return btn;
+        },
+
+        _buttonPublish: function (evt) {
+            var btn = evt.currentTarget;
+            btn.blur();  // Allow button to be defocused without clicking elsewhere
+            $.publish(btn.id);
+        }
 
         //------------------------------------------------------------------------------------------------------------//
     };

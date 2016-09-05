@@ -1,0 +1,17 @@
+﻿{
+    "splashBackgroundUrl": "images/splash.jpg",
+    "splashText": "Public survey is used to gather comments from various perspectives",
+    "title": "Public Survey",
+
+    "allowGuestSubmissions": true,
+    "useWebmapOrigImg": false,
+
+    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey"],
+
+    "proxyProgram": "proxy/proxy.ashx",
+    "portalurl": "https://www.arcgis.com",
+    "googleplusLogoutUrl": "https://accounts.google.com/logout",
+    "twitterSigninUrl": "https://utility.arcgis.com/tproxy/signin",
+    "twitterUserUrl": "https://utility.arcgis.com/tproxy/proxy/1.1/account/verify_credentials.json?q=&include_entities=true&skip_status=true&locale=en",
+    "twitterCallbackUrl": "/oauth-callback-twitter.html"
+}

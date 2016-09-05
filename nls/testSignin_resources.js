@@ -1,4 +1,4 @@
-/** @license
+﻿/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +13,19 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-
-/* ---------- general page ---------- */
-
-.mainContent {
-    min-height: 200px;
-    background-color: lightgray;
-    overflow: auto;
-}
-.sidebarContent {
-    overflow-y: auto;
-}
-
-.repad {
-    padding: 8px !important;
-}
-
-@media only screen and (min-width: 768px) {
-    .conditionalPageFill {
-        height: 100%;
-        min-height: 100%;
-    }
-}
-
+define({
+    root: ({
+        messages: {
+        },
+        prompts: {
+        },
+        labels: {
+            signOut: "Sign out"
+        },
+        tooltips: {
+            signOut: "Sign out of application"
+        }
+    }),
+    "de": 0,
+    "fr": 0
+});
