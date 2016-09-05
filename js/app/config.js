@@ -24,6 +24,7 @@ define([],
         main_params: {
             allowGuestSubmissions: true,
             diag: true,
+            proxyProgram: "proxy/proxy.ashx",
             splashBackgroundUrl: "images/splash.jpg",
             splashText: "Public survey is used to gather comments from various perspectives",
             title: "Public Survey",

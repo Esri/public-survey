@@ -32,7 +32,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                 }, {
                     prepend: true,
                     complete: function () {
-                        splashInfoPanelReady.resolve();
+                        // Show the splash page
                         $("#splashPage").fadeIn();
 
                         // If we're not going to wait for the webmap's original image, just set the splash
@@ -46,6 +46,14 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                         } else {
                             splash.setBackground(config.main_params.splashBackgroundUrl);
                         }
+
+                        // Test browser level and proxy availability for older IE
+                        splash._testProxy(config).then(
+                            splashInfoPanelReady.resolve,
+                            function (error) {
+                                splashInfoPanelReady.reject(error);
+                            }
+                        );
                     }
                 });
             });
@@ -102,6 +110,33 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                     thenDo && thenDo(thenDoArg);
                 }
             });
+        },
+
+        _testProxy: function (config) {
+            var proxyReady = $.Deferred(), unsupported = false, needProxy = false;
+
+            // Check for obsolete IE
+            if ($("body").hasClass("unsupportedIE")) {
+                unsupported = true;
+            } else if ($("body").hasClass("IE9")) {
+                needProxy = true;
+            }
+
+            // If a proxy is needed, launch the test for a usable proxy
+            if (unsupported) {
+                proxyReady.reject("Unsupported browser");
+            } else if (needProxy) {
+                $.getJSON(config.main_params.proxyProgram + "?ping", function () {
+                    proxyReady.resolve();
+                }).fail(function (error) {
+                    proxyReady.reject(error);
+                });
+            } else {
+                config.main_params.proxyProgram = null;
+                proxyReady.resolve();
+            }
+
+            return proxyReady;
         }
 
         //------------------------------------------------------------------------------------------------------------//
