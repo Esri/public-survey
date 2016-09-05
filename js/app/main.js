@@ -104,6 +104,9 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                                     function () {
                                         // Show sign-in
                                         user.launch(config, splash);
+                                    },
+                                    function (info) {
+                                        splash.replacePrompt(info);
                                     }
                                 );
                             },
