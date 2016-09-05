@@ -41,6 +41,13 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                             }
                         }
                     );
+                },
+                function (error) {
+                    require(["app/message"], function (message) {
+                        message.init().then(function () {
+                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + error.statusText);
+                        });
+                    });
                 }
             );
         },

@@ -14,22 +14,25 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define([],
-    function () {
+define(["app/fetchConfigInfo"],
+    function (fetchConfigInfo) {
     "use strict";
     var config;
     config = {
         //------------------------------------------------------------------------------------------------------------//
 
         main_params: {
+            // Parameters not in main_config.json
+            diag: false,
+            webmapOrigImageUrlReady: $.Deferred(),
+
+
             allowGuestSubmissions: true,
-            diag: true,
             proxyProgram: "proxy/proxy.ashx",
             splashBackgroundUrl: "images/splash.jpg",
             splashText: "Public survey is used to gather comments from various perspectives",
             title: "Public Survey",
-            useWebmapOrigImg: false,
-            webmapOrigImageUrlReady: $.Deferred()
+            useWebmapOrigImg: false
         },
 
         //------------------------------------------------------------------------------------------------------------//
@@ -44,8 +47,15 @@ define([],
         init: function () {
             var parametersReady = $.Deferred();
 
+            fetchConfigInfo.getParamsFromConfigFile("config/main_config.json").then(
+                function (paramsFromFile) {
+                    parametersReady.resolve();
+                },
+                function (error) {
+                    parametersReady.reject(error);
+                }
+            );
 
-            parametersReady.resolve();
 
 
             return parametersReady;
