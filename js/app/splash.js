@@ -27,8 +27,8 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             $().ready(function () {
                 // Instantiate the splash template
                 $("body").loadTemplate("js/app/splash.html", {
-                    splashInfoTitle: config.main_params.title,
-                    splashInfoBody: config.main_params.splashText
+                    splashInfoTitle: config.appParams.title,
+                    splashInfoBody: config.appParams.splashText
                 }, {
                     prepend: true,
                     complete: function () {
@@ -36,15 +36,15 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                         $("#splashPage").fadeIn();
 
                         // If we're not going to wait for the webmap's original image, just set the splash
-                        if (config.main_params.useWebmapOrigImg) {
-                            config.main_params.webmapOrigImageUrlReady.then(function (url) {
+                        if (config.appParams.useWebmapOrigImg) {
+                            config.appParams.webmapOrigImageUrlReady.then(function (url) {
                                 if (url) {
-                                    config.main_params.splashBackgroundUrl = url;
+                                    config.appParams.splashBackgroundUrl = url;
                                 }
-                                splash.setBackground(config.main_params.splashBackgroundUrl);
+                                splash.setBackground(config.appParams.splashBackgroundUrl);
                             });
                         } else {
-                            splash.setBackground(config.main_params.splashBackgroundUrl);
+                            splash.setBackground(config.appParams.splashBackgroundUrl);
                         }
 
                         // Test browser level and proxy availability for older IE
@@ -126,9 +126,9 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             if (unsupported) {
                 proxyReady.reject("Unsupported browser");
             } else if (needProxy) {
-                $.getJSON(config.main_params.proxyProgram + "?ping", proxyReady.resolve).fail(proxyReady.reject);
+                $.getJSON(config.appParams.proxyProgram + "?ping", proxyReady.resolve).fail(proxyReady.reject);
             } else {
-                config.main_params.proxyProgram = null;
+                config.appParams.proxyProgram = null;
                 proxyReady.resolve();
             }
 

@@ -24,8 +24,8 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
             // Config tells us app specifics in addition to app's parameters
             config.init().then(
                 function () {
-                    document.title = config.main_params.title;
-                    if (config.main_params.diag !== undefined) {
+                    document.title = config.appParams.title;
+                    if (config.appParams.diag !== undefined) {
                         diag.init();
                     }
 
@@ -45,7 +45,8 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                 function (error) {
                     require(["app/message"], function (message) {
                         message.init().then(function () {
-                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + error.statusText);
+                            var details = (error && error.statusText) || (error && error.message) || "";
+                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
                         });
                     });
                 }
@@ -83,17 +84,17 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
 */
 
                                 // Wire up coordination between splash/signin and rest of app
-                                $.subscribe("signedIn:user", function (ignore, loginInfo) {
+                                $.subscribe("signedIn-user", function (ignore, loginInfo) {
                                     diag.appendWithLF("signed in user: " + JSON.stringify(loginInfo));  //???
                                     console.log();
                                     splash.show(false, appController.show, true);
                                 });
 
-                                $.subscribe("request:signOut", function () {
+                                $.subscribe("request-signOut", function () {
                                     user.signout();
                                 });
 
-                                $.subscribe("signedOut:user", function () {
+                                $.subscribe("signedOut-user", function () {
                                     diag.appendWithLF("signed out");  //???
                                     appController.show(false, splash.show, true);
                                 });
@@ -114,7 +115,9 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                         splash.replacePrompt(i18n.messages.unableToStartApp);
                     }
                 }
-            );
+            ).fail(function (error) {
+                splash.replacePrompt(i18n.messages.unableToStartApp);
+            });
         }
 
         //------------------------------------------------------------------------------------------------------------//

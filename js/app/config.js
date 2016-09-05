@@ -21,9 +21,16 @@ define(["app/fetchConfigInfo"],
     config = {
         //------------------------------------------------------------------------------------------------------------//
 
-        main_params: {
+        appParams: {
             // Parameters not in *_config.json
+            appName: "",
+            arcgisUrl: null,
+            webId: null,
+            webIdIsWebscene: null,
             webmapOrigImageUrlReady: $.Deferred()
+        },
+        featureSvcParams: {
+            surveyFeatureLayerReady: $.Deferred()
         },
 
         //------------------------------------------------------------------------------------------------------------//
@@ -42,29 +49,101 @@ define(["app/fetchConfigInfo"],
             paramsFromUrl = fetchConfigInfo.getParamsFromUrl();
 
             // Get the config file parameters
-            fetchConfigInfo.getParamsFromConfigFile(
-                "config/" + config._toVariableName(paramsFromUrl.a) + "_config.json").then(
+            config.appParams.appName = config._toVariableName(paramsFromUrl.a);
+            fetchConfigInfo.getParamsFromConfigFile("config/" + config.appParams.appName + "_config.json").then(
                 function (paramsFromFile) {
-                    // Mix together params accumulated so far in increasing-importance order:
-                    //  1. internal main_params (above)
-                    //  2. app configuration file (if found)
-                    config.main_params = $.extend(true,
-                        config.main_params,
+                    var arcgisUrl, webmapParamsFetch = $.Deferred(), webmapDataFetch = $.Deferred();
+
+                    // Mix in params from configuration file
+                    config.appParams = $.extend(true,
+                        config.appParams,
                         paramsFromFile
                     );
 
                     // Mix in params from URL after filtering them using filter from config file
-                    config.main_params = $.extend(true,
-                        config.main_params,
-                        config._filterProperties(config.main_params.urlParamsFilter || [], paramsFromUrl)
+                    paramsFromUrl = config._filterProperties(config.appParams.urlParamsFilter || [], paramsFromUrl);
+                    config.appParams = $.extend(true,
+                        config.appParams,
+                        paramsFromUrl
                     );
 
+                    // Access to webmap and webscene is same
+                    if (config._isUsableString(config.appParams.webmap)) {
+                        config.appParams.webId = config.appParams.webmap;
+                        config.appParams.webIdIsWebscene = false;
+                    } else if (config._isUsableString(config.appParams.webscene)) {
+                        config.appParams.webId = config.appParams.webscene;
+                        config.appParams.webIdIsWebscene = true;
+                    } else {
+                        // Neither webmap nor webscene is provided; nothing more to init
+                        parametersReady.resolve();
+                        config.featureSvcParams.surveyFeatureLayerReady.reject();
+                        config.appParams.webmapOrigImageUrlReady.reject();
+                        return;
+                    }
 
+                    // Set up URL to portal items, allowing for case variations in URL param
+                    config.appParams.arcgisUrl = config.appParams.portalurl + "/sharing/rest/content/items/";
 
+                    // Fetch webmap or webscene
+                    fetchConfigInfo.getParamsFromWebmap(config.appParams.arcgisUrl, config.appParams.webId,
+                        webmapParamsFetch, config.appParams.webmapOrigImageUrlReady);
+                    fetchConfigInfo.getWebmapData(config.appParams.arcgisUrl, config.appParams.webId,
+                        config.appParams.survey, webmapDataFetch);
 
+                    // Once we have the webmap, we can assemble the app parameters
+                    webmapParamsFetch.done(function (paramsFromWebmap) {
+                        // Mix in params from webmap (reapplying filtered URL params because they're more important)
+                        config.appParams = $.extend(true,
+                            config.appParams,
+                            paramsFromWebmap,
+                            paramsFromUrl
+                        );
 
+                        //???
+                        //???postprocessAppParams(config.appParams);
 
-                    parametersReady.resolve();
+                        parametersReady.resolve();
+                    }).fail(function (error) {
+                        parametersReady.reject(error);
+                    });
+
+                    // Once we have the webmap's data, we can fetch the survey's feature layer
+                    webmapDataFetch.done(function (data) {
+                        var popupDesc,
+                            opLayerParams = data.opLayerParams,
+                            featureSvcParams = data.featureSvcParams,
+                            serviceData = data.serviceData;
+
+                        // Check the two places for the popup description, which contains the survey
+                        if (opLayerParams && featureSvcParams) {
+                            if (opLayerParams.popupInfo && opLayerParams.popupInfo.description) {
+                                popupDesc = opLayerParams.popupInfo.description;
+                            } else if (serviceData && serviceData.layers && serviceData.layers.length > 0) {
+                                popupDesc = serviceData.layers[0].popupInfo;
+                                if (popupDesc) {
+                                    popupDesc = popupDesc.description;
+                                }
+                            }
+                        }
+
+                        // If we have a popup description
+                        if (popupDesc) {
+                            config.featureSvcParams.title = opLayerParams.title;
+                            config.featureSvcParams.url = opLayerParams.url;
+                            config.featureSvcParams.id = opLayerParams.id;
+                            config.featureSvcParams.objectIdField = featureSvcParams.objectIdField;
+                            config.featureSvcParams.canBeUpdated = featureSvcParams.canBeUpdated;
+                            config.featureSvcParams.popupDescription = popupDesc;
+                            config.featureSvcParams.fields = featureSvcParams.fields;
+
+                            config.featureSvcParams.surveyFeatureLayerReady.resolve();
+                        } else {
+                            config.featureSvcParams.surveyFeatureLayerReady.reject();
+                        }
+                    }).fail(function () {
+                        config.featureSvcParams.surveyFeatureLayerReady.reject();
+                    });
                 },
                 function (error) {
                     parametersReady.reject(error);
@@ -77,12 +156,12 @@ define(["app/fetchConfigInfo"],
         loadController: function () {
             var controllerReady = $.Deferred();
 
-            config._loadCSS("css/content_styles.css");
+            config._loadCSS("css/" + config.appParams.appName + "_styles.css");
 
-            var appControllerName = "app/content";
+            var appControllerName = "app/" + config.appParams.appName + "_content";
             require([appControllerName], function (appController) {
                 controllerReady.resolve(appController);
-            });
+            }, controllerReady.reject);
 
             return controllerReady;
         },

@@ -24,17 +24,17 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>"
                 + i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
             $("#guestSignin").on("click", function () {
-                $.publish("signedIn:user", {
+                $.publish("signedIn-user", {
                     name: i18n.labels.guestName,
                     id: "",
-                    canSubmit: config.main_params.allowGuestSubmissions
+                    canSubmit: config.appParams.allowGuestSubmissions
                 });
             });
             splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
         },
 
         signout: function () {
-            $.publish("signedOut:user");
+            $.publish("signedOut-user");
         },
 
         //------------------------------------------------------------------------------------------------------------//
