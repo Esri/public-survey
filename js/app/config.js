@@ -158,7 +158,7 @@ define(["app/fetchConfigInfo"],
 
             config._loadCSS("css/" + config.appParams.appName + "_styles.css");
 
-            var appControllerName = "app/" + config.appParams.appName + "_content";
+            var appControllerName = "app/" + config.appParams.appName + "_controller";
             require([appControllerName], function (appController) {
                 controllerReady.resolve(appController);
             }, controllerReady.reject);

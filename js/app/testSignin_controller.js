@@ -17,8 +17,8 @@
 define(["lib/i18n.min!nls/testSignin_resources.js"],
     function (i18n) {
     "use strict";
-    var content;
-    content = {
+    var controller;
+    controller = {
         //------------------------------------------------------------------------------------------------------------//
 
         _config: {},
@@ -26,40 +26,40 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
         //------------------------------------------------------------------------------------------------------------//
 
         init: function (config) {
-            var contentReady = $.Deferred();
+            var controllerReady = $.Deferred();
 
-            content._config = config;
+            controller._config = config;
 
-            contentReady.resolve();
+            controllerReady.resolve();
 
-            return contentReady;
+            return controllerReady;
         },
 
         launch: function () {
-            var contentReady = $.Deferred();
+            var controllerReady = $.Deferred();
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/" + content._config.appParams.appName + "_content.html", {
+            $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
             }, {
                 prepend: true,
                 complete: function () {
 
-                    content._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
+                    controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
 
-                    contentReady.resolve();
+                    controllerReady.resolve();
                 }
             });
 
-            return contentReady;
+            return controllerReady;
         },
 
         show: function (makeVisible, thenDo, thenDoArg) {
             if (makeVisible) {
-                $("#content").fadeIn("fast", function () {
+                $("#controller").fadeIn("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             } else {
-                $("#content").fadeOut("fast", function () {
+                $("#controller").fadeOut("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             }
@@ -69,7 +69,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
 
         _activateButton: function (id, label, tooltip) {
             var btn = $("#" + id);
-            btn.on("click", content._buttonPublish);
+            btn.on("click", controller._buttonPublish);
 
             btn = btn[0];
             if (label) {
@@ -90,5 +90,5 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
 
         //------------------------------------------------------------------------------------------------------------//
     };
-    return content;
+    return controller;
 });
