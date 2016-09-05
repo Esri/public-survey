@@ -126,11 +126,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             if (unsupported) {
                 proxyReady.reject("Unsupported browser");
             } else if (needProxy) {
-                $.getJSON(config.main_params.proxyProgram + "?ping", function () {
-                    proxyReady.resolve();
-                }).fail(function (error) {
-                    proxyReady.reject(error);
-                });
+                $.getJSON(config.main_params.proxyProgram + "?ping", proxyReady.resolve).fail(proxyReady.reject);
             } else {
                 config.main_params.proxyProgram = null;
                 proxyReady.resolve();
