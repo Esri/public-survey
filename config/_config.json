@@ -6,6 +6,8 @@
     "allowGuestSubmissions": true,
     "useWebmapOrigImg": false,
 
+    "urlParamsFilter": ["diag", "test"],
+
     "proxyProgram": "proxy/proxy.ashx",
     "portalUrl": "https://www.arcgis.com",
     "googleplusLogoutUrl": "https://accounts.google.com/logout",

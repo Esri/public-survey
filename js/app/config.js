@@ -22,17 +22,8 @@ define(["app/fetchConfigInfo"],
         //------------------------------------------------------------------------------------------------------------//
 
         main_params: {
-            // Parameters not in main_config.json
-            diag: false,
-            webmapOrigImageUrlReady: $.Deferred(),
-
-
-            allowGuestSubmissions: true,
-            proxyProgram: "proxy/proxy.ashx",
-            splashBackgroundUrl: "images/splash.jpg",
-            splashText: "Public survey is used to gather comments from various perspectives",
-            title: "Public Survey",
-            useWebmapOrigImg: false
+            // Parameters not in *_config.json
+            webmapOrigImageUrlReady: $.Deferred()
         },
 
         //------------------------------------------------------------------------------------------------------------//
@@ -45,18 +36,40 @@ define(["app/fetchConfigInfo"],
          * thumbnail has been checked and is ready to use, respectively.
          */
         init: function () {
-            var parametersReady = $.Deferred();
+            var paramsFromUrl, parametersReady = $.Deferred();
 
-            fetchConfigInfo.getParamsFromConfigFile("config/main_config.json").then(
+            // Get the URL parameters
+            paramsFromUrl = fetchConfigInfo.getParamsFromUrl();
+
+            // Get the config file parameters
+            fetchConfigInfo.getParamsFromConfigFile(
+                "config/" + config._toVariableName(paramsFromUrl.a) + "_config.json").then(
                 function (paramsFromFile) {
+                    // Mix together params accumulated so far in increasing-importance order:
+                    //  1. internal main_params (above)
+                    //  2. app configuration file (if found)
+                    config.main_params = $.extend(true,
+                        config.main_params,
+                        paramsFromFile
+                    );
+
+                    // Mix in params from URL after filtering them using filter from config file
+                    config.main_params = $.extend(true,
+                        config.main_params,
+                        config._filterProperties(config.main_params.urlParamsFilter || [], paramsFromUrl)
+                    );
+
+
+
+
+
+
                     parametersReady.resolve();
                 },
                 function (error) {
                     parametersReady.reject(error);
                 }
             );
-
-
 
             return parametersReady;
         },
@@ -82,6 +95,13 @@ define(["app/fetchConfigInfo"],
             stylesheet.rel = "stylesheet";
             stylesheet.type = "text/css";
             document.getElementsByTagName("head")[0].appendChild(stylesheet);
+        },
+
+        _toVariableName: function (text) {
+            if (text) {
+                return text.replace(/[^\w]+/g, "");
+            }
+            return "";
         },
 
         /**
