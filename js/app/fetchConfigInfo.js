@@ -78,7 +78,7 @@ define([], function () {
                 $.getJSON(arcgisUrl + webmapId + "?f=json&callback=?", function (data) {
                     var normalizedData = {}, imageUrl, iExt;
                     if (!data || data.error) {
-                        deferreds.params.reject();
+                        deferreds.params.reject(data && data.error);
                         deferreds.origImageUrl.resolve();
                         return;
                     }
@@ -118,7 +118,7 @@ define([], function () {
                     } else {
                         deferreds.origImageUrl.resolve();
                     }
-                }).fail(deferred.reject);
+                }).fail(deferreds.params.reject);
             } else {
                 deferreds.params.resolve({});
                 deferreds.origImageUrl.resolve();
