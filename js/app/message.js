@@ -22,7 +22,30 @@ define(["lib/i18n.min!nls/main_resources.js"],
     var message = {
         //------------------------------------------------------------------------------------------------------------//
 
-        init: function () {
+        _initialized: false,
+
+        //------------------------------------------------------------------------------------------------------------//
+
+        showMessage: function (body, title) {
+            if (message._initialized) {
+                message._showMessage(body, title);
+            } else {
+                message._init().then(function () {
+                    message._initialized = true;
+                    message._showMessage(body, title);
+                });
+            }
+        },
+
+        //------------------------------------------------------------------------------------------------------------//
+
+        _showMessage: function (body, title) {
+            $("#messageTitle")[0].innerHTML = title || "";
+            $("#messageBody")[0].innerHTML = body;
+            $("#messagePanel").modal("show");
+        },
+
+        _init: function () {
             var messagePanelReady = $.Deferred();
 
             // When the DOM is ready, we can start adjusting the UI
@@ -43,12 +66,6 @@ define(["lib/i18n.min!nls/main_resources.js"],
             });
 
             return messagePanelReady;
-        },
-
-        showMessage: function (body, title) {
-            $("#messageTitle")[0].innerHTML = title || "";
-            $("#messageBody")[0].innerHTML = body;
-            $("#messagePanel").modal("show");
         }
 
         //------------------------------------------------------------------------------------------------------------//

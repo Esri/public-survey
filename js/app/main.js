@@ -44,10 +44,8 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                 },
                 function (error) {
                     require(["app/message"], function (message) {
-                        message.init().then(function () {
-                            var details = (error && error.statusText) || (error && error.message) || "";
-                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
-                        });
+                        var details = (error && error.statusText) || (error && error.message) || "";
+                        message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
                     });
                 }
             );
@@ -70,18 +68,6 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
 
                         $.when(signinReady, appReady).then(
                             function (user) {
-/*
-                                require(["app/message"], function (message) {
-                                    message.init().then(
-                                        function () {
-                                            $.subscribe("show-help", function () {
-                                                message.showMessage(appController._prepareAppConfigInfo.appParams.helpText,
-                                                    appController._prepareAppConfigInfo.appParams.title);
-                                            });
-                                        }
-                                    );
-                                });
-*/
 
                                 // Wire up coordination between splash/signin and rest of app
                                 $.subscribe("signedIn-user", function (ignore, loginInfo) {
