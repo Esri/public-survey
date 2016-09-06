@@ -38,7 +38,20 @@
         paths: {
             app: package_path + "/js/app",
             lib: package_path + "/js/lib"
-        }
+        },
+        packages: [{
+            name: "dojo",
+            location: "./dojo",
+            main: "main"
+        }, {
+            name: "dijit",
+            location: "./dijit",
+            main: "main"
+        }, {
+            name: "dojox",
+            location: "./dojox",
+            main: "main"
+        }]
     });
 
     // Load the main app module to start the app
