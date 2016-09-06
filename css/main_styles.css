@@ -36,7 +36,7 @@ header, section, footer, aside, nav, main, article, figure {
     display: block;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(images/loading.gif);
+    background-image: url(../images/loading.gif);
 }
 
 .fillHeight {
