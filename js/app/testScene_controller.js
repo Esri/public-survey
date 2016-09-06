@@ -21,11 +21,15 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
     controller = {
         //------------------------------------------------------------------------------------------------------------//
 
+        _averagingFieldValues: null,
+        _clusterer: null,
+        _clustererView: null,
         _config: {},
-        _surveyInProgress: false,
-
-        _log: null,
+        _featureLayerOptions: null,
         _logNum: 0,
+        _multipleChoiceQuestions: null,
+        _pieChartTheme: "GreySkies",
+        _surveyInProgress: false,
 
         //------------------------------------------------------------------------------------------------------------//
 
@@ -52,7 +56,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 /*  //???
                         dataAccess.init(controller._config.featureSvcParams.url,
                             controller._config.featureSvcParams.id,
-                            controller.appParams.appParams.proxyProgram);
+                            controller._config.appParams.proxyProgram);
 */
                         controllerReady.resolve();
                     }, function (error) {
@@ -93,12 +97,9 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
             $.subscribe("show-help", controller._logSubscribedEvent);
             $.subscribe("reset-survey", controller._logSubscribedEvent);
+            $.subscribe("goto_location", controller._logSubscribedEvent);
 
 
-
-            controller._config.loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
-            controller._config.loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
-            controller._config.loadCSS("css/testScene_styles2.css");
 
             require(["app/survey", "app/visualsController3d"], function(survey, visualsController) {
                 // Prepare the survey
@@ -109,6 +110,10 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._prependToLog("Survey definition created");
 
 
+
+                controller._config.loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
+                controller._config.loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
+                controller._config.loadCSS("css/testScene_styles2.css");
 
                 var visualsCtrlr = visualsController.init(controller._config, $("#mainContent"),
                     controller._clusterViewBuilder, controller._okToNavigate);
@@ -136,8 +141,12 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         //------------------------------------------------------------------------------------------------------------//
 
-        _logSubscribedEvent: function (evt) {
-            controller._prependToLog(evt.type);
+        _logSubscribedEvent: function (evt, data) {
+            var dataAsString = data ? JSON.stringify(data) : "";
+            if (dataAsString.length > 50) {
+                dataAsString = dataAsString.substr(0, 50) + "...";
+            }
+            controller._prependToLog(evt.type + " " + dataAsString);
         },
 
         _okToNavigate: function () {

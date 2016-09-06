@@ -19,10 +19,12 @@ define({
             noMoreSurveys: "There are no surveys available at this time; thank you for your participation."
         },
         prompts: {
+            goToResponses: "Go to response location",
             currentResponsesWillBeCleared: "Current response will be cleared. Do you wish to proceed?"
         },
         labels: {
-            signOut: "Sign out"
+            signOut: "Sign out",
+            multipleResponsesHere: "{count} responses here"
         },
         tooltips: {
             signOut: "Sign out of application",
