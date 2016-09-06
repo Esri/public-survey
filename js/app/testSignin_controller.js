@@ -27,16 +27,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
 
         init: function (config) {
             var controllerReady = $.Deferred();
-
             controller._config = config;
-
-            controllerReady.resolve();
-
-            return controllerReady;
-        },
-
-        launch: function () {
-            var controllerReady = $.Deferred();
 
             // Instantiate the splash template
             $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
@@ -44,6 +35,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
                 prepend: true,
                 complete: function () {
 
+                    // Testing support
                     controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
 
                     controllerReady.resolve();
@@ -53,13 +45,21 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
             return controllerReady;
         },
 
+        launch: function () {
+            var controllerComponentsReady = $.Deferred();
+
+            controllerComponentsReady.resolve();
+
+            return controllerComponentsReady;
+        },
+
         show: function (makeVisible, thenDo, thenDoArg) {
             if (makeVisible) {
-                $("#controller").fadeIn("fast", function () {
+                $("#content").fadeIn("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             } else {
-                $("#controller").fadeOut("fast", function () {
+                $("#content").fadeOut("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             }
