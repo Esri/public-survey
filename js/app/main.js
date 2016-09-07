@@ -53,7 +53,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
 
         //------------------------------------------------------------------------------------------------------------//
 
-        _launch: function (fred) {
+        _launch: function () {
             // Load the app specifics
             splash.replacePrompt(i18n.messages.loadingApp);
             config.loadController().then(

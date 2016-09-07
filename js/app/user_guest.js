@@ -14,11 +14,42 @@
  | limitations under the License.
  */
 //====================================================================================================================//
+
+/**
+ * Manages sign-in and sign-out to a set of authentication providers.
+ * @namespace visualsController
+ * @version 0.1
+ */
 define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
     function (i18n, diag) {
     "use strict";
     var user = {
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Events -----------------------------------------------------------------------------------------------//
+
+        // Published
+        /**
+         * @typedef {object} UserInfoHash
+         * @property {string} name - User name reported by provider
+         * @property {string} id - User id reported by provider
+         * @property {boolean} canSubmit - Indicates if user has submit privileges
+         * @memberof user
+         */
+        /**
+         * Provides information about the currently-signed-in user.
+         * @event user#signedOut-user
+         * @property {UserInfoHash} - User info
+         */
+
+        /**
+         * Requests to go to a location with its collection of survey responses.
+         * @event user#signedOut-user
+         */
+
+         // Consumed
+
+        //----- Module variables -------------------------------------------------------------------------------------//
+
+        //----- Procedures available for external access -------------------------------------------------------------//
 
         launch: function (config, splash) {
             $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>"
@@ -36,6 +67,8 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
         signout: function () {
             $.publish("signedOut-user");
         },
+
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
 
         //------------------------------------------------------------------------------------------------------------//
     };

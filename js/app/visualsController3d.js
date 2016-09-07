@@ -1,6 +1,4 @@
-﻿/*global define,$ */
-/*jslint browser:true */
-/** @license
+﻿/** @license
  | Copyright 2016 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +14,14 @@
  | limitations under the License.
  */
 //====================================================================================================================//
+
+/**
+ * Manages the display of a webscene accompanied by a gallery of slides.
+ * @namespace visualsController
+ * @version 0.1
+ *
+ * @property {number} numResponseSites - Number of slides in slide gallery
+ */
 define([
     "lib/i18n.min!nls/testScene_resources.js",
     "app/diag"
@@ -25,7 +31,40 @@ define([
 ) {
     "use strict";
     var visualsController = {
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Events -----------------------------------------------------------------------------------------------//
+
+        // Published
+        /**
+         * @typedef {object} ResponseSiteHash
+         * @property {number} set - Zero-based slide number
+         * @property {string} title - Slide title
+         * @property {boolean} fromCamera - Indicates if slide number was result of
+         *          matching by camera location
+         * @memberof visualsController
+         */
+        /**
+         * Provides result of trying to match current position with slides in slide gallery.
+         * @event visualsController#current-response-site
+         * @property {?ResponseSiteHash} - Info about current slide
+         */
+
+        /**
+         * @typedef {object} ResponsesHash
+         * @property {array} responses - Survey responses
+         * @memberof visualsController
+         */
+        /**
+         * Requests to go to a location with its collection of survey responses.
+         * @event visualsController#goto_location
+         * @property {ResponsesHash} - Survey responses
+         */
+
+         // Consumed
+         // surveyController#cluster-clicked
+         // surveyController#goto-camera-pos
+         // surveyController#goto-response-site
+
+        //----- Module variables -------------------------------------------------------------------------------------//
 
         _prepareAppConfigInfo: null,
         _container: null,
@@ -51,8 +90,14 @@ define([
         view: null,
         numResponseSites: 0,
 
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Procedures available for external access -------------------------------------------------------------//
 
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @param {object} container - DOM container for controller's graphics
+         * @memberof visualsController
+         */
         init: function (prepareAppConfigInfo, container, clusterViewBuilder, _okToNavigate) {
             var visualsControllerReady = $.Deferred();
             visualsController._prepareAppConfigInfo = prepareAppConfigInfo;
@@ -99,6 +144,13 @@ define([
             return visualsControllerReady;
         },
 
+        /**
+         * Shows or hides the DOM container managed by the controller.
+         * @param {boolean} makeVisible - Visibility to set for container
+         * @param {?function} thenDo - Function to execute after show/hide animation completes
+         * @param {?object} thenDoArg - Argument for thenDo function
+         * @memberof visualsController
+         */
         show: function (makeVisible, thenDo, thenDoArg) {
             if (makeVisible) {
                 $(visualsController._container).fadeIn("fast", function () {
@@ -111,8 +163,19 @@ define([
             }
         },
 
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
 
+        /**
+         * Loads libraries and creates a WebScene and SceneView for the supplied webscene item.
+         * @param {object} webId - AGOL id of webscene item
+         * @param {deferred} mapParamsReady - For reporting when setup is done
+         * @fires visualsController#goto_location
+         * @listens surveyController#cluster-clicked
+         * @listens surveyController#goto-camera-pos
+         * @listens surveyController#goto-response-site
+         * @memberof visualsController
+         * @private
+         */
         _loadWebScene: function (webId, mapParamsReady) {
 
             requirejs.config({
@@ -252,8 +315,6 @@ define([
                             });
 
                             // Slide image
-                            var fred = "<img id='image_" + slideNum + "' title='" + slide.title.text
-                                + "' src='" + slide.thumbnail.url + "' class='slideFrame'>";
                             $(slideObj).append("<img id='image_" + slideNum + "' title='" + slide.title.text
                                 + "' src='" + slide.thumbnail.url + "' class='slideFrame'>");
 
@@ -287,10 +348,6 @@ define([
                 });
 
                 // Wire up app
-                $.subscribe("clear-current-slide", function () {
-                    visualsController._updateCurrentSlide();
-                });
-
                 $.subscribe("goto-response-site", function (ignore, iSite) {
                     visualsController._goToSlide(iSite);
                 });
@@ -307,15 +364,6 @@ define([
                 $.subscribe("cluster-clicked", function (ignore, clusterClickInfo) {
                     var cluster = visualsController._clusterer.getClusterById(clusterClickInfo.attributes.id);
                     clusterSurveys = cluster.features;
-                });
-
-                // Shift the viewpoint on demand
-                $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
-                    console.log("goto " + JSON.stringify(cameraOptions.position) + ", "
-                        + cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
-                    var camera = new Camera(cameraOptions);
-                    visualsController._view.goTo(camera);
-                    visualsController._updateCurrentSlide(_this._getMatchingSlide(camera), true);
                 });
 
                 // Set up some event handlers to intercept navigation via nav widgets and mouse actions on scene
@@ -413,6 +461,15 @@ define([
             visualsController._goToSlide(visualsController._currentSlideNum);
         },
 
+        /**
+         * Broadcasts result of trying to match current position with slides in slide gallery.
+         * @param {number} slideNum - Zero-based slide number
+         * @param {boolean|undefined} isFromCameraMatch - Indicates if slide number was result of
+         *      matching by camera location
+         * @fires visualsController#current-response-site
+         * @memberof visualsController
+         * @private
+         */
         _updateCurrentSlide: function (slideNum, isFromCameraMatch) {
             if (visualsController.numResponseSites > 0) {
                 if (slideNum === undefined) {

@@ -14,6 +14,12 @@
  | limitations under the License.
  */
 //====================================================================================================================//
+
+/**
+ * Manages the display of clustered feature layer.
+ * @namespace ClustererView
+ * @version 0.1
+ */
 define([
     "dojo/_base/array",
     "dojo/_base/declare",
@@ -30,6 +36,26 @@ define([
     GraphicsLayer
 ) {
     return declare([], {
+        //----- Events -----------------------------------------------------------------------------------------------//
+
+        // Published
+        /**
+         * @typedef {object} ClusterSelectionHash
+         * @property {object} attributes -
+         * @property {object} mapPoint -
+         * @memberof ClustererView
+         */
+        /**
+         * Provides information about selected cluster.
+         * @event ClustererView#cluster-clicked
+         * @property {ClusterSelectionHash} - Info about cluster
+         */
+
+         // Consumed
+
+        //----- Module variables -------------------------------------------------------------------------------------//
+
+        //----- Procedures available for external access -------------------------------------------------------------//
 
         constructor: function (options) {
             // options:
@@ -152,5 +178,8 @@ define([
             return this._featureLayer ? this._featureLayer.id : this._graphicsLayer ? this._graphicsLayer.id : null;
         }
 
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        //------------------------------------------------------------------------------------------------------------//
     });
 });

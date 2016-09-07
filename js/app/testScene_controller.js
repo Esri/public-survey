@@ -14,12 +14,28 @@
  | limitations under the License.
  */
 //====================================================================================================================//
+
+/**
+ * Manages the display of a pair of visuals and survey controllers.
+ * @namespace controller
+ * @version 0.1
+ */
 define(["lib/i18n.min!nls/testScene_resources.js"],
     function (i18n) {
     "use strict";
     var controller;
     controller = {
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Published events -------------------------------------------------------------------------------------//
+
+        // Published
+        /**
+         * Requests that the survey be reset.
+         * @event controller#reset-survey
+         */
+
+         // Consumed
+
+        //----- Module variables -------------------------------------------------------------------------------------//
 
         _averagingFieldValues: null,
         _clusterer: null,
@@ -31,8 +47,13 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         _pieChartTheme: "GreySkies",
         _surveyInProgress: false,
 
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Procedures available for external access -------------------------------------------------------------//
 
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @memberof controller
+         */
         init: function (config) {
             var controllerReady = $.Deferred();
             controller._config = config;
@@ -71,6 +92,13 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             return controllerReady;
         },
 
+        /**
+         * Launches the controller.
+         * @listens controller#survey-form-in-progress
+         * @listens controller#survey-form-is-empty
+         * @listens controller#show-help
+         * @memberof controller
+         */
         launch: function () {
             var controllerComponentsReady = $.Deferred();
 
@@ -98,6 +126,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             $.subscribe("show-help", controller._logSubscribedEvent);
             $.subscribe("reset-survey", controller._logSubscribedEvent);
             $.subscribe("goto_location", controller._logSubscribedEvent);
+            $.subscribe("current-response-site", controller._logSubscribedEvent);
 
 
 
@@ -127,6 +156,13 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             return controllerComponentsReady;
         },
 
+        /**
+         * Shows or hides the DOM container managed by the controller.
+         * @param {boolean} makeVisible - Visibility to set for container
+         * @param {?function} thenDo - Function to execute after show/hide animation completes
+         * @param {?object} thenDoArg - Argument for thenDo function
+         * @memberof controller
+         */
         show: function (makeVisible, thenDo, thenDoArg) {
             if (makeVisible) {
                 $("#content").fadeIn("fast", function () {
@@ -139,8 +175,14 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             }
         },
 
-        //------------------------------------------------------------------------------------------------------------//
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
 
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @memberof controller
+         * @private
+         */
         _logSubscribedEvent: function (evt, data) {
             var dataAsString = data ? JSON.stringify(data) : "";
             if (dataAsString.length > 50) {
@@ -149,6 +191,12 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             controller._prependToLog(evt.type + " " + dataAsString);
         },
 
+        /**
+         * Prompts user if he/she is about to do something that will invalidate an in-progress survey.
+         * @fires controller#reset-survey
+         * @memberof controller
+         * @private
+         */
         _okToNavigate: function () {
             var ok = true;
             if (controller._surveyInProgress) {
@@ -162,6 +210,14 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             return ok;
         },
 
+        /**
+         * Completes text setup of a button and sets its click event to publish the id of the button.
+         * @param {string} id - Id of button to modify
+         * @param {?string} label - Text to display in button display
+         * @param {?string} tooltip - Text to display in button tooltip
+         * @memberof controller
+         * @private
+         */
         _activateButton: function (id, label, tooltip) {
             var btn = $("#" + id);
             btn.on("click", controller._buttonPublish);
@@ -177,13 +233,26 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             return btn;
         },
 
+        /**
+         * Click event function to publish the id of the target.
+         * @param {object} evt - Click event
+         * @memberof controller
+         * @private
+         */
         _buttonPublish: function (evt) {
             var btn = evt.currentTarget;
             btn.blur();  // Allow button to be defocused without clicking elsewhere
             $.publish(btn.id);
         },
 
-        // Note: does not work while controller page is not displayed
+        /**
+         * Prepends sequence number and supplied text to #logText item.
+         * <br>
+         * Note: does not work while controller page is not displayed
+         * @param {string} text - Text to prepend
+         * @memberof controller
+         * @private
+         */
         _prependToLog: function (text) {
             $("#logText").prepend(++controller._logNum + ": " + text + "\n");
         },
