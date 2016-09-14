@@ -19,7 +19,7 @@ define([], function () {
     var survey;
     survey = {
 
-        flag_important_question: "Please answer this question",
+        flagImportantQuestion: "Please answer this question",
 
         //--------------------------------------------------------------------------------------------------------------------//
 
@@ -321,7 +321,7 @@ define([], function () {
                 "<div id='qg" + iQuestion + "' class='form-group'>"
                 + "<label for='q" + iQuestion + "'>" + questionInfo.question + (questionInfo.important
                 ? "&nbsp;<div class='importantQuestion sprites star' title=\""
-                + survey.flag_important_question + "\"></div>"
+                + survey.flagImportantQuestion + "\"></div>"
                 : "")
                     + "</label><br>";
             if (questionInfo.image && questionInfo.image.length > 0 && questionInfo.startsWithImage) {

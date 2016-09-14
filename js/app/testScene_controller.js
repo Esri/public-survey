@@ -64,21 +64,16 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 prepend: true,
                 complete: function () {
 
-                    // Testing support
+                    // Controls in test window
                     controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
                     controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
-                    controller._activateButton("survey-form-in-progress", "Survey in progress");
-                    controller._activateButton("survey-form-is-empty", "Survey is clear");
+                    controller._activateButton("survey-form-in-progress", "Fill in survey");
+                    controller._activateButton("survey-form-is-empty", "Clear survey");
                     controller._activateButton("reset-survey", "Reset survey");
 
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
-/*  //???
-                        dataAccess.init(controller._config.featureSvcParams.url,
-                            controller._config.featureSvcParams.id,
-                            controller._config.appParams.proxyProgram);
-*/
                         controllerReady.resolve();
                     }, function (error) {
                         if (error) {
@@ -121,6 +116,8 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 });
             });
 
+
+            // Monitoring in test window
             $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
             $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
             $.subscribe("show-help", controller._logSubscribedEvent);
@@ -128,6 +125,9 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             $.subscribe("goto_location", controller._logSubscribedEvent);
             $.subscribe("current-response-site", controller._logSubscribedEvent);
 
+            $.subscribe("signedIn-user", controller._logSubscribedEvent);
+            $.subscribe("request-signOut", controller._logSubscribedEvent);
+            $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
 
             require(["app/survey", "app/visualsController3d"], function(survey, visualsController) {
@@ -139,18 +139,13 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._prependToLog("Survey definition created");
 
 
-
                 controller._config.loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
                 controller._config.loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
                 controller._config.loadCSS("css/testScene_styles2.css");
 
-                var visualsCtrlr = visualsController.init(controller._config, $("#mainContent"),
-                    controller._clusterViewBuilder, controller._okToNavigate);
-
-
-
-
-                controllerComponentsReady.resolve();
+                visualsController.init(controller._config, $("#mainContent"),
+                    controller._clusterViewBuilder, controller._okToNavigate)
+                    .then(controllerComponentsReady.resolve());
             });
 
             return controllerComponentsReady;
@@ -215,12 +210,13 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
          * @param {string} id - Id of button to modify
          * @param {?string} label - Text to display in button display
          * @param {?string} tooltip - Text to display in button tooltip
+         * @param {?object} data - Data to pass to event handler
          * @memberof controller
          * @private
          */
-        _activateButton: function (id, label, tooltip) {
+        _activateButton: function (id, label, tooltip, data) {
             var btn = $("#" + id);
-            btn.on("click", controller._buttonPublish);
+            btn.on("click", data, controller._buttonPublish);
 
             btn = btn[0];
             if (label) {
@@ -242,7 +238,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         _buttonPublish: function (evt) {
             var btn = evt.currentTarget;
             btn.blur();  // Allow button to be defocused without clicking elsewhere
-            $.publish(btn.id);
+            $.publish(btn.id, evt.data);
         },
 
         /**
@@ -569,7 +565,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
             return clusterViewReady;
         }
-
 
         //------------------------------------------------------------------------------------------------------------//
     };

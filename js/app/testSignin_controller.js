@@ -35,7 +35,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
                 prepend: true,
                 complete: function () {
 
-                    // Testing support
+                    // Controls in test window
                     controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
 
                     controllerReady.resolve();
