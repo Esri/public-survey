@@ -42,6 +42,11 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         _config: {},
         _logNum: 0,
+        _currentUser: {
+            name: "",
+            id: "",
+            canSubmit: true
+        },
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -61,16 +66,29 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Template options
                 prepend: true,
                 complete: function () {
-
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
                         controllerReady.resolve();
-                    }, function (error) {
-                        if (error) {
-                            console.log(JSON.stringify(error));
+                    }, function () {
+                        // Attempt to load the survey form description
+                        if (controller._config.appParams.surveydesc) {
+                            $.getJSON(controller._config.appParams.surveydesc + ".json",
+                                function (surveyDesc) {
+                                    controller._config.featureSvcParams.popupDescription = surveyDesc.description;
+                                    controller._config.featureSvcParams.fields = surveyDesc.fields;
+                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
+                                    controllerReady.resolve();
+                                }
+                            ).fail(
+                                function (error) {
+                                    if (error) {
+                                        console.log(JSON.stringify(error));
+                                    }
+                                    controllerReady.reject(i18n.messages.unableToStartApp);
+                                }
+                            );
                         }
-                        controllerReady.reject(i18n.messages.noMoreSurveys);
                     });
                 }
             });
@@ -116,6 +134,11 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             });
 
             require(["app/survey", "app/surveyController"], function(survey, surveyController) {
+                // Adjust config parameters as needed
+                controller._config.appParams.readonly =
+                    controller._toBoolean(controller._config.appParams.readonly,
+                    !controller._config.featureSvcParams.canBeUpdated);
+
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
@@ -159,6 +182,47 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        /** Normalizes a boolean value to true or false.
+         * @param {boolean|string} boolValue A true or false value that is returned directly or a string
+         * "true", "t", "yes", "y", "false", "f", "no", "n" (case-insensitive) or a number (0 for false; non-zero
+         * for true) that is interpreted and returned; if neither a boolean nor a usable string nor a number, falls
+         * back to defaultValue
+         * @param {boolean} [defaultValue] A true or false that is returned if boolValue can't be used; if not
+         * defined, true is returned
+         * @private
+         */
+        _toBoolean: function (boolValue, defaultValue) {
+            var lowercaseValue;
+
+            // Shortcut true|false
+            if (boolValue === true) {
+                return true;
+            }
+            if (boolValue === false) {
+                return false;
+            }
+
+            // Handle a true|false string
+            if (typeof boolValue === "string") {
+                lowercaseValue = boolValue.toLowerCase();
+                if (lowercaseValue === "true" || lowercaseValue === "t" || lowercaseValue === "yes"
+                    || lowercaseValue === "y" || lowercaseValue === "1") {
+                    return true;
+                }
+                if (lowercaseValue === "false" || lowercaseValue === "f" || lowercaseValue === "no"
+                    || lowercaseValue === "n" || lowercaseValue === "0") {
+                    return false;
+                }
+            } else if (typeof boolValue === "number") {
+                return boolValue !== 0;
+            }
+            // Fall back to default
+            if (defaultValue === undefined) {
+                return true;
+            }
+            return defaultValue;
+        },
 
         /**
          * Completes text setup of a button and sets its click event to publish the id of the button.
