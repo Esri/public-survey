@@ -84,6 +84,7 @@
     border: 1px solid #007ac2;
     white-space: normal;
     min-height: 2.6em;
+    width: 100%;
 }
 .number-input {
     font-size: 12px;
@@ -94,7 +95,7 @@
     white-space: normal;
     min-height: 2.6em;
     padding-left: 4px;
-    max-width: 100%;
+    width: 100%;
 }
 .text-input {
     font-size: 12px;
