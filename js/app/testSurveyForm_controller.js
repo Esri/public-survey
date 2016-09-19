@@ -16,7 +16,7 @@
 //====================================================================================================================//
 
 /**
- * Manages the display of a survey controller.
+ * Manages the display of a survey form.
  * @namespace controller
  * @version 0.1
  */
@@ -28,15 +28,9 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         //----- Published events -------------------------------------------------------------------------------------//
 
         // Published
-        /**
-         * Requests that a new survey be started.
-         * @event controller#show-newSurvey
-         */
 
          // Consumed
-         // survey-form-in-progress
-         // survey-form-is-empty
-         // show-help
+         // signedIn-user
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
@@ -61,21 +55,32 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Template options
                 prepend: true,
                 complete: function () {
+                    // Adjust config parameters as needed
+                    controller._config.appParams.readonly =
+                        controller._toBoolean(controller._config.appParams.readonly, false);
 
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
-/*  //???
-                        dataAccess.init(controller._config.featureSvcParams.url,
-                            controller._config.featureSvcParams.id,
-                            controller._config.appParams.proxyProgram);
-*/
                         controllerReady.resolve();
-                    }, function (error) {
-                        if (error) {
-                            console.log(JSON.stringify(error));
+                    }, function () {
+                        // Attempt to load the survey form description
+                        if (controller._config.appParams.surveydesc) {
+                            $.getJSON(controller._config.appParams.surveydesc + ".json",
+                                function (surveyDesc) {
+                                    controller._config.featureSvcParams.popupDescription = surveyDesc.description;
+                                    controller._config.featureSvcParams.fields = surveyDesc.fields;
+                                    controllerReady.resolve();
+                                }
+                            ).fail(
+                                function (error) {
+                                    if (error) {
+                                        console.log(JSON.stringify(error));
+                                    }
+                                    controllerReady.reject(i18n.messages.unableToStartApp);
+                                }
+                            );
                         }
-                        controllerReady.reject(i18n.messages.noMoreSurveys);
                     });
                 }
             });
@@ -85,6 +90,8 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         /**
          * Launches the controller.
+         * @listens controller#survey-form-in-progress
+         * @listens controller#survey-form-is-empty
          * @listens controller#show-help
          * @memberof controller
          */
@@ -92,35 +99,19 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             var controllerComponentsReady = $.Deferred();
 
             // Controls in test window
-            controller._activateButton("goto_location", i18n.prompts.goToResponses, null, {responses: {a: "a", b: "b"}});
+            controller._activateButton("clear-form");
+            controller._activateButton("fill-form");
+            controller._activateButton("request-signOut");
+            controller._activateButton("at-least-one");
+            controller._activateButton("all-important");
+            controller._activateButton("all");
 
             // Monitoring in test window
-            $.subscribe("request-signOut", controller._logSubscribedEvent);
-            $.subscribe("submit-survey-form", controller._logSubscribedEvent);
-            $.subscribe("clear-survey-form", controller._logSubscribedEvent);
-            $.subscribe("goto-next-todo-response-site", controller._logSubscribedEvent);
-            $.subscribe("finish-survey-form", controller._logSubscribedEvent);
-            $.subscribe("see-responses", controller._logSubscribedEvent);
-            $.subscribe("goto-next-response", controller._logSubscribedEvent);
-            $.subscribe("turn-off-responses", controller._logSubscribedEvent);
-
-            $.subscribe("goto_location", controller._logSubscribedEvent);
-            $.subscribe("signedIn-user", controller._logSubscribedEvent);
-            $.subscribe("signedOut-user", controller._logSubscribedEvent);
-            $.subscribe("show-noSurveys", controller._logSubscribedEvent);
-            $.subscribe("show-newSurvey", controller._logSubscribedEvent);
             $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
             $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
+            $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
-            // Display help for app
-            require(["app/message"], function (message) {
-                $.subscribe("show-help", function () {
-                    message.showMessage(controller._config.appParams.helpText,
-                        controller._config.appParams.title);
-                });
-            });
-
-            require(["app/survey", "app/surveyController"], function(survey, surveyController) {
+            require(["app/survey"], function(survey) {
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
@@ -128,40 +119,14 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 );
                 controller._prependToLog("Survey definition created");
 
-                // Prepare and start the survey controller
-                surveyController.init(controller._config, $("#sidebarContent")).then(function () {
-
-                    $.subscribe("signedIn-user", function () {
-                        surveyController.startSurveying();
-                        $.publish("show-newSurvey");
-                    });
-
-    /*                $.subscribe("request-newSurvey", function () {
-
-                        // Get candidate
-                        dataAccess.getCandidate().then(function (candidate) {
-                            // id:num
-                            // obj:feature{}
-                            // numPhotos:num
-                            // attachments:[{id,url},...]
-
-                            // Do we have a valid candidate?
-                            if (!candidate.obj) {
-                                $.publish("show-noSurveys");
-                                return;
-                            }
-
-                            $.publish("show-newSurvey", candidate);
-
-                        }, function () {
-                            $.publish("show-noSurveys");
-                        });
-                    });
-    */  //???
-
-                    // Done with setup
-                    controllerComponentsReady.resolve();
+                // Start with a fresh survey form for newly-signed-in user
+                $.subscribe("signedIn-user", function () {
+                    survey.createSurveyForm($("#sidebarContent")[0],
+                        controller._config.appParams._surveyDefinition, controller._config.appParams.readonly);
                 });
+
+                // Done with setup
+                controllerComponentsReady.resolve();
             });
 
             return controllerComponentsReady;
@@ -187,6 +152,47 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        /** Normalizes a boolean value to true or false.
+         * @param {boolean|string} boolValue A true or false value that is returned directly or a string
+         * "true", "t", "yes", "y", "false", "f", "no", "n" (case-insensitive) or a number (0 for false; non-zero
+         * for true) that is interpreted and returned; if neither a boolean nor a usable string nor a number, falls
+         * back to defaultValue
+         * @param {boolean} [defaultValue] A true or false that is returned if boolValue can't be used; if not
+         * defined, true is returned
+         * @private
+         */
+        _toBoolean: function (boolValue, defaultValue) {
+            var lowercaseValue;
+
+            // Shortcut true|false
+            if (boolValue === true) {
+                return true;
+            }
+            if (boolValue === false) {
+                return false;
+            }
+
+            // Handle a true|false string
+            if (typeof boolValue === "string") {
+                lowercaseValue = boolValue.toLowerCase();
+                if (lowercaseValue === "true" || lowercaseValue === "t" || lowercaseValue === "yes"
+                    || lowercaseValue === "y" || lowercaseValue === "1") {
+                    return true;
+                }
+                if (lowercaseValue === "false" || lowercaseValue === "f" || lowercaseValue === "no"
+                    || lowercaseValue === "n" || lowercaseValue === "0") {
+                    return false;
+                }
+            } else if (typeof boolValue === "number") {
+                return boolValue !== 0;
+            }
+            // Fall back to default
+            if (defaultValue === undefined) {
+                return true;
+            }
+            return defaultValue;
+        },
 
         /**
          * Initializes the controller.

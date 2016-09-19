@@ -17,7 +17,7 @@
 
 /**
  * Manages the display of a webscene accompanied by a gallery of slides.
- * @namespace visualsController
+ * @namespace sceneController
  * @version 0.1
  *
  * @property {number} numResponseSites - Number of slides in slide gallery
@@ -30,7 +30,7 @@ define([
     diag
 ) {
     "use strict";
-    var visualsController = {
+    var sceneController = {
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
@@ -40,22 +40,22 @@ define([
          * @property {string} title - Slide title
          * @property {boolean} fromCamera - Indicates if slide number was result of
          *          matching by camera location
-         * @memberof visualsController
+         * @memberof sceneController
          */
         /**
          * Provides result of trying to match current position with slides in slide gallery.
-         * @event visualsController#current-response-site
+         * @event sceneController#current-response-site
          * @property {?ResponseSiteHash} - Info about current slide
          */
 
         /**
          * @typedef {object} ResponsesHash
          * @property {array} responses - Survey responses
-         * @memberof visualsController
+         * @memberof sceneController
          */
         /**
          * Requests to go to a location with its collection of survey responses.
-         * @event visualsController#goto_location
+         * @event sceneController#goto_location
          * @property {ResponsesHash} - Survey responses
          */
 
@@ -96,52 +96,52 @@ define([
          * Initializes the controller.
          * @param {object} config - App config info
          * @param {object} container - DOM container for controller's graphics
-         * @memberof visualsController
+         * @memberof sceneController
          */
         init: function (prepareAppConfigInfo, container, clusterViewBuilder, _okToNavigate) {
-            var visualsControllerReady = $.Deferred();
-            visualsController._prepareAppConfigInfo = prepareAppConfigInfo;
-            visualsController._container = container;
-            visualsController._okToNavigate = _okToNavigate;
+            var sceneControllerReady = $.Deferred();
+            sceneController._prepareAppConfigInfo = prepareAppConfigInfo;
+            sceneController._container = container;
+            sceneController._okToNavigate = _okToNavigate;
 
-            visualsController.mapParamsReady = $.Deferred();
+            sceneController.mapParamsReady = $.Deferred();
 
-            // Instantiate the visualsController template
-            container.loadTemplate("js/app/visualsController3d.html", {
+            // Instantiate the sceneController template
+            container.loadTemplate("js/app/sceneController.html", {
             }, {
                 prepend: true,
                 complete: function () {
 
-                    visualsController._loadWebScene(
-                        prepareAppConfigInfo.appParams.webId, visualsController.mapParamsReady);
+                    sceneController._loadWebScene(
+                        prepareAppConfigInfo.appParams.webId, sceneController.mapParamsReady);
 
-                    visualsController.mapParamsReady.then(function (response) {
+                    sceneController.mapParamsReady.then(function (response) {
                         // Loads once visuals panel becomes visible
                         $("#viewDiv").removeClass("loading-indicator");
                         console.log("webscene ready");
 
-                        clusterViewBuilder(visualsController.view).then(function (clustering) {
-                            visualsController._clusterer = clustering.clusterer;
-                            visualsController._clustererView = clustering.clustererView;
+                        clusterViewBuilder(sceneController.view).then(function (clustering) {
+                            sceneController._clusterer = clustering.clusterer;
+                            sceneController._clustererView = clustering.clustererView;
 
                             // Go to first slide
-                            if (visualsController.numResponseSites > 0) {
-                                visualsController._goToSlide(0);
+                            if (sceneController.numResponseSites > 0) {
+                                sceneController._goToSlide(0);
 
                             // Make sure that the cluster layer is visible and its underlying data layer is not
                             } else {
-                                visualsController._fixLayerVisibility();
+                                sceneController._fixLayerVisibility();
                             }
                         });
                     });
 
                     // Done with launch, but not initialization because SceneView must be visible for it to load
-                    // Need to use visualsController.mapParamsReady before accessing map, view, numResponseSites
-                    visualsControllerReady.resolve();
+                    // Need to use sceneController.mapParamsReady before accessing map, view, numResponseSites
+                    sceneControllerReady.resolve();
                 }
             });
 
-            return visualsControllerReady;
+            return sceneControllerReady;
         },
 
         /**
@@ -149,15 +149,15 @@ define([
          * @param {boolean} makeVisible - Visibility to set for container
          * @param {?function} thenDo - Function to execute after show/hide animation completes
          * @param {?object} thenDoArg - Argument for thenDo function
-         * @memberof visualsController
+         * @memberof sceneController
          */
         show: function (makeVisible, thenDo, thenDoArg) {
             if (makeVisible) {
-                $(visualsController._container).fadeIn("fast", function () {
+                $(sceneController._container).fadeIn("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             } else {
-                $(visualsController._container).fadeOut("fast", function () {
+                $(sceneController._container).fadeOut("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
             }
@@ -169,11 +169,11 @@ define([
          * Loads libraries and creates a WebScene and SceneView for the supplied webscene item.
          * @param {object} webId - AGOL id of webscene item
          * @param {deferred} mapParamsReady - For reporting when setup is done
-         * @fires visualsController#goto_location
+         * @fires sceneController#goto_location
          * @listens surveyController#cluster-clicked
          * @listens surveyController#goto-camera-pos
          * @listens surveyController#goto-response-site
-         * @memberof visualsController
+         * @memberof sceneController
          * @private
          */
         _loadWebScene: function (webId, mapParamsReady) {
@@ -205,40 +205,40 @@ define([
 
                 // Create the map (WebScene) and its view (SceneView)
                 // N.B.: The view must be visible for it to load and to resolve its event
-                esriConfig.portalUrl = visualsController._prepareAppConfigInfo.appParams.portalurl;
+                esriConfig.portalUrl = sceneController._prepareAppConfigInfo.appParams.portalurl;
 
-                visualsController.map = new WebScene({
+                sceneController.map = new WebScene({
                     portalItem: {
                         id: webId
                     }
                 });
 
-                visualsController.view = new SceneView({
-                    map: visualsController.map,
+                sceneController.view = new SceneView({
+                    map: sceneController.map,
                     container: "viewDiv"
                 });
 
                 // Once the map and view are loaded, we can adjust the view
-                visualsController.view.then(function () {
+                sceneController.view.then(function () {
 
                     // Disable popups on all webscene layers
-                    visualsController.map.allLayers.forEach(function (layer) {
+                    sceneController.map.allLayers.forEach(function (layer) {
                         layer.popupEnabled = false;
                     });
 
                     // Are we displaying slides?
-                    visualsController.numResponseSites =
-                        visualsController.map.presentation && visualsController.map.presentation.slides
-                        ? visualsController.map.presentation.slides.length : 0;
-                    if (visualsController.numResponseSites > 0) {
-                        visualsController._slides = visualsController.map.presentation.slides.items;
+                    sceneController.numResponseSites =
+                        sceneController.map.presentation && sceneController.map.presentation.slides
+                        ? sceneController.map.presentation.slides.length : 0;
+                    if (sceneController.numResponseSites > 0) {
+                        sceneController._slides = sceneController.map.presentation.slides.items;
                     }
 
                     // Reset the top-left widgets set
-                    visualsController.view.ui.empty("top-left");
+                    sceneController.view.ui.empty("top-left");
 
                     // Disable popups on all webscene layers
-                    visualsController.map.allLayers.forEach(function (layer) {
+                    sceneController.map.allLayers.forEach(function (layer) {
                         layer.popupEnabled = false;
                     });
 
@@ -248,12 +248,12 @@ define([
                         id: "goto-response",
                         image: "images/blank.png"
                     };
-                    visualsController.view.popup.actions = [goToResponse];
+                    sceneController.view.popup.actions = [goToResponse];
 
-                    visualsController.view.popup.on("trigger-action", function (evt) {
+                    sceneController.view.popup.on("trigger-action", function (evt) {
                         if (evt.action.id === "goto-response") {
-                            visualsController.view.popup.clear();
-                            visualsController.view.popup.close();
+                            sceneController.view.popup.clear();
+                            sceneController.view.popup.close();
 
                             // Package array because lightweight pub/sub only passes first element of arrays
                             $.publish("goto_location", {responses: clusterSurveys});
@@ -261,8 +261,8 @@ define([
                     });
 
                     // Remove dock option from popup
-                    visualsController.view.popup.dockEnabled = true;
-                    visualsController.view.popup.dockOptions = {
+                    sceneController.view.popup.dockEnabled = true;
+                    sceneController.view.popup.dockOptions = {
                         position: "top-left",
                         buttonEnabled: false,
                         breakpoint: false
@@ -271,25 +271,25 @@ define([
                     // Add navigation widgets
                     require(["esri/widgets/Zoom", "esri/widgets/NavigationToggle", "esri/widgets/Compass"],
                         function (Zoom, NavigationToggle, Compass) {
-                        var zoomWidget = new Zoom({view: visualsController.view, className: "iconContainer"});
+                        var zoomWidget = new Zoom({view: sceneController.view, className: "iconContainer"});
                         zoomWidget.startup();
-                        visualsController.view.ui.add(zoomWidget, "top-left");
+                        sceneController.view.ui.add(zoomWidget, "top-left");
 
-                        var navigationToggle = new NavigationToggle({view: visualsController.view});
+                        var navigationToggle = new NavigationToggle({view: sceneController.view});
                         navigationToggle.startup();
-                        visualsController.view.ui.add(navigationToggle, "top-left");
+                        sceneController.view.ui.add(navigationToggle, "top-left");
 
-                        var compassWidget = new Compass({view: visualsController.view, className: "iconContainer"});
+                        var compassWidget = new Compass({view: sceneController.view, className: "iconContainer"});
                         compassWidget.startup();
-                        visualsController.view.ui.add(compassWidget, "top-left");
+                        sceneController.view.ui.add(compassWidget, "top-left");
                     });
 
                     // Create the slide gallery
-                    if (visualsController.numResponseSites > 0) {
+                    if (sceneController.numResponseSites > 0) {
                         // Create gallery frame, its label tab, and its slides container
                         var gallery = $("<div id='gallery' class='gallery'></div>");
                         $("#viewDiv").append(gallery);
-                        visualsController.view.ui.add(gallery[0], "manual");
+                        sceneController.view.ui.add(gallery[0], "manual");
 
                         $(gallery).append("<div class='galleryTab'>Take a tour</div>");
 
@@ -297,7 +297,7 @@ define([
                         $(gallery).append(slidesHolder);
 
                         // Fill the slides container with the map's slides
-                        var slides = visualsController.map.presentation.slides;
+                        var slides = sceneController.map.presentation.slides;
                         slides.forEach(function (slide, slideNum) {
                             console.log("// Slide #" + slideNum + ": " + slide.id);
                             console.log("   title = " + JSON.stringify(slide.title) + ";");
@@ -320,7 +320,7 @@ define([
 
                             // Slide click behavior
                             $("#" + slide.id).on("click", function () {
-                                visualsController._goToSlide(slideNum);
+                                sceneController._goToSlide(slideNum);
                             });
                         });
 
@@ -331,16 +331,16 @@ define([
                         // Otherwise, add a Home widget
                         require(["esri/widgets/Home"],
                             function (Home) {
-                            var homeWidget = new Home({view: visualsController.view, className: "iconContainer"});
+                            var homeWidget = new Home({view: sceneController.view, className: "iconContainer"});
                             homeWidget.startup();
-                            visualsController.view.ui.add(homeWidget, "top-left");
+                            sceneController.view.ui.add(homeWidget, "top-left");
                         });
 
-                        if (visualsController.map.initialViewProperties) {
+                        if (sceneController.map.initialViewProperties) {
                             console.log("// Scene initial view:");
-                            console.log("   scale = " + visualsController.map.initialViewProperties.viewpoint.scale + ";");
+                            console.log("   scale = " + sceneController.map.initialViewProperties.viewpoint.scale + ";");
                             console.log("   camera = "
-                                + JSON.stringify(visualsController.map.initialViewProperties.viewpoint.camera) + ";");
+                                + JSON.stringify(sceneController.map.initialViewProperties.viewpoint.camera) + ";");
                         }
                     }
 
@@ -349,20 +349,20 @@ define([
 
                 // Wire up app
                 $.subscribe("goto-response-site", function (ignore, iSite) {
-                    visualsController._goToSlide(iSite);
+                    sceneController._goToSlide(iSite);
                 });
 
                 $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
                     console.log("goto " + JSON.stringify(cameraOptions.position) + ", "
                         + cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
                     var camera = new Camera(cameraOptions);
-                    visualsController.view.goTo(camera);
-                    visualsController._updateCurrentSlide(visualsController._getMatchingSlide(camera), true);
+                    sceneController.view.goTo(camera);
+                    sceneController._updateCurrentSlide(sceneController._getMatchingSlide(camera), true);
                 });
 
                 // Save cluster features list when one clicks on a cluster
                 $.subscribe("cluster-clicked", function (ignore, clusterClickInfo) {
-                    var cluster = visualsController._clusterer.getClusterById(clusterClickInfo.attributes.id);
+                    var cluster = sceneController._clusterer.getClusterById(clusterClickInfo.attributes.id);
                     clusterSurveys = cluster.features;
                 });
 
@@ -375,11 +375,11 @@ define([
                 // is interpreted as a zoom in.
 
                 function checkedUpdate (evt) {
-                    if (!visualsController._okToNavigate()) {
+                    if (!sceneController._okToNavigate()) {
                         evt.stopPropagation();
                         evt.preventDefault();
                     } else {
-                        visualsController._updateCurrentSlide();
+                        sceneController._updateCurrentSlide();
                     }
                 }
 
@@ -409,14 +409,14 @@ define([
             // Is the survey layer visible in this slide?  If so, hide it because we'll replace it with a clustered form
             if (slide !== undefined) {
                 slide.visibleLayers.items.some(function (visibleLayer, iVisibleLayer) {
-                    if (visualsController._prepareAppConfigInfo.featureSvcParams.id === visibleLayer.id) {
+                    if (sceneController._prepareAppConfigInfo.featureSvcParams.id === visibleLayer.id) {
                         slide.visibleLayers.remove(visibleLayer);
                         return true;
                     }
                 });
 
                 // Similarly, if the cluster view's graphics layer is not visible, add it to the visible layers
-                var clusterViewLayerId = visualsController._clustererView.layerId();
+                var clusterViewLayerId = sceneController._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
                     var clusterLayerVisible = slide.visibleLayers.some(function (visibleLayer, iVisibleLayer) {
                         if (clusterViewLayerId === visibleLayer.id) {
@@ -428,37 +428,37 @@ define([
                     }
                 }
             } else {
-                visualsController.map.findLayerById(
-                    visualsController._prepareAppConfigInfo.featureSvcParams.id).visible = false;
-                var clusterViewLayerId = visualsController._clustererView.layerId();
+                sceneController.map.findLayerById(
+                    sceneController._prepareAppConfigInfo.featureSvcParams.id).visible = false;
+                var clusterViewLayerId = sceneController._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
-                    visualsController.map.findLayerById(clusterViewLayerId).visible = true;
+                    sceneController.map.findLayerById(clusterViewLayerId).visible = true;
                 }
             }
         },
 
         _goToSlide: function (slideNum) {
-            if (!visualsController._okToNavigate() || !visualsController._slides
-                || visualsController._slides.length === 0) {
+            if (!sceneController._okToNavigate() || !sceneController._slides
+                || sceneController._slides.length === 0) {
                 return;
             }
-            var slide = visualsController._slides[slideNum];
+            var slide = sceneController._slides[slideNum];
 
             // Make sure that the cluster layer is visible and its underlying data layer is not
-            visualsController._fixLayerVisibility(slide);
+            sceneController._fixLayerVisibility(slide);
 
             // Apply a slide's settings to the SceneView.
-            slide.applyTo(visualsController.view);
+            slide.applyTo(sceneController.view);
 
-            visualsController._updateCurrentSlide(slideNum);
+            sceneController._updateCurrentSlide(slideNum);
         },
 
         _goToNextSlide: function () {
-            visualsController._currentSlideNum += 1;
-            if (visualsController._currentSlideNum >= visualsController.numResponseSites) {
-                visualsController._currentSlideNum = 0;
+            sceneController._currentSlideNum += 1;
+            if (sceneController._currentSlideNum >= sceneController.numResponseSites) {
+                sceneController._currentSlideNum = 0;
             }
-            visualsController._goToSlide(visualsController._currentSlideNum);
+            sceneController._goToSlide(sceneController._currentSlideNum);
         },
 
         /**
@@ -466,25 +466,25 @@ define([
          * @param {number} slideNum - Zero-based slide number
          * @param {boolean|undefined} isFromCameraMatch - Indicates if slide number was result of
          *      matching by camera location
-         * @fires visualsController#current-response-site
-         * @memberof visualsController
+         * @fires sceneController#current-response-site
+         * @memberof sceneController
          * @private
          */
         _updateCurrentSlide: function (slideNum, isFromCameraMatch) {
-            if (visualsController.numResponseSites > 0) {
+            if (sceneController.numResponseSites > 0) {
                 if (slideNum === undefined) {
                     $.publish("current-response-site");
 
                 } else {
-                    visualsController._currentSlideNum = slideNum;
+                    sceneController._currentSlideNum = slideNum;
                     $.publish("current-response-site", {
                         set: slideNum,
-                        title: visualsController._slides[slideNum].title.text,
+                        title: sceneController._slides[slideNum].title.text,
                         fromCamera: !!isFromCameraMatch
                     });
                 }
 
-                visualsController._highlightSlide(slideNum);
+                sceneController._highlightSlide(slideNum);
             }
         },
 
@@ -501,12 +501,12 @@ define([
             var matchingSlideNum;
 
             // Determine if the view's camera (heading, position, tilt) matches any slides
-            array.forEach(visualsController._slides, lang.hitch(visualsController, function (slide, slideNum) {
+            array.forEach(sceneController._slides, lang.hitch(sceneController, function (slide, slideNum) {
                 var slideCamera = slide.viewpoint.camera;
                 if (
-                    visualsController._essentiallyEqualNums(slideCamera.heading, camera.heading) &&
-                    visualsController._essentiallyEqualPositions(slideCamera.position, camera.position) &&
-                    visualsController._essentiallyEqualNums(slideCamera.tilt, camera.tilt)
+                    sceneController._essentiallyEqualNums(slideCamera.heading, camera.heading) &&
+                    sceneController._essentiallyEqualPositions(slideCamera.position, camera.position) &&
+                    sceneController._essentiallyEqualNums(slideCamera.tilt, camera.tilt)
                 ) {
                     matchingSlideNum = slideNum;
                     return true;
@@ -525,14 +525,14 @@ define([
 
         _essentiallyEqualPositions: function (a, b) {
             var essentiallyEqual =
-                visualsController._essentiallyEqualNums(a.x, b.x) &&
-                visualsController._essentiallyEqualNums(a.y, b.y) &&
-                visualsController._essentiallyEqualNums(a.z, b.z) &&
+                sceneController._essentiallyEqualNums(a.x, b.x) &&
+                sceneController._essentiallyEqualNums(a.y, b.y) &&
+                sceneController._essentiallyEqualNums(a.z, b.z) &&
                 a.spatialReference.wkid === b.spatialReference.wkid;
             return essentiallyEqual;
         }
 
         //------------------------------------------------------------------------------------------------------------//
     };
-    return visualsController;
+    return sceneController;
 });

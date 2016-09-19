@@ -18,10 +18,23 @@ define([], function () {
     'use strict';
     var survey;
     survey = {
+        //----- Events -----------------------------------------------------------------------------------------------//
+
+        //----- Module variables -------------------------------------------------------------------------------------//
+
+        _questions: [],
+        _questionLookup: [],
+        _notificationPolicy: ">=1",  // must answer ">=1", "allImportant", "all"
+        _importantQuestionTooltip: "Please answer this question",  // backup for missing argument
+        _requiredFieldsMask: 0,     // N.B.: Form is restricted to a maximum of 31 required fields because of
+        _requiredFieldsStatus: 0,   // the way that required fields are tracked.
+        _idPrefix: "",
+        _inProgress: false,
+        _isReadOnly: false,
 
         flagImportantQuestion: "Please answer this question",
 
-        //--------------------------------------------------------------------------------------------------------------------//
+        //----- Procedures available for external access -------------------------------------------------------------//
 
         /**
          * Parses HTML text such as appears in a webmap's feature layer's popup to generate a set of survey questions.
@@ -30,7 +43,7 @@ define([], function () {
          * @return {array} List of survey question objects, each of which contains question, field, style, domain, important
          * properties
          */
-        createSurvey: function (surveyDescription, featureSvcFields) {
+        createSurveyDefinition: function (surveyDescription, featureSvcFields) {
             // Patch older browsers
             survey._installPolyfills();
 
@@ -49,18 +62,52 @@ define([], function () {
          * style, domain, important
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
          */
-        createNewForm: function (surveyContainer, surveyDefinition, isReadOnly) {
+        createSurveyForm: function (surveyContainer, surveyDefinition, isReadOnly) {
             // Remove children and their events
             $(surveyContainer).children().remove();
 
             // Create the questions
             $.each(surveyDefinition, function (indexInArray, questionInfo) {
-                survey._addQuestion(surveyContainer, indexInArray, questionInfo, isReadOnly);
+                var question = survey._addQuestion(surveyContainer, indexInArray, questionInfo, isReadOnly);
+                if (question) {
+                    // Save question for later answer retrieval
+                    survey._questionLookup[question.surveyField] = survey._questions.length;
+                    survey._questions.push(question);
+
+                    // Set flag for field in mask, save its offset with the question, and set up for next field
+                    if (question.surveyImportant || survey._notificationPolicy === "all") {
+                        survey._requiredFieldsMask |= (nextReqFldStatusFlag);
+                        question.requiredFieldFlag = nextReqFldStatusFlag;
+                        nextReqFldStatusFlag *= 2;
+                    }
+                }
             });
 
             // Render any radiobutton groups
             $(".btn-group").trigger('create');
         },
+
+        setFormReadOnly: function (isReadOnly) {
+            $.each(survey._questions, function (iQuestion, question) {
+                if (question.surveyFieldStyle === "button") {
+                    $.each(question.surveyValues, function (i, uiValue) {
+                        $("#q" + (iQuestion + 1) + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
+                    });
+
+                } else if (question.surveyFieldStyle === "list") {
+                    $.each(question.surveyValues, function (i, uiValue) {
+                        $("input[name=q" + (iQuestion + 1) + "][value=" + i + "]").attr("disabled", isReadOnly);
+                    });
+
+                } else {
+                    $("#q" + (iQuestion + 1)).attr("disabled", isReadOnly);
+                }
+            });
+        },
+
+        clearForm: function () {},
+        fillInForm: function (values) {},
+        getFormAnswers: function () {},
 
         /**
          * Validates a survey form in the specified element.
@@ -114,14 +161,14 @@ define([], function () {
             return firstMissing;
         },
 
-        //--------------------------------------------------------------------------------------------------------------------//
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
 
         _installPolyfills: function () {
             // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
             if (!String.prototype.startsWith) {
                 String.prototype.startsWith = function(searchString, position){
                     position = position || 0;
-                    return this.substr(position, searchString.length) === searchString;
+                    return survey.substr(position, searchString.length) === searchString;
                 };
             }
         },
@@ -415,7 +462,10 @@ define([], function () {
          */
         _createNumberInput: function (iQuestion, questionInfo, isReadOnly) {
             // <input id='q1' type='number' class='number-input'>
-            var list = "<input id='q" + iQuestion + "' type='number' class='number-input'>";
+            var list = "<input id='q" + iQuestion + "' type='number' class='number-input'"
+                + (isReadOnly
+                    ? " disabled"
+                    : "") + ">";
             return list;
         },
 
@@ -429,7 +479,21 @@ define([], function () {
          */
         _createTextLineInput: function (iQuestion, questionInfo, isReadOnly) {
             // <input id='q1' type='text' class='text-input'>
-            var list = "<input id='q" + iQuestion + "' type='text' class='text-input'>";
+            var list;
+            if (questionInfo.domain < 32) {
+                // <input id='q1' type='text' class='text-input'>
+                list = "<input type='text'";
+            } else {
+                // <textarea id='q1' rows='4' class='text-input'></textarea>
+                list = "<textarea rows='4'";
+            }
+            list += " id='q" + iQuestion + "' class='text-input' maxlength='" + questionInfo.domain + "' "
+                + (isReadOnly
+                    ? "disabled"
+                    : "") + ">";
+            if (questionInfo.domain >= 32) {
+                list += "</textarea>";
+            }
             return list;
         },
 

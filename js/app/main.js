@@ -61,31 +61,31 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                     if (appController) {
                         var appReady, signinReady = $.Deferred();
 
-                        appReady = appController.init(config);
+                        // Prepare app components
                         require(["app/user_guest"], function (user) {
                             signinReady.resolve(user);
                         });
 
+                        appReady = appController.init(config);
+
+                        // Wire up coordination between splash/signin and rest of app
+                        $.subscribe("signedIn-user", function (ignore, loginInfo) {
+                            diag.appendWithLF("signed in user: " + JSON.stringify(loginInfo));  //???
+                            splash.show(false, appController.show, true);
+                        });
+
+                        $.subscribe("signedOut-user", function () {
+                            diag.appendWithLF("signed out");  //???
+                            appController.show(false, splash.show, true);
+                        });
+
+                        // Run app components
                         $.when(signinReady, appReady).then(
                             function (user) {
-
-                                // Wire up coordination between splash/signin and rest of app
-                                $.subscribe("signedIn-user", function (ignore, loginInfo) {
-                                    diag.appendWithLF("signed in user: " + JSON.stringify(loginInfo));  //???
-                                    console.log();
-                                    splash.show(false, appController.show, true);
-                                });
-
                                 $.subscribe("request-signOut", function () {
                                     user.signout();
                                 });
 
-                                $.subscribe("signedOut-user", function () {
-                                    diag.appendWithLF("signed out");  //???
-                                    appController.show(false, splash.show, true);
-                                });
-
-                                // Able to run app; continue appController initialization
                                 appController.launch().then(
                                     function () {
                                         // Show sign-in

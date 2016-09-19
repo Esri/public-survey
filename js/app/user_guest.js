@@ -17,7 +17,7 @@
 
 /**
  * Manages sign-in and sign-out to a set of authentication providers.
- * @namespace visualsController
+ * @namespace user
  * @version 0.1
  */
 define(["lib/i18n.min!nls/main_resources.js", "app/diag"],

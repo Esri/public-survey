@@ -97,7 +97,7 @@ define([
             survey.flagImportantQuestion = i18n.tooltips.flagImportantQuestion;
 
             // Instantiate the surveyController template
-            container.loadTemplate("js/app/surveyController3d.html", {
+            container.loadTemplate("js/app/surveyController.html", {
             }, {
                 prepend: true,
                 complete: function () {
@@ -150,7 +150,7 @@ define([
                     });
 
                     $.subscribe("submit-survey-form", function () {
-                        $.publish("submit-survey", surveyController._surveyForm.getFormAnswers());
+                        $.publish("submit-survey", survey.getFormAnswers());
                         surveyController._numSubmissions++;
 
                         // Update our to-do list
@@ -232,8 +232,14 @@ define([
 
                         // Hide survey form
                         surveyController._resetSurvey();
-                        surveyController._showDomItem(surveyController._surveyFrame, DISEMBODIED);
+                        surveyController._showDomItem(surveyController._container, DISEMBODIED);
                     });
+
+
+
+
+
+                    $.subscribe("show-newSurvey", surveyController._showNewSurvey);
 
 /*
                     $("#submitBtn").on("click", surveyController._submitSurvey);
@@ -242,8 +248,6 @@ define([
                         surveyController._hideSurvey();
                         $.publish("request:newSurvey");
                     });
-
-                    $.subscribe("show:newSurvey", surveyController._showNewSurvey);
 
                     $.subscribe("show:noSurveys", function () {
                         // Show the profile view & help window
@@ -288,13 +292,13 @@ define([
                         return btn;
                     }
 
-                    activateButton("submit-survey-form", i18n.prompts.submitBtn);
-                    activateButton("clear-survey-form", i18n.prompts.clearBtn);
-                    activateButton("goto-next-todo-response-site", i18n.prompts.nextBtn);
-                    activateButton("finish-survey-form", i18n.prompts.finishBtn);
-                    activateButton("see-responses", i18n.prompts.seeResponsesBtn);
-                    activateButton("goto-next-response", i18n.prompts.nextResponseBtn);
-                    activateButton("turn-off-responses", i18n.prompts.turnOffResponsesBtn);
+                    surveyController._submitBtn = activateButton("submit-survey-form", i18n.prompts.submitBtn);
+                    surveyController._clearBtn = activateButton("clear-survey-form", i18n.prompts.clearBtn);
+                    surveyController._nextToDoBtn = activateButton("goto-next-todo-response-site", i18n.prompts.nextBtn);
+                    surveyController._finishBtn = activateButton("finish-survey-form", i18n.prompts.finishBtn);
+                    surveyController._seeResponsesBtn = activateButton("see-responses", i18n.prompts.seeResponsesBtn);
+                    surveyController._nextResponseBtn = activateButton("goto-next-response", i18n.prompts.nextResponseBtn);
+                    surveyController._turnOffResponsesBtn = activateButton("turn-off-responses", i18n.prompts.turnOffResponsesBtn);
 
                     // Done with setup
                     surveyControllerReady.resolve();
@@ -325,7 +329,8 @@ define([
 
             // Show survey form
             surveyController._resetSurvey();
-            surveyController._showDomItem(surveyController._surveyFrame, ENABLED);
+            surveyController._showDomItem(surveyController._container, ENABLED);
+            surveyController.showSurvey(true);
         },
 
         gotoLocation: function (responses) {
@@ -401,8 +406,8 @@ define([
             surveyController._showDomItem(surveyController._nextResponseBtn, DISEMBODIED);
             surveyController._showDomItem(surveyController._turnOffResponsesBtn, DISEMBODIED);
 
-            surveyController._surveyForm.setFormReadOnly(false);
-            surveyController._surveyForm.clearForm();
+            survey.setFormReadOnly(false);
+            survey.clearForm();
         },
 
         _showResponses: function () {
@@ -417,8 +422,8 @@ define([
             surveyController._showDomItem(surveyController._nextResponseBtn, (surveyController._responses.length > 1 ? ENABLED : DISEMBODIED));
             surveyController._showDomItem(surveyController._turnOffResponsesBtn, ENABLED);
 
-            surveyController._surveyForm.setFormReadOnly(true);
-            surveyController._surveyForm.clearForm();
+            survey.setFormReadOnly(true);
+            survey.clearForm();
 
             surveyController._iCurrentResponse = 0;
             surveyController._showCurrentResponse();
@@ -426,7 +431,7 @@ define([
 
         _showCurrentResponse: function () {
             var values = surveyController._responses[surveyController._iCurrentResponse];
-            surveyController._surveyForm.fillInForm(values);
+            survey.fillInForm(values);
 
             surveyController._showCurrentResponseLocation();
         },
@@ -450,7 +455,7 @@ define([
 
         _submitSurvey: function () {
             var firstMissing = survey.validateForm($('#surveyContainer'),
-                surveyController._prepareAppConfigInfo.survey, surveyController._currentCandidate.obj.attributes);
+                surveyController._prepareAppConfigInfo.appParams._surveyDefinition, surveyController._currentCandidate.obj.attributes);
 
             // Submit the survey if it has the important responses
             if (firstMissing === undefined) {
@@ -493,7 +498,7 @@ define([
 
 
             // Create survey
-            survey.createNewForm($("#surveyContainer")[0], surveyController._prepareAppConfigInfo.survey, isReadOnly);
+            survey.createSurveyForm($("#surveyContainer")[0], surveyController._prepareAppConfigInfo.appParams._surveyDefinition, isReadOnly);
 
             // Continue the visual feedback for the switch to a new survey
             surveyController._showSurvey(isReadOnly);
