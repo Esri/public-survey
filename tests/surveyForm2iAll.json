@@ -1,4 +1,5 @@
 {
+    "canBeUpdated": true,
     "description": "<div><p>Question 1: button {question1} {button}</p><p>Question 2: list {question2} {list}</p><p>Question 3: dropdown {question3} {dropdown}</p><p>Question 4: number {question4} {number}</p><p>Question 5: short text {question5} {text}</p><p>Question 6: long text {question6} {text}</p><p>Title/subtitle</p></div>",
     "fields": [{
         "name": "objectid",

@@ -1,4 +1,5 @@
 {
+    "canBeUpdated": true,
     "description": "<div><p><span>Answer the survey question based on what you see</span></p><p><span>Does this development fit the character of the community? {question1} {button}</span></p><p><span>Is this development good for the community? {question2} {list}</span></p><p><span>Do you have any additional comments? {comments} {text}</span></p></div>",
     "fields": [{
         "name": "objectid",
