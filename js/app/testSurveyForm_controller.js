@@ -25,7 +25,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
     "use strict";
     var controller;
     controller = {
-        //----- Published events -------------------------------------------------------------------------------------//
+        //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
 
@@ -195,20 +195,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         },
 
         /**
-         * Initializes the controller.
-         * @param {object} config - App config info
-         * @memberof controller
-         * @private
-         */
-        _logSubscribedEvent: function (evt, data) {
-            var dataAsString = data ? JSON.stringify(data) : "";
-            if (dataAsString.length > 50) {
-                dataAsString = dataAsString.substr(0, 50) + "...";
-            }
-            controller._prependToLog(evt.type + " " + dataAsString);
-        },
-
-        /**
          * Completes text setup of a button and sets its click event to publish the id of the button.
          * @param {string} id - Id of button to modify
          * @param {?string} label - Text to display in button display
@@ -242,6 +228,20 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             var btn = evt.currentTarget;
             btn.blur();  // Allow button to be defocused without clicking elsewhere
             $.publish(btn.id, evt.data);
+        },
+
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @memberof controller
+         * @private
+         */
+        _logSubscribedEvent: function (evt, data) {
+            var dataAsString = data ? JSON.stringify(data) : "";
+            if (dataAsString.length > 50) {
+                dataAsString = dataAsString.substr(0, 50) + "...";
+            }
+            controller._prependToLog(evt.type + " " + dataAsString);
         },
 
         /**

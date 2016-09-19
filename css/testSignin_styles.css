@@ -151,3 +151,8 @@
     float: right;
 }
 
+.full-width-textarea {
+    width: 98%;
+    margin: 2px;
+}
+

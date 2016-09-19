@@ -25,7 +25,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
     "use strict";
     var controller;
     controller = {
-        //----- Published events -------------------------------------------------------------------------------------//
+        //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
         /**
@@ -40,6 +40,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
+        _config: {},
         _averagingFieldValues: null,
         _clusterer: null,
         _clustererView: null,
@@ -48,7 +49,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         _pieChartTheme: "GreySkies",
         _surveyInProgress: false,
 
-        _config: {},
         _logNum: 0,
 
         //----- Procedures available for external access -------------------------------------------------------------//
@@ -177,20 +177,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         //----- Procedures meant for internal module use only --------------------------------------------------------//
 
         /**
-         * Initializes the controller.
-         * @param {object} config - App config info
-         * @memberof controller
-         * @private
-         */
-        _logSubscribedEvent: function (evt, data) {
-            var dataAsString = data ? JSON.stringify(data) : "";
-            if (dataAsString.length > 50) {
-                dataAsString = dataAsString.substr(0, 50) + "...";
-            }
-            controller._prependToLog(evt.type + " " + dataAsString);
-        },
-
-        /**
          * Prompts user if he/she is about to do something that will invalidate an in-progress survey.
          * @fires controller#reset-survey
          * @memberof controller
@@ -243,6 +229,20 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             var btn = evt.currentTarget;
             btn.blur();  // Allow button to be defocused without clicking elsewhere
             $.publish(btn.id, evt.data);
+        },
+
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @memberof controller
+         * @private
+         */
+        _logSubscribedEvent: function (evt, data) {
+            var dataAsString = data ? JSON.stringify(data) : "";
+            if (dataAsString.length > 50) {
+                dataAsString = dataAsString.substr(0, 50) + "...";
+            }
+            controller._prependToLog(evt.type + " " + dataAsString);
         },
 
         /**

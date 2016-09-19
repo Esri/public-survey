@@ -25,7 +25,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
     "use strict";
     var controller;
     controller = {
-        //----- Published events -------------------------------------------------------------------------------------//
+        //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
         /**
@@ -65,11 +65,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
-/*  //???
-                        dataAccess.init(controller._config.featureSvcParams.url,
-                            controller._config.featureSvcParams.id,
-                            controller._config.appParams.proxyProgram);
-*/
                         controllerReady.resolve();
                     }, function (error) {
                         if (error) {
@@ -136,29 +131,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                         $.publish("show-newSurvey");
                     });
 
-    /*                $.subscribe("request-newSurvey", function () {
-
-                        // Get candidate
-                        dataAccess.getCandidate().then(function (candidate) {
-                            // id:num
-                            // obj:feature{}
-                            // numPhotos:num
-                            // attachments:[{id,url},...]
-
-                            // Do we have a valid candidate?
-                            if (!candidate.obj) {
-                                $.publish("show-noSurveys");
-                                return;
-                            }
-
-                            $.publish("show-newSurvey", candidate);
-
-                        }, function () {
-                            $.publish("show-noSurveys");
-                        });
-                    });
-    */  //???
-
                     // Done with setup
                     controllerComponentsReady.resolve();
                 });
@@ -187,20 +159,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
-
-        /**
-         * Initializes the controller.
-         * @param {object} config - App config info
-         * @memberof controller
-         * @private
-         */
-        _logSubscribedEvent: function (evt, data) {
-            var dataAsString = data ? JSON.stringify(data) : "";
-            if (dataAsString.length > 50) {
-                dataAsString = dataAsString.substr(0, 50) + "...";
-            }
-            controller._prependToLog(evt.type + " " + dataAsString);
-        },
 
         /**
          * Completes text setup of a button and sets its click event to publish the id of the button.
@@ -236,6 +194,20 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             var btn = evt.currentTarget;
             btn.blur();  // Allow button to be defocused without clicking elsewhere
             $.publish(btn.id, evt.data);
+        },
+
+        /**
+         * Initializes the controller.
+         * @param {object} config - App config info
+         * @memberof controller
+         * @private
+         */
+        _logSubscribedEvent: function (evt, data) {
+            var dataAsString = data ? JSON.stringify(data) : "";
+            if (dataAsString.length > 50) {
+                dataAsString = dataAsString.substr(0, 50) + "...";
+            }
+            controller._prependToLog(evt.type + " " + dataAsString);
         },
 
         /**

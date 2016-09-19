@@ -6,7 +6,7 @@
     "allowGuestSubmissions": true,
     "useWebmapOrigImg": false,
 
-    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey"],
+    "urlParamsFilter": ["diag", "test", "cansubmit"],
 
     "proxyProgram": "proxy/proxy.ashx",
     "portalurl": "https://www.arcgis.com",

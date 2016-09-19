@@ -14,6 +14,12 @@
  | limitations under the License.
  */
 //============================================================================================================================//
+
+/**
+ * Manages the display of a survey form.
+ * @namespace survey
+ * @version 0.1
+ */
 define([], function () {
     'use strict';
     var survey;
