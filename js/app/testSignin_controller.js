@@ -76,6 +76,8 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
             $.subscribe("signedIn-user", controller._logSubscribedEvent);
             $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
+            controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
+
             controllerComponentsReady.resolve();
 
             return controllerComponentsReady;
@@ -101,6 +103,14 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        _loadCSS: function (url) {
+            var stylesheet = document.createElement("link");
+            stylesheet.href = url;
+            stylesheet.rel = "stylesheet";
+            stylesheet.type = "text/css";
+            document.getElementsByTagName("head")[0].appendChild(stylesheet);
+        },
 
         /** Normalizes a boolean value to true or false.
          * @param {boolean|string} boolValue A true or false value that is returned directly or a string

@@ -143,9 +143,9 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._prependToLog("Survey definition created");
 
                 // Prepare and start the scene controller
-                controller._config.loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
-                controller._config.loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
-                controller._config.loadCSS("css/testScene_styles2.css");
+                controller._loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
+                controller._loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
+                controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 sceneController.init(controller._config, $("#mainContent"),
                     controller._clusterViewBuilder, controller._okToNavigate)
@@ -175,6 +175,14 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        _loadCSS: function (url) {
+            var stylesheet = document.createElement("link");
+            stylesheet.href = url;
+            stylesheet.rel = "stylesheet";
+            stylesheet.type = "text/css";
+            document.getElementsByTagName("head")[0].appendChild(stylesheet);
+        },
 
         /**
          * Prompts user if he/she is about to do something that will invalidate an in-progress survey.

@@ -278,3 +278,21 @@ img {
     box-sizing: content-box;
 }
 
+/* ---------- JSAPI overrides ---------- */
+
+.esri-navigation-toggle__button:before {
+    z-index: auto;
+}
+
+.esri-ui-top-right {
+    bottom: 0;
+}
+
+.esri-popup-renderer .esri-popup-renderer-media-summary .esri-popup-renderer-media-image-summary {
+    display: none;
+}
+
+.esri-popup-renderer-button:focus {
+    outline: none;
+}
+

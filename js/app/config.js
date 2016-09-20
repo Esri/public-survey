@@ -156,22 +156,12 @@ define(["app/fetchConfigInfo"],
         loadController: function () {
             var controllerReady = $.Deferred();
 
-            config.loadCSS("css/" + config.appParams.appName + "_styles.css");
-
             var appControllerName = "app/" + config.appParams.appName + "_controller";
             require([appControllerName], function (appController) {
                 controllerReady.resolve(appController);
             }, controllerReady.reject);
 
             return controllerReady;
-        },
-
-        loadCSS: function (url) {
-            var stylesheet = document.createElement("link");
-            stylesheet.href = url;
-            stylesheet.rel = "stylesheet";
-            stylesheet.type = "text/css";
-            document.getElementsByTagName("head")[0].appendChild(stylesheet);
         },
 
         //------------------------------------------------------------------------------------------------------------//
