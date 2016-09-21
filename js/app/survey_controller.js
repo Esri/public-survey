@@ -17,11 +17,11 @@
 
 /**
  * Manages the display of a survey.
- * @namespace surveyController
+ * @namespace survey_controller
  * @version 0.1
  */
 define([
-    "lib/i18n.min!nls/testSurvey_resources.js",
+    "lib/i18n.min!nls/survey_resources.js",
     "app/survey",
     "app/diag"
 ], function (
@@ -30,13 +30,13 @@ define([
     diag
 ) {
     "use strict";
-    var surveyController = {
+    var survey_controller = {
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
         /**
          * Requests to go to a location with its collection of survey responses.
-         * @event surveyController#cluster-clicked
+         * @event survey_controller#cluster-clicked
          * @property {number} iSite - Zero-based slide number
          */
 
@@ -45,11 +45,11 @@ define([
          * @property {number} position -
          * @property {number} heading -
          * @property {number} tilt -
-         * @memberof surveyController
+         * @memberof survey_controller
          */
         /**
          * Requests to go to a location with its collection of survey responses.
-         * @event surveyController#goto-camera-pos
+         * @event survey_controller#goto-camera-pos
          * @property {CameraPosHash} -
          */
 
@@ -57,17 +57,20 @@ define([
          * @typedef {object} ClusterAttrsHash
          * @property {number} attributes -
          * @property {number} mapPoint -
-         * @memberof surveyController
+         * @memberof survey_controller
          */
         /**
          * Requests to go to a location with its collection of survey responses.
-         * @event surveyController#goto-response-site
+         * @event survey_controller#goto-response-site
          * @property {ClusterAttrsHash} -
          */
 
+         // Consumed
+
+
         //----- Module variables -------------------------------------------------------------------------------------//
 
-        _prepareAppConfigInfo: null,
+        _config: null,
         _dataAccess: null,
         _currentUser: {
             name: "",
@@ -87,25 +90,24 @@ define([
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
-        init: function (prepareAppConfigInfo, container, dataAccess) {
+        init: function (config, container) {
             var surveyControllerReady = $.Deferred();
-            surveyController._prepareAppConfigInfo = prepareAppConfigInfo;
-            surveyController._dataAccess = dataAccess;
-            surveyController._container = container;
+            survey_controller._config = config;
+            survey_controller._container = container;
 
             // Provide the i18n strings to the survey
             survey.flagImportantQuestion = i18n.tooltips.flagImportantQuestion;
 
-            // Instantiate the surveyController template
-            container.loadTemplate("js/app/surveyController.html", {
+            // Instantiate the survey_controller template
+            container.loadTemplate("js/app/survey_controller.html", {
             }, {
                 prepend: true,
                 complete: function () {
 
                     // Fill in page title, help, branding
-                    $("#page-title")[0].innerHTML = surveyController._prepareAppConfigInfo.appParams.title;
+                    $("#page-title")[0].innerHTML = survey_controller._config.appParams.title;
 
-                    if (surveyController._prepareAppConfigInfo.appParams.helpText) {
+                    if (survey_controller._config.appParams.helpText) {
                         $("#helpButton")[0].title = i18n.tooltips.helpTip;
                         $("#helpButton").on("click", function () {
                             $.publish("show-help");
@@ -113,35 +115,35 @@ define([
                         $("#helpButton").removeClass("absent");
                     }
 
-                    if (surveyController._prepareAppConfigInfo.appParams.brandingIcon) {
-                        $("#brandingIcon").attr("src", surveyController._prepareAppConfigInfo.appParams.brandingIcon);
+                    if (survey_controller._config.appParams.brandingIcon) {
+                        $("#brandingIcon").attr("src", survey_controller._config.appParams.brandingIcon);
                         $("#branding").removeClass("absent");
                     }
 
                     // Set up a map to keep track of response sites
-                    surveyController._responseSitesToDo = new Array(surveyController._prepareAppConfigInfo.appParams.numResponseSites).fill(1);
+                    survey_controller._responseSitesToDo = new Array(survey_controller._config.appParams.numResponseSites).fill(1);
 
                     // As soon as the survey form has an answer, the Clear button is relevant; hide Next button until
                     // survey completed or cleared
                     $.subscribe("survey-form-in-progress", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-                        surveyController._showDomItem(surveyController._clearBtn, ENABLED);
-                        surveyController._showDomItem(surveyController._nextToDoBtn, INVISIBLE);
+                        survey_controller._showDomItem(survey_controller._clearBtn, ENABLED);
+                        survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
                     });
 
                     // As soon as the minimum number of answers has been reached, the Submit button is usable
                     $.subscribe("survey-form-policy-satisfied", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-                        surveyController._showDomItem(surveyController._submitBtn, ENABLED);
+                        survey_controller._showDomItem(survey_controller._submitBtn, ENABLED);
                     });
 
                     // Handle actions
                     $.subscribe("signedIn-user", function (ignore, loginInfo) {
-                        surveyController._updateUser(loginInfo);
+                        survey_controller._updateUser(loginInfo);
                     });
 
                     $("#userSignoutSelection").on("click", function () {
-                        surveyController._updateUser({
+                        survey_controller._updateUser({
                             name: "",
                             id: "",
                             canSubmit: false
@@ -151,31 +153,31 @@ define([
 
                     $.subscribe("submit-survey-form", function () {
                         $.publish("submit-survey", survey.getFormAnswers());
-                        surveyController._numSubmissions++;
+                        survey_controller._numSubmissions++;
 
                         // Update our to-do list
-                        if (surveyController._iCurrentResponseSite !== undefined) {
-                            surveyController._responseSitesToDo[surveyController._iCurrentResponseSite] = 0;
-                            $.publish("completed-response-site", surveyController._iCurrentResponseSite);
+                        if (survey_controller._iCurrentResponseSite !== undefined) {
+                            survey_controller._responseSitesToDo[survey_controller._iCurrentResponseSite] = 0;
+                            $.publish("completed-response-site", survey_controller._iCurrentResponseSite);
                         }
 
-                        surveyController._resetSurvey();
+                        survey_controller._resetSurvey();
                     });
 
                     $.subscribe("clear-survey-form", function () {
-                        surveyController._resetSurvey();
+                        survey_controller._resetSurvey();
                     });
 
                     $.subscribe("current-response-site", function (ignore, siteInfo) {
                         if (!siteInfo || siteInfo.set === undefined) {
-                            surveyController._iCurrentResponseSite = undefined;
-                            surveyController._responses = [];
-                            surveyController._resetSurvey();
+                            survey_controller._iCurrentResponseSite = undefined;
+                            survey_controller._responses = [];
+                            survey_controller._resetSurvey();
                         } else {
-                            surveyController._iCurrentResponseSite = siteInfo.set;
+                            survey_controller._iCurrentResponseSite = siteInfo.set;
                             if (!siteInfo.fromCamera) {
-                                surveyController._responses = [];
-                                surveyController._resetSurvey();
+                                survey_controller._responses = [];
+                                survey_controller._resetSurvey();
                             }
                         }
                     });
@@ -183,25 +185,25 @@ define([
                     $.subscribe("goto-next-todo-response-site", function () {
                         var iToDo;
 
-                        if (surveyController._iCurrentResponseSite !== undefined) {
+                        if (survey_controller._iCurrentResponseSite !== undefined) {
                             // Check sites after the current one
-                            for (iToDo = surveyController._iCurrentResponseSite + 1; iToDo < surveyController._responseSitesToDo.length; ++iToDo) {
-                                if(surveyController._responseSitesToDo[iToDo] === 1) {
+                            for (iToDo = survey_controller._iCurrentResponseSite + 1; iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
+                                if(survey_controller._responseSitesToDo[iToDo] === 1) {
                                     $.publish("goto-response-site", iToDo)
                                     return;
                                 }
                             }
 
                             // If all sites after the current one are completed, wrap around and start from the beginning
-                            for (iToDo = 0; iToDo < surveyController._iCurrentResponseSite; ++iToDo) {
-                                if(surveyController._responseSitesToDo[iToDo] === 1) {
+                            for (iToDo = 0; iToDo < survey_controller._iCurrentResponseSite; ++iToDo) {
+                                if(survey_controller._responseSitesToDo[iToDo] === 1) {
                                     $.publish("goto-response-site", iToDo)
                                     return;
                                 }
                             }
                         } else {
                             // Start search from beginning of todo list
-                            $.each(surveyController._responseSitesToDo, function (iToDo, status) {
+                            $.each(survey_controller._responseSitesToDo, function (iToDo, status) {
                                 if (status === 1) {
                                     $.publish("goto-response-site", iToDo)
                                     return false;
@@ -211,41 +213,41 @@ define([
                     });
 
                     $.subscribe("goto-next-response", function () {
-                        surveyController._iCurrentResponse += 1;
-                        if (surveyController._iCurrentResponse >= surveyController._responses.length) {
-                            surveyController._iCurrentResponse = 0;
+                        survey_controller._iCurrentResponse += 1;
+                        if (survey_controller._iCurrentResponse >= survey_controller._responses.length) {
+                            survey_controller._iCurrentResponse = 0;
                         }
 
-                        surveyController._showCurrentResponse();
+                        survey_controller._showCurrentResponse();
                     });
 
                     $.subscribe("see-responses", function () {
-                        surveyController._showResponses();
+                        survey_controller._showResponses();
                     });
 
                     $.subscribe("turn-off-responses", function () {
-                        surveyController._resetSurvey();
+                        survey_controller._resetSurvey();
                     });
 
                     $.subscribe("finish-survey-form", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
                         // Hide survey form
-                        surveyController._resetSurvey();
-                        surveyController._showDomItem(surveyController._container, DISEMBODIED);
+                        survey_controller._resetSurvey();
+                        survey_controller._showDomItem(survey_controller._container, DISEMBODIED);
                     });
 
 
 
 
 
-                    $.subscribe("show-newSurvey", surveyController._showNewSurvey);
+                    $.subscribe("show-newSurvey", survey_controller._showNewSurvey);
 
 /*
-                    $("#submitBtn").on("click", surveyController._submitSurvey);
+                    $("#submitBtn").on("click", survey_controller._submitSurvey);
 
                     $("#skipBtn").on("click", function () {
-                        surveyController._hideSurvey();
+                        survey_controller._hideSurvey();
                         $.publish("request:newSurvey");
                     });
 
@@ -254,7 +256,7 @@ define([
                         $("#profileActionBar").css("display", "none");
                         $.publish("show:profile");
                         message.showMessage(i18n.signin.noMoreSurveys,
-                            surveyController._prepareAppConfigInfo.appParams.title)
+                            survey_controller._config.appParams.title)
                     });
 
                     $.subscribe("show:profile", function () {
@@ -271,7 +273,7 @@ define([
 
                     $.subscribe("goto_location", function (ignore, carrier) {
                         // Start the responses display
-//???                   surveyController._surveyController.gotoLocation(carrier.responses);
+//???                   survey_controller._surveyController.gotoLocation(carrier.responses);
                     });
 */
 
@@ -292,13 +294,13 @@ define([
                         return btn;
                     }
 
-                    surveyController._submitBtn = activateButton("submit-survey-form", i18n.prompts.submitBtn);
-                    surveyController._clearBtn = activateButton("clear-survey-form", i18n.prompts.clearBtn);
-                    surveyController._nextToDoBtn = activateButton("goto-next-todo-response-site", i18n.prompts.nextBtn);
-                    surveyController._finishBtn = activateButton("finish-survey-form", i18n.prompts.finishBtn);
-                    surveyController._seeResponsesBtn = activateButton("see-responses", i18n.prompts.seeResponsesBtn);
-                    surveyController._nextResponseBtn = activateButton("goto-next-response", i18n.prompts.nextResponseBtn);
-                    surveyController._turnOffResponsesBtn = activateButton("turn-off-responses", i18n.prompts.turnOffResponsesBtn);
+                    survey_controller._submitBtn = activateButton("submit-survey-form", i18n.prompts.submitBtn);
+                    survey_controller._clearBtn = activateButton("clear-survey-form", i18n.prompts.clearBtn);
+                    survey_controller._nextToDoBtn = activateButton("goto-next-todo-response-site", i18n.prompts.nextBtn);
+                    survey_controller._finishBtn = activateButton("finish-survey-form", i18n.prompts.finishBtn);
+                    survey_controller._seeResponsesBtn = activateButton("see-responses", i18n.prompts.seeResponsesBtn);
+                    survey_controller._nextResponseBtn = activateButton("goto-next-response", i18n.prompts.nextResponseBtn);
+                    survey_controller._turnOffResponsesBtn = activateButton("turn-off-responses", i18n.prompts.turnOffResponsesBtn);
 
                     // Done with setup
                     surveyControllerReady.resolve();
@@ -308,40 +310,24 @@ define([
             return surveyControllerReady;
         },
 
-        showSurvey: function (makeVisible, thenDo, thenDoArg) {
-            if (makeVisible) {
-                $("#survey").fadeIn("fast", function () {
-                    thenDo && thenDo(thenDoArg);
-                });
-            } else {
-                $("#survey").fadeOut("fast", function () {
-                    thenDo && thenDo(thenDoArg);
-                });
-            }
-        },
-
-        startSurveying: function () {
+        launch: function () {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
-            // Reinitialize variables in case we're re-entering
-            surveyController._responseSitesToDo = new Array(surveyController._prepareAppConfigInfo.appParams.numResponseSites).fill(1);
-            surveyController._numSubmissions = 0;
-
             // Show survey form
-            surveyController._resetSurvey();
-            surveyController._showDomItem(surveyController._container, ENABLED);
-            surveyController.showSurvey(true);
+            survey_controller._resetSurvey();
+            survey_controller._showDomItem(survey_controller._container, ENABLED);
+            survey_controller._showSurvey(true);
         },
 
         gotoLocation: function (responses) {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
-            surveyController._responses = responses || [];
+            survey_controller._responses = responses || [];
 
-            if (surveyController._responses.length > 0) {
-                surveyController._iCurrentResponse = 0;
-                surveyController._resetSurvey();
-                surveyController._showCurrentResponseLocation();
+            if (survey_controller._responses.length > 0) {
+                survey_controller._iCurrentResponse = 0;
+                survey_controller._resetSurvey();
+                survey_controller._showCurrentResponseLocation();
             }
         },
 
@@ -368,43 +354,43 @@ define([
         },
 
         _numRemainingToDo: function () {
-            return surveyController._responseSitesToDo.reduce(surveyController._accumulate);
+            return survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
         },
 
         _resetSurvey: function () {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Set initial action buttons states
-            surveyController._showDomItem(surveyController._submitBtn, (surveyController._prepareAppConfigInfo.appParams.surveyNotificationPolicy === "none" ? ENABLED : DISABLED));
-            surveyController._showDomItem(surveyController._clearBtn, DISABLED);
+            survey_controller._showDomItem(survey_controller._submitBtn, (survey_controller._config.appParams.surveyNotificationPolicy === "none" ? ENABLED : DISABLED));
+            survey_controller._showDomItem(survey_controller._clearBtn, DISABLED);
 
-            if (surveyController._prepareAppConfigInfo.appParams.numResponseSites > 0) {
-                var remainingToDo = surveyController._numRemainingToDo();
+            if (survey_controller._config.appParams.numResponseSites > 0) {
+                var remainingToDo = survey_controller._numRemainingToDo();
                 if (remainingToDo === 0) {
-                    surveyController._showDomItem(surveyController._nextToDoBtn, INVISIBLE);
-                    surveyController._showDomItem(surveyController._finishBtn, ENABLED);
+                    survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
+                    survey_controller._showDomItem(survey_controller._finishBtn, ENABLED);
                 } else if (remainingToDo === 1) {
-                    if (surveyController._iCurrentResponseSite !== undefined &&
-                        surveyController._responseSitesToDo[surveyController._iCurrentResponseSite] === 1) {
+                    if (survey_controller._iCurrentResponseSite !== undefined &&
+                        survey_controller._responseSitesToDo[survey_controller._iCurrentResponseSite] === 1) {
                         // Next button not needed: we are at the only site remaining to do
-                        surveyController._showDomItem(surveyController._nextToDoBtn, INVISIBLE);
+                        survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
                     } else {
                         // Next button needed: we are either not at a site or are at a completed site
-                        surveyController._showDomItem(surveyController._nextToDoBtn, ENABLED);
+                        survey_controller._showDomItem(survey_controller._nextToDoBtn, ENABLED);
                     }
-                    surveyController._showDomItem(surveyController._finishBtn, INVISIBLE);
+                    survey_controller._showDomItem(survey_controller._finishBtn, DISEMBODIED);
                 } else {
-                    surveyController._showDomItem(surveyController._nextToDoBtn, ENABLED);
-                    surveyController._showDomItem(surveyController._finishBtn, INVISIBLE);
+                    survey_controller._showDomItem(survey_controller._nextToDoBtn, ENABLED);
+                    survey_controller._showDomItem(survey_controller._finishBtn, DISEMBODIED);
                 }
             } else {
-                surveyController._showDomItem(surveyController._finishBtn, (surveyController._numSubmissions > 0 ? ENABLED : INVISIBLE));
+                survey_controller._showDomItem(survey_controller._finishBtn, (survey_controller._numSubmissions > 0 ? ENABLED : DISEMBODIED));
             }
 
-            surveyController._showDomItem(surveyController._seeResponsesBtn,
-                (surveyController._responses.length > 0 && surveyController._prepareAppConfigInfo.appParams.showSeeResponsesButton ? ENABLED : DISEMBODIED));
-            surveyController._showDomItem(surveyController._nextResponseBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._turnOffResponsesBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._seeResponsesBtn,
+                (survey_controller._responses.length > 0 && survey_controller._config.appParams.showSeeResponsesButton ? ENABLED : DISEMBODIED));
+            survey_controller._showDomItem(survey_controller._nextResponseBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._turnOffResponsesBtn, DISEMBODIED);
 
             survey.setFormReadOnly(false);
             survey.clearForm();
@@ -414,35 +400,35 @@ define([
             // Set initial action buttons states
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
-            surveyController._showDomItem(surveyController._submitBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._clearBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._nextToDoBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._finishBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._seeResponsesBtn, DISEMBODIED);
-            surveyController._showDomItem(surveyController._nextResponseBtn, (surveyController._responses.length > 1 ? ENABLED : DISEMBODIED));
-            surveyController._showDomItem(surveyController._turnOffResponsesBtn, ENABLED);
+            survey_controller._showDomItem(survey_controller._submitBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._clearBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._nextToDoBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._finishBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._seeResponsesBtn, DISEMBODIED);
+            survey_controller._showDomItem(survey_controller._nextResponseBtn, (survey_controller._responses.length > 1 ? ENABLED : DISEMBODIED));
+            survey_controller._showDomItem(survey_controller._turnOffResponsesBtn, ENABLED);
 
             survey.setFormReadOnly(true);
             survey.clearForm();
 
-            surveyController._iCurrentResponse = 0;
-            surveyController._showCurrentResponse();
+            survey_controller._iCurrentResponse = 0;
+            survey_controller._showCurrentResponse();
         },
 
         _showCurrentResponse: function () {
-            var values = surveyController._responses[surveyController._iCurrentResponse];
+            var values = survey_controller._responses[survey_controller._iCurrentResponse];
             survey.fillInForm(values);
 
-            surveyController._showCurrentResponseLocation();
+            survey_controller._showCurrentResponseLocation();
         },
 
         _showCurrentResponseLocation: function () {
-            var values = surveyController._responses[surveyController._iCurrentResponse];
+            var values = survey_controller._responses[survey_controller._iCurrentResponse];
             if (values.attributes && values.geometry) {
                 var cameraOptions = {
                     position: values.geometry,
-                    heading: values.attributes[surveyController._cameraFields.heading],
-                    tilt: values.attributes[surveyController._cameraFields.tilt]
+                    heading: values.attributes[survey_controller._cameraFields.heading],
+                    tilt: values.attributes[survey_controller._cameraFields.tilt]
                 };
                 $.publish("goto-camera-pos", cameraOptions);
             }
@@ -455,25 +441,25 @@ define([
 
         _submitSurvey: function () {
             var firstMissing = survey.validateForm($('#surveyContainer'),
-                surveyController._prepareAppConfigInfo.appParams._surveyDefinition, surveyController._currentCandidate.obj.attributes);
+                survey_controller._config.appParams._surveyDefinition, survey_controller._currentCandidate.obj.attributes);
 
             // Submit the survey if it has the important responses
             if (firstMissing === undefined) {
-                surveyController._currentCandidate.obj.attributes[
-                    surveyController._prepareAppConfigInfo.appParams.surveyorNameField] =
-                    surveyController._currentUser.name;
-                if (surveyController._iSelectedPhoto >= 0) {
-                    surveyController._currentCandidate.obj.attributes[
-                        surveyController._prepareAppConfigInfo.appParams.bestPhotoField] =
-                        surveyController._currentCandidate.attachments[surveyController._iSelectedPhoto].id;
+                survey_controller._currentCandidate.obj.attributes[
+                    survey_controller._config.appParams.surveyorNameField] =
+                    survey_controller._currentUser.name;
+                if (survey_controller._iSelectedPhoto >= 0) {
+                    survey_controller._currentCandidate.obj.attributes[
+                        survey_controller._config.appParams.bestPhotoField] =
+                        survey_controller._currentCandidate.attachments[survey_controller._iSelectedPhoto].id;
                 }
                 diag.appendWithLF("saving survey for property <i>"
-                    + JSON.stringify(surveyController._currentCandidate.obj.attributes) + "</i>");  //???
-                surveyController._dataAccess.updateCandidate(surveyController._currentCandidate).then(function () {
-                    surveyController._completions += 1;
-                    surveyController._updateCount();
+                    + JSON.stringify(survey_controller._currentCandidate.obj.attributes) + "</i>");  //???
+                survey_controller._dataAccess.updateCandidate(survey_controller._currentCandidate).then(function () {
+                    survey_controller._completions += 1;
+                    survey_controller._updateCount();
 
-                    surveyController._hideSurvey();
+                    survey_controller._hideSurvey();
                     $.publish("request-newSurvey");
                 });
 
@@ -491,45 +477,45 @@ define([
             // obj:feature{}
             // numPhotos:num
             // attachments:[{id,url},...]
-            surveyController._currentCandidate = candidate;
+            survey_controller._currentCandidate = candidate;
 
-            var isReadOnly = !(surveyController._prepareAppConfigInfo.featureSvcParams.canBeUpdated &&
-                surveyController._currentUser.canSubmit);
+            var isReadOnly = !(survey_controller._config.featureSvcParams.canBeUpdated &&
+                survey_controller._currentUser.canSubmit);
 
 
             // Create survey
-            survey.createSurveyForm($("#surveyContainer")[0], surveyController._prepareAppConfigInfo.appParams._surveyDefinition, isReadOnly);
+            survey.createSurveyForm($("#surveyContainer")[0], survey_controller._config.appParams._surveyDefinition, isReadOnly);
 
             // Continue the visual feedback for the switch to a new survey
-            surveyController._showSurvey(isReadOnly);
+            survey_controller._showSurvey(isReadOnly);
         },
 
         _updateUser: function (loginInfo) {
-            surveyController._currentUser = loginInfo;
+            survey_controller._currentUser = loginInfo;
 
             // Heading on survey/profile page
             $("#name")[0].innerHTML = loginInfo.name;
         },
 
         _updateCount: function () {
-            $("#score")[0].innerHTML = surveyController._completions;
-            $("#score2")[0].innerHTML = surveyController._completions;
+            $("#score")[0].innerHTML = survey_controller._completions;
+            $("#score2")[0].innerHTML = survey_controller._completions;
             $("#profileCount").fadeIn();
 
-            if (surveyController._prepareAppConfigInfo.appParams.contribLevels.length > 0) {
+            if (survey_controller._config.appParams.contribLevels.length > 0) {
                 // Find the user's level
-                var level = surveyController._prepareAppConfigInfo.appParams.contribLevels.length - 1;
+                var level = survey_controller._config.appParams.contribLevels.length - 1;
                 var surveysForNextLevel = -1;
-                while (surveyController._prepareAppConfigInfo.appParams.contribLevels[level].minimumSurveysNeeded >
-                    surveyController._completions) {
+                while (survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded >
+                    survey_controller._completions) {
                     surveysForNextLevel =
-                        surveyController._prepareAppConfigInfo.appParams.contribLevels[level].minimumSurveysNeeded;
+                        survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded;
                     level -= 1;
                 }
 
                 // Show ranking via text and stars
                 $("#rankLabel")[0].innerHTML =
-                    surveyController._prepareAppConfigInfo.appParams.contribLevels[level].label;
+                    survey_controller._config.appParams.contribLevels[level].label;
                 $("#level")[0].innerHTML = i18n.labels.label_level.replace("${0}", level);
                 if (level === 0) {
                     $("div", ".profileRankStars").removeClass("filled-star").addClass("empty-star");
@@ -540,9 +526,9 @@ define([
                 }
 
                 // If below top level, show how far to next level
-                var doneThisLevel = surveyController._completions -
-                    surveyController._prepareAppConfigInfo.appParams.contribLevels[level].minimumSurveysNeeded;
-                var remainingToNextLevel = Math.max(0, surveysForNextLevel - surveyController._completions);
+                var doneThisLevel = survey_controller._completions -
+                    survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded;
+                var remainingToNextLevel = Math.max(0, surveysForNextLevel - survey_controller._completions);
                 var surveysThisLevel = doneThisLevel + remainingToNextLevel;
                 if (surveysForNextLevel >= 0 && surveysThisLevel > 0) {
                     var cRankBarWidthPx = 170;
@@ -596,6 +582,6 @@ define([
 
         //------------------------------------------------------------------------------------------------------------//
     };
-    return surveyController;
+    return survey_controller;
 });
 

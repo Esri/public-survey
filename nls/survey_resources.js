@@ -34,7 +34,7 @@ define({
         tooltips: {
             signOut: "Sign out of application",
             helpTip: "More information",
-            importantQuestion: "Please answer this question"
+            flagImportantQuestion: "Please answer this question"
         }
     }),
     "de": 0,

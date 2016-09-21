@@ -20,7 +20,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testScene_resources.js"],
+define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
     function (i18n) {
     "use strict";
     var controller;
@@ -44,12 +44,12 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
          * @param {object} config - App config info
          * @memberof controller
          */
-        init: function (config) {
+        init: function (config, container) {
             var controllerReady = $.Deferred();
             controller._config = config;
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+            container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
                 // Template parameters
             }, {
                 // Template options
@@ -115,7 +115,8 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
-                    controller._config.featureSvcParams.fields
+                    controller._config.featureSvcParams.fields,
+                    i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
 

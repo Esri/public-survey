@@ -66,7 +66,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                             signinReady.resolve(user);
                         });
 
-                        appReady = appController.init(config);
+                        appReady = appController.init(config, $("body"));
 
                         // Wire up coordination between splash/signin and rest of app
                         $.subscribe("signedIn-user", function (ignore, loginInfo) {

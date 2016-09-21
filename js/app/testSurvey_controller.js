@@ -20,7 +20,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testScene_resources.js"],
+define(["lib/i18n.min!nls/testSurvey_resources.js"],
     function (i18n) {
     "use strict";
     var controller;
@@ -55,12 +55,12 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
          * @param {object} config - App config info
          * @memberof controller
          */
-        init: function (config) {
+        init: function (config, container) {
             var controllerReady = $.Deferred();
             controller._config = config;
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+            container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
                 // Template parameters
             }, {
                 // Template options
@@ -133,7 +133,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 });
             });
 
-            require(["app/survey", "app/surveyController"], function(survey, surveyController) {
+            require(["app/survey", "app/survey_controller"], function(survey, survey_controller) {
                 // Adjust config parameters as needed
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly,
@@ -142,17 +142,18 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
-                    controller._config.featureSvcParams.fields
+                    controller._config.featureSvcParams.fields,
+                    i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
 
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 // Prepare and start the survey controller
-                surveyController.init(controller._config, $("#sidebarContent")).then(function () {
+                survey_controller.init(controller._config, $("#sidebarContent")).then(function () {
 
                     $.subscribe("signedIn-user", function () {
-                        surveyController.startSurveying();
+                        survey_controller.launch();
                         $.publish("show-newSurvey");
                     });
 

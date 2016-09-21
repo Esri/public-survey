@@ -58,18 +58,19 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
          * @param {object} config - App config info
          * @memberof controller
          */
-        init: function (config) {
+        init: function (config, container) {
             var controllerReady = $.Deferred();
             controller._config = config;
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+            container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
                 // Template parameters
             }, {
                 // Template options
                 prepend: true,
                 complete: function () {
 
+                    //???
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
@@ -80,6 +81,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                         }
                         controllerReady.reject(i18n.messages.noMoreSurveys);
                     });
+                    //???
                 }
             });
 
@@ -134,7 +136,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 });
             });
 
-            require(["app/survey", "app/sceneController"], function(survey, sceneController) {
+            require(["app/survey", "app/scene_controller"], function(survey, scene_controller) {
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
@@ -147,7 +149,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
-                sceneController.init(controller._config, $("#mainContent"),
+                scene_controller.init(controller._config, $("#mainContent"),
                     controller._clusterViewBuilder, controller._okToNavigate)
                     .then(controllerComponentsReady.resolve());
             });

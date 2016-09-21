@@ -38,8 +38,6 @@ define([], function () {
         _inProgress: false,
         _isReadOnly: false,
 
-        flagImportantQuestion: "Please answer this question",
-
         //----- Procedures available for external access -------------------------------------------------------------//
 
         /**
@@ -49,9 +47,11 @@ define([], function () {
          * @return {array} List of survey question objects, each of which contains question, field, style, domain, important
          * properties
          */
-        createSurveyDefinition: function (surveyDescription, featureSvcFields) {
+        createSurveyDefinition: function (surveyDescription, featureSvcFields, importantQuestionTooltip) {
             // Patch older browsers
             survey._installPolyfills();
+
+            survey._importantQuestionTooltip = importantQuestionTooltip || survey._importantQuestionTooltip;
 
             // Create dictionary of domains
             var dictionary = survey._createSurveyDictionary(featureSvcFields);
@@ -374,7 +374,7 @@ define([], function () {
                 "<div id='qg" + iQuestion + "' class='form-group'>"
                 + "<label for='q" + iQuestion + "'>" + questionInfo.question + (questionInfo.important
                 ? "&nbsp;<div class='importantQuestion sprites star' title=\""
-                + survey.flagImportantQuestion + "\"></div>"
+                + survey._importantQuestionTooltip + "\"></div>"
                 : "")
                     + "</label><br>";
             if (questionInfo.image && questionInfo.image.length > 0 && questionInfo.startsWithImage) {

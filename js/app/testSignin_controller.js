@@ -39,12 +39,12 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
          * @param {object} config - App config info
          * @memberof controller
          */
-        init: function (config) {
+        init: function (config, container) {
             var controllerReady = $.Deferred();
             controller._config = config;
 
             // Instantiate the splash template
-            $("body").loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+            container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
                 // Template parameters
             }, {
                 // Template options

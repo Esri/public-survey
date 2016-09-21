@@ -16,24 +16,12 @@
 define({
     root: ({
         messages: {
-            noMoreSurveys: "There are no surveys available at this time; thank you for your participation."
         },
         prompts: {
-            clearBtn: "Clear",
-            finishBtn: "Finish",
-            nextBtn: "Next",
-            nextResponseBtn: "Next response",
-            seeResponsesBtn: "See responses",
-            submitBtn: "Submit",
-            turnOffResponsesBtn: "Turn off responses",
-            goToResponses: "Go to response location"
         },
         labels: {
-            signOut: "Sign out"
         },
         tooltips: {
-            signOut: "Sign out of application",
-            helpTip: "More information",
             importantQuestion: "Please answer this question"
         }
     }),
