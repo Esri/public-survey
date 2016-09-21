@@ -20,7 +20,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testScene_resources.js"],
+define(["lib/i18n.min!nls/publicSurvey_resources.js"],
     function (i18n) {
     "use strict";
     var controller;
@@ -109,25 +109,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         launch: function () {
             var controllerComponentsReady = $.Deferred();
 
-            // Controls in test window
-            controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
-            controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
-            controller._activateButton("survey-form-in-progress", "Fill in survey");
-            controller._activateButton("survey-form-is-empty", "Clear survey");
-            controller._activateButton("reset-survey", "Reset survey");
-
-            // Monitoring in test window
-            $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
-            $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
-            $.subscribe("show-help", controller._logSubscribedEvent);
-            $.subscribe("reset-survey", controller._logSubscribedEvent);
-            $.subscribe("goto_location", controller._logSubscribedEvent);
-            $.subscribe("current-response-site", controller._logSubscribedEvent);
-
-            $.subscribe("signedIn-user", controller._logSubscribedEvent);
-            $.subscribe("request-signOut", controller._logSubscribedEvent);
-            $.subscribe("signedOut-user", controller._logSubscribedEvent);
-
             // Monitor survey messages for coordination between visuals and survey
             $.subscribe("survey-form-in-progress", function () {
                 controller._surveyInProgress = true;
@@ -147,7 +128,8 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 });
             });
 
-            require(["app/survey", "app/scene_controller"], function(survey, scene_controller) {
+            require(["app/survey", "app/survey_controller", "app/scene_controller"],
+                function(survey, survey_controller, scene_controller) {
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
@@ -163,6 +145,15 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 scene_controller.init(controller._config, $("#mainContent"),
                     controller._clusterViewBuilder, controller._okToNavigate)
                     .then(controllerComponentsReady.resolve());
+
+                // Prepare and start the survey controller
+                survey_controller.init(controller._config, $("#sidebarContent")).then(function () {
+
+                    $.subscribe("signedIn-user", function () {
+                        survey_controller.launch();
+                        $.publish("show-newSurvey");
+                    });
+                });
             });
 
             return controllerComponentsReady;
