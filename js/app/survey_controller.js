@@ -127,7 +127,7 @@ define([
                     $.subscribe("survey-form-in-progress", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
                         survey_controller._showDomItem(survey_controller._clearBtn, ENABLED);
-                        survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
+                        survey_controller._showDomItem(survey_controller._nextToDoBtn, DISEMBODIED);
                     });
 
                     // As soon as the minimum number of answers has been reached, the Submit button is usable
@@ -371,13 +371,13 @@ define([
             if (survey_controller._config.appParams.numResponseSites > 0) {
                 var remainingToDo = survey_controller._numRemainingToDo();
                 if (remainingToDo === 0) {
-                    survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
+                    survey_controller._showDomItem(survey_controller._nextToDoBtn, DISEMBODIED);
                     survey_controller._showDomItem(survey_controller._finishBtn, ENABLED);
                 } else if (remainingToDo === 1) {
                     if (survey_controller._iCurrentResponseSite !== undefined &&
                         survey_controller._responseSitesToDo[survey_controller._iCurrentResponseSite] === 1) {
                         // Next button not needed: we are at the only site remaining to do
-                        survey_controller._showDomItem(survey_controller._nextToDoBtn, INVISIBLE);
+                        survey_controller._showDomItem(survey_controller._nextToDoBtn, DISEMBODIED);
                     } else {
                         // Next button needed: we are either not at a site or are at a completed site
                         survey_controller._showDomItem(survey_controller._nextToDoBtn, ENABLED);
