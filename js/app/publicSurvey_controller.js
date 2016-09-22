@@ -133,7 +133,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
-                    controller._config.featureSvcParams.fields
+                    controller._config.featureSvcParams.fields,
+                    ">=1", i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
 

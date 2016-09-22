@@ -26,16 +26,40 @@ define([], function () {
     survey = {
         //----- Events -----------------------------------------------------------------------------------------------//
 
+        // Published
+        /**
+         * Informs that at least one question has an answer completed.
+         * @event survey#survey-form-in-progress
+         */
+
+        /**
+         * Informs that the survey has not satisfied the notification policy.
+         * @event survey#survey-form-policy-not-satisfied
+         */
+
+        /**
+         * Informs that the survey has satisfied the notification policy.
+         * @event survey#survey-form-policy-satisfied
+         */
+
+        /**
+         * Informs that the survey has no answers completed.
+         * @event survey#survey-form-is-empty
+         */
+
+         // Consumed
+
         //----- Module variables -------------------------------------------------------------------------------------//
 
+        _containerId: null,
         _questions: [],
         _questionLookup: [],
         _notificationPolicy: ">=1",  // must answer ">=1", "allImportant", "all"
         _importantQuestionTooltip: "Please answer this question",  // backup for missing argument
         _requiredFieldsMask: 0,     // N.B.: Form is restricted to a maximum of 31 required fields because of
         _requiredFieldsStatus: 0,   // the way that required fields are tracked.
-        _idPrefix: "",
         _inProgress: false,
+        _policySatisfied: false,
         _isReadOnly: false,
 
         //----- Procedures available for external access -------------------------------------------------------------//
@@ -47,9 +71,16 @@ define([], function () {
          * @return {array} List of survey question objects, each of which contains question, field, style, domain, important
          * properties
          */
-        createSurveyDefinition: function (surveyDescription, featureSvcFields, importantQuestionTooltip) {
+        createSurveyDefinition: function (surveyDescription, featureSvcFields, notificationPolicy, importantQuestionTooltip) {
             // Patch older browsers
             survey._installPolyfills();
+
+            // Adjust parameters as needed
+            if (notificationPolicy !== "allImportant"
+                && notificationPolicy !== "all") {
+                notificationPolicy = ">=1";
+            }
+            survey._notificationPolicy = notificationPolicy;
 
             survey._importantQuestionTooltip = importantQuestionTooltip || survey._importantQuestionTooltip;
 
@@ -69,6 +100,8 @@ define([], function () {
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
          */
         createSurveyForm: function (surveyContainer, surveyDefinition, isReadOnly) {
+            var nextReqFldStatusFlag = 1;  // first slot for required fields mask
+
             // Remove children and their events
             $(surveyContainer).children().remove();
 
@@ -89,8 +122,12 @@ define([], function () {
                 }
             });
 
+            // Reset the required-questions tracking
+            survey._requiredFieldsStatus = survey._requiredFieldsMask;
+
             // Render any radiobutton groups
-            $(".btn-group").trigger('create');
+            survey._containerId = surveyContainer.id;
+            $("#" + survey._containerId + " .btn-group").trigger('create');
         },
 
         setFormReadOnly: function (isReadOnly) {
@@ -111,9 +148,107 @@ define([], function () {
             });
         },
 
-        clearForm: function () {},
-        fillInForm: function (values) {},
-        getFormAnswers: function () {},
+        clearForm: function () {
+            // Clear button-style radio buttons, which are flagged as selected by having the "active" class
+            $("#" + survey._containerId + " .active").removeClass("active").blur();
+
+            // Clear radio buttons, which are flagged as selected by having the "checked" attribute
+            $("#" + survey._containerId + " input:checked").removeAttr("checked").blur();
+
+            // Clear dropdown-style inputs
+            $("#" + survey._containerId + " .dropdown-group").each(function (indexInArray, input) {
+                input.selectedIndex = -1;
+            });
+
+            // Clear number-style inputs
+            $("#" + survey._containerId + " .number-input").each(function (indexInArray, input) {
+                input.value = "";
+            });
+
+            // Clear text-style inputs
+            $("#" + survey._containerId + " .text-input").each(function (indexInArray, input) {
+                input.value = "";
+            });
+
+            // Reset the required-questions tracking
+            survey._requiredFieldsStatus = survey._requiredFieldsMask;
+
+            survey._notifyAboutSurveyStatus(false);
+        },
+
+        fillInForm: function (values) {
+            var _this = this;
+            survey.clearForm();
+
+            if (values) {
+                // Set the value for each question in the survey for which we have an answer
+                $.each(values, function (property, value) {
+                    var iQuestion = survey._questionLookup[property];
+                    if (typeof iQuestion === "number") {
+                        var question = survey._questions[iQuestion];
+
+                        console.log(property + ": " + JSON.stringify(value));//???
+                        if (question.surveyFieldStyle === "button") {
+                            $.each(question.surveyValues, function (i, uiValue) {
+                                if (value === uiValue) {
+                                    $("#q" + iQuestion + ">:nth-child(" + (i + 1) + ")").addClass("active");
+                                    return false;
+                                }
+                            });
+
+                        } else if (question.surveyFieldStyle === "list") {
+                            $.each(question.surveyValues, function (i, uiValue) {
+                                if (value === uiValue) {
+                                    $("input[name=q" + iQuestion + "][value=" + i + "]").prop('checked', true);
+                                    return false;
+                                }
+                            });
+
+                        } else if (question.surveyFieldStyle === "dropdown") {
+                            $.each(question.surveyValues, function (i, uiValue) {
+                                if (value === uiValue) {
+                                    $("#q" + iQuestion)[0].selectedIndex = i;
+                                    return false;
+                                }
+                            });
+
+                        } else {
+                            $("#q" + iQuestion).val(value);
+                        }
+
+                        // Update the policy status for this question
+                        survey._checkNotificationPolicy(question, true);
+                    }
+                });
+            }
+        },
+
+        getFormAnswers: function () {
+            var answers = {};
+
+            $.each(survey._questions, function (indexInArray, question) {
+                var answer = $(question.surveyAnswerQuery);
+                if (answer.length > 0) {
+                    // coded-value item: button, list, dropdown
+                    if (question.surveyValues) {
+                        if (question.surveyFieldStyle === "dropdown") {
+                            if (answer[0].selectedIndex >= 0) {
+                                answers[question.surveyField] = question.surveyValues[answer[0].selectedIndex];
+                            }
+                        } else {
+                            answers[question.surveyField] = question.surveyValues[answer[0].value];
+                        }
+
+                    // free-text item: text, number
+                    } else if (answer[0].value.length > 0) {
+                        // Escape newlines because REST endpoint treats them as the end of the string
+                        answers[question.surveyField] = answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim()
+                    }
+                }
+            });
+
+            return answers;
+        },
 
         /**
          * Validates a survey form in the specified element.
@@ -168,6 +303,20 @@ define([], function () {
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        _notifyAboutSurveyStatus: function (inProgress) {
+            if (survey._inProgress != inProgress) {
+                survey._inProgress = inProgress;
+                $.publish(inProgress ? "survey-form-in-progress" : "survey-form-is-empty");
+            }
+        },
+
+        _notifyAboutSurveyPolicy: function (satisfied) {
+            if (survey._policySatisfied != satisfied) {
+                survey._policySatisfied = satisfied;
+                $.publish(satisfied ? "survey-form-policy-satisfied" : "survey-form-policy-not-satisfied");
+            }
+        },
 
         _installPolyfills: function () {
             // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
@@ -305,6 +454,14 @@ define([], function () {
 
                         surveyQuestions.push(surveyQuestion);
                     }
+
+                // Otherwise, just echo line
+                } else {
+                    surveyQuestion = {
+                        question: line,
+                        style: "heading"
+                    };
+                    surveyQuestions.push(surveyQuestion);
                 }
             });
             return surveyQuestions;
@@ -319,67 +476,100 @@ define([], function () {
          * @private
          */
         _addQuestion: function (surveyContainer, iQuestion, questionInfo, isReadOnly) {
-            var question = survey._startQuestion(iQuestion, questionInfo);
-            if (questionInfo.style === "button") {
-                question += survey._createButtonChoice(iQuestion, questionInfo, isReadOnly);
-            } else if (questionInfo.style === "list") {
-                question += survey._createListChoice(iQuestion, questionInfo, isReadOnly);
-            } else if (questionInfo.style === "dropdown") {
-                question += survey._createDropdownChoice(iQuestion, questionInfo, isReadOnly);
-            } else if (questionInfo.style === "number") {
-                question += survey._createNumberInput(iQuestion, questionInfo, isReadOnly);
-            } else if (questionInfo.style === "text") {
-                question += survey._createTextLineInput(iQuestion, questionInfo, isReadOnly);
-            }
-            question += survey._wrapupQuestion(iQuestion, questionInfo, isReadOnly);
-            $(surveyContainer).append(question);
+            var watchImportant, questionHTML, question, eventQuery;
 
-            // Fix radio-button toggling
-            if (questionInfo.style === "button") {
-                $('#q' + iQuestion + ' button').click(function (evt) {
-                    $(evt.currentTarget).addClass('active').siblings().removeClass('active');
-                    $("#qg" + iQuestion).removeClass("flag-error");
-                });
-
-            } else if (questionInfo.style === "list") {
-                $("[name=q" + iQuestion + "]").click(function (evt) {
-                    $("#qg" + iQuestion).removeClass("flag-error");
-                });
+            if (questionInfo.style === "heading") {
+                questionHTML = survey._createHeading(questionInfo, isReadOnly);
+                $(surveyContainer).append(questionHTML);
 
             } else {
-                // Start with nothing selected in dropdown
-                if (questionInfo.style === "dropdown") {
-                    $("#q" + iQuestion).each(function (indexInArray, input) {
-                        input.selectedIndex = -1;
-                    });
-                }
+                watchImportant = questionInfo.important && survey._notificationPolicy === "allImportant";
+                questionHTML = survey._startQuestion(iQuestion, questionInfo, isReadOnly, watchImportant);
 
-                $('#q' + iQuestion).change(function (evt) {
-                    $("#qg" + iQuestion).removeClass("flag-error");
-                });
+                if (questionInfo.style === "button") {
+                    questionHTML += survey._createButtonChoice(iQuestion, questionInfo, isReadOnly);
+                } else if (questionInfo.style === "list") {
+                    questionHTML += survey._createListChoice(iQuestion, questionInfo, isReadOnly);
+                } else if (questionInfo.style === "dropdown") {
+                    questionHTML += survey._createDropdownChoice(iQuestion, questionInfo, isReadOnly);
+                } else if (questionInfo.style === "number") {
+                    questionHTML += survey._createNumberInput(iQuestion, questionInfo, isReadOnly);
+                } else if (questionInfo.style === "text") {
+                    questionHTML += survey._createTextLineInput(iQuestion, questionInfo, isReadOnly);
+                }
+                questionHTML += survey._wrapupQuestion();
+                $(surveyContainer).append(questionHTML);
+
+                // Fetch question block for returning and save its importance
+                question = $("#q" + iQuestion)[0];
+                question.surveyField = questionInfo.field;
+                question.surveyFieldStyle = questionInfo.style;
+                question.surveyImportant = watchImportant;
+                question.surveyValues = questionInfo.values;
+
+                // Fix radio-button toggling for both styles of radio button
+                if (questionInfo.style === "button") {
+                    eventQuery = "#q" + iQuestion + " button";
+                    $(eventQuery).click(function (evt) {
+                        $(evt.currentTarget).addClass("active").siblings().removeClass("active");
+                        survey._handleButtonClick(evt);
+                    });
+                    question.surveyAnswerQuery = eventQuery + ".active";
+
+                } else if (questionInfo.style === "dropdown") {
+                    eventQuery = "#q" + iQuestion;
+                    question.surveyAnswerQuery = eventQuery;
+                    $(eventQuery)[0].selectedIndex = -1;
+                    $(eventQuery).on("change", survey._handleDropdownClick);
+
+                } else if (questionInfo.style === "list") {
+                    eventQuery = "[name=q" + iQuestion + "]";
+                    $(eventQuery).on("click", survey._handleRadiobuttonClick);
+                    question.surveyAnswerQuery = eventQuery + ":checked";
+
+                } else if (questionInfo.style === "number") {
+                    eventQuery = "#q" + iQuestion;
+                    $(eventQuery).on("keyup", survey._handleInputKeyup);
+                    $(eventQuery).on("click", survey._handleInputKeyup);
+                    question.surveyAnswerQuery = eventQuery;
+
+                } else {
+                    eventQuery = "#q" + iQuestion;
+                    $(eventQuery).on("keyup", survey._handleInputKeyup);
+                    question.surveyAnswerQuery = eventQuery;
+                }
             }
+            return question;
+        },
+
+        _createHeading: function (questionInfo, isReadOnly) {
+            var heading = "<div class='form-heading"
+                + (isReadOnly ? " disabled-label'" : "'")
+                + ">" + questionInfo.question + "</div>";
+            return heading;
         },
 
         /**
          * Starts the HTML for a survey question with its label.
          * @param {number} iQuestion Zero-based question number
          * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
+         * @param {boolean} isReadOnly Indicates if survey form elements are read-only
+         * @param {boolean} flagAsImportant Should the question be flagged as important
          * @return {string} HTML for question's label and the start of its div
          * @private
          */
-        _startQuestion: function (iQuestion, questionInfo) {
+        _startQuestion: function (iQuestion, questionInfo, isReadOnly, flagAsImportant) {
             // <div class='form-group'>
             //   <label for='q1'>Is there a structure on the property? <span class='glyphicon glyphicon-star'></span></label><br>
             var start =
-                "<div id='qg" + iQuestion + "' class='form-group'>"
-                + "<label for='q" + iQuestion + "'>" + questionInfo.question + (questionInfo.important
-                ? "&nbsp;<div class='importantQuestion sprites star' title=\""
+                "<div id='q" + "g" + iQuestion + "' class='form-group'>"
+                + "<label for='q" + iQuestion + "'"
+                + (isReadOnly ? " class='disabled-label'" : "")
+                + ">" + questionInfo.question
+                + (flagAsImportant ? "&nbsp;<div class='importantQuestion sprites star' title=\""
                 + survey._importantQuestionTooltip + "\"></div>"
                 : "")
-                    + "</label><br>";
-            if (questionInfo.image && questionInfo.image.length > 0 && questionInfo.startsWithImage) {
-                start += "<img src='" + questionInfo.image + "' class='image-before'/><br>";
-            }
+                    + "</label>";
             return start;
         },
 
@@ -409,7 +599,7 @@ define([], function () {
         },
 
         /**
-         * Creates a survey question's response response item's HTML: a set of list-style radio buttons.
+         * Creates a survey question's response item's HTML: a set of list-style radio buttons.
          * @param {number} iQuestion Zero-based question number
          * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
@@ -422,7 +612,7 @@ define([], function () {
             // <div class='radio'><label><input type='radio' name='q1' id='optionFound3' value='2'>Elevated</label></div>
             // <div class='radio'><label><input type='radio' name='q1' id='optionFound4' value='3'>Slab on grade</label></div>
             // <div class='radio'><label><input type='radio' name='q1' id='optionFound0' value='4'>Not sure</label></div>
-            var list = "";
+            var list = "<div id='q" + iQuestion + "' class='radio-group'>";
             var domain = questionInfo.domain.split('|');
             $.each(domain, function (i, choice) {
                 list += "<div class='radio'><label><input type='radio' name='q" + iQuestion + "' value='" + i
@@ -430,11 +620,12 @@ define([], function () {
                     ? "disabled"
                     : "") + ">" + choice + "</label></div>";
             });
+            list += "</div>";
             return list;
         },
 
         /**
-         * Creates a survey question's response response item's HTML: a dropdown list of options.
+         * Creates a survey question's response item's HTML: a dropdown list of options.
          * @param {number} iQuestion Zero-based question number
          * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
@@ -450,8 +641,8 @@ define([], function () {
             var list = "<select id='q" + iQuestion + "' class='dropdown-group'>";
             var domain = questionInfo.domain.split('|');
             $.each(domain, function (i, choice) {
-                list += "<option value='" + questionInfo.values[i] + "'" + (isReadOnly
-                    ? " disabled"
+                list += "<option value='" + choice + "' " + (isReadOnly
+                    ? "disabled"
                     : "") + ">" + choice + "</option>";
             });
             list += "</select>";
@@ -459,7 +650,7 @@ define([], function () {
         },
 
         /**
-         * Creates a survey question's response response item's HTML: a number input field.
+         * Creates a survey question's response item's HTML: a number input field.
          * @param {number} iQuestion Zero-based question number
          * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
@@ -468,15 +659,14 @@ define([], function () {
          */
         _createNumberInput: function (iQuestion, questionInfo, isReadOnly) {
             // <input id='q1' type='number' class='number-input'>
-            var list = "<input id='q" + iQuestion + "' type='number' class='number-input'"
-                + (isReadOnly
-                    ? " disabled"
+            var list = "<input id='q" + iQuestion + "' type='number' class='number-input' " + (isReadOnly
+                    ? "disabled"
                     : "") + ">";
             return list;
         },
 
         /**
-         * Creates a survey question's response response item's HTML: a single-line text input field.
+         * Creates a survey question's response item's HTML: a single-line text input field.
          * @param {number} iQuestion Zero-based question number
          * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
@@ -484,7 +674,6 @@ define([], function () {
          * @private
          */
         _createTextLineInput: function (iQuestion, questionInfo, isReadOnly) {
-            // <input id='q1' type='text' class='text-input'>
             var list;
             if (questionInfo.domain < 32) {
                 // <input id='q1' type='text' class='text-input'>
@@ -493,8 +682,7 @@ define([], function () {
                 // <textarea id='q1' rows='4' class='text-input'></textarea>
                 list = "<textarea rows='4'";
             }
-            list += " id='q" + iQuestion + "' class='text-input' maxlength='" + questionInfo.domain + "' "
-                + (isReadOnly
+            list += " id='q" + iQuestion + "' class='text-input' maxlength='" + questionInfo.domain + "' " + (isReadOnly
                     ? "disabled"
                     : "") + ">";
             if (questionInfo.domain >= 32) {
@@ -505,21 +693,74 @@ define([], function () {
 
         /**
          * Completes the HTML for a survey question.
-         * @param {number} iQuestion Zero-based question number
-         * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
-         * @param {boolean} isReadOnly Indicates if survey form elements are read-only
          * @return {string} HTML for the end of its div
          * @private
          */
-        _wrapupQuestion: function (iQuestion, questionInfo, isReadOnly) {
+        _wrapupQuestion: function () {
             // </div>
             // <div class='clearfix'></div>
-            var wrap = "";
-            if (questionInfo.image && questionInfo.image.length > 0 && !questionInfo.startsWithImage) {
-                wrap += "<img src='" + questionInfo.image + "' class='image-after'/><br>";
-            }
-            wrap += "</div><div class='clearfix'></div>";
+            var wrap = "</div><div class='clearfix'></div>";
             return wrap;
+        },
+
+        _handleButtonClick: function (evt) {
+            var question = evt.target.parentElement;
+            survey._checkNotificationPolicy(question, true);
+        },
+
+        _handleRadiobuttonClick: function (evt) {
+            var question = evt.target.parentElement.parentElement.parentElement;
+            survey._checkNotificationPolicy(question, true);
+        },
+
+        _handleDropdownClick: function (evt) {
+            var question = evt.target;
+            survey._checkNotificationPolicy(question, true);
+        },
+
+        _handleInputKeyup: function (evt) {
+            var question = evt.target;
+            survey._checkNotificationPolicy(question, question.value.length > 0);
+        },
+
+        _checkNotificationPolicy: function (question, hasValue) {
+            if (hasValue) {
+                survey._notifyAboutSurveyStatus(true);
+            }
+
+            // All questions are required
+            if (survey._notificationPolicy === "all") {
+                if (hasValue) {
+                    // Clear flag for question
+                    survey._requiredFieldsStatus &= ~(question.requiredFieldFlag);
+                } else {
+                    // Set flag for question
+                    survey._requiredFieldsStatus |= (question.requiredFieldFlag);
+                }
+
+                // Notify survey controller if all questions have been answered
+                survey._notifyAboutSurveyPolicy(survey._requiredFieldsStatus === 0);
+
+            // Some questions are required
+            } else if (survey._notificationPolicy === "allImportant") {
+                if (question.surveyImportant) {
+                    if (hasValue) {
+                        // Clear flag for question
+                        survey._requiredFieldsStatus &= ~(question.requiredFieldFlag);
+                    } else {
+                        // Set flag for question
+                        survey._requiredFieldsStatus |= (question.requiredFieldFlag);
+                    }
+                }
+
+                // Notify survey controller if all important questions have been answered
+                survey._notifyAboutSurveyPolicy(survey._requiredFieldsStatus === 0);
+
+            // At least one question is required
+            } else {
+                // Notify survey controller because at least one question has been answered
+                survey._notifyAboutSurveyPolicy(hasValue);
+            }
         },
 
         /**
@@ -532,6 +773,7 @@ define([], function () {
             return $("<div>" + original + "</div>").text();
         }
 
+        //------------------------------------------------------------------------------------------------------------//
     };
     return survey;
 });

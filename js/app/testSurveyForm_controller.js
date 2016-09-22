@@ -99,15 +99,12 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
             var controllerComponentsReady = $.Deferred();
 
             // Controls in test window
-            controller._activateButton("clear-form");
-            controller._activateButton("fill-form");
             controller._activateButton("request-signOut");
-            controller._activateButton("at-least-one");
-            controller._activateButton("all-important");
-            controller._activateButton("all");
 
             // Monitoring in test window
             $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
+            $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
+            $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
             $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
             $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
@@ -116,15 +113,35 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    i18n.tooltips.importantQuestion
+                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
+                controller._prependToLog("Survey question policy: " + controller._config.appParams.policy);
 
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
+                // Controls in test window
+                controller._activateButton("clear-form");
+                $.subscribe("clear-form", function () {
+                    survey.clearForm();
+                });
+
+                controller._activateButton("fill-form");
+                $.subscribe("fill-form", function () {
+                    var values = {
+                        "question1": "oui",
+                        "question2": "peutêtre",
+                        "question3": "non",
+                        //"question4": "4",
+                        "question5": "q. 5",
+                        "question6": "question 6"
+                    };
+                    survey.fillInForm(values);
+                });
+
                 // Start with a fresh survey form for newly-signed-in user
                 $.subscribe("signedIn-user", function () {
-                    survey.createSurveyForm($("#sidebarContent")[0],
+                    survey.createSurveyForm($("#surveyContainer")[0],
                         controller._config.appParams._surveyDefinition, controller._config.appParams.readonly);
                 });
 

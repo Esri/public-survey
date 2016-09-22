@@ -29,7 +29,7 @@
     ],
 
 
-    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly"],
+    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy"],
 
     "proxyProgram": "proxy/proxy.ashx",
     "portalurl": "https://www.arcgis.com",

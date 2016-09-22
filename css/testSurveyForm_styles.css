@@ -303,6 +303,9 @@ img {
 .dropdown-menu>li>span:focus {
     outline: none;
 }
+.radio-group {
+    padding-left: 12px;
+}
 
 .page-title {
     margin: 12px 0 !important;
