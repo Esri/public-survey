@@ -36,7 +36,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
          */
         /**
          * Provides information about the currently-signed-in user.
-         * @event user#signedOut-user
+         * @event user#signedIn-user
          * @property {UserInfoHash} - User info
          */
 
