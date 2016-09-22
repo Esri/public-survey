@@ -66,6 +66,8 @@ define([
          */
 
          // Consumed
+         // survey#survey-form-policy-not-satisfied
+         // survey#survey-form-policy-satisfied
 
 
         //----- Module variables -------------------------------------------------------------------------------------//
@@ -94,9 +96,6 @@ define([
             var surveyControllerReady = $.Deferred();
             survey_controller._config = config;
             survey_controller._container = container;
-
-            // Provide the i18n strings to the survey
-            survey.flagImportantQuestion = i18n.tooltips.flagImportantQuestion;
 
             // Instantiate the survey_controller template
             container.loadTemplate("js/app/survey_controller.html", {
@@ -135,6 +134,11 @@ define([
                     $.subscribe("survey-form-policy-satisfied", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
                         survey_controller._showDomItem(survey_controller._submitBtn, ENABLED);
+                    });
+
+                    $.subscribe("survey-form-policy-not-satisfied", function () {
+                        var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+                        survey_controller._showDomItem(survey_controller._submitBtn, DISABLED);
                     });
 
                     // Handle actions
