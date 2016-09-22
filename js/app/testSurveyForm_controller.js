@@ -106,6 +106,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
             $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
             $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
             $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
+            $.subscribe("signedIn-user", controller._logSubscribedEvent);
             $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
             require(["app/survey"], function(survey) {
