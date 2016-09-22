@@ -60,6 +60,7 @@ define([], function () {
         _requiredFieldsStatus: 0,   // the way that required fields are tracked.
         _inProgress: false,
         _policySatisfied: false,
+        _hasUneraseableValue: false,
         _isReadOnly: false,
 
         //----- Procedures available for external access -------------------------------------------------------------//
@@ -104,6 +105,12 @@ define([], function () {
 
             // Remove children and their events
             $(surveyContainer).children().remove();
+
+            // Resets
+            survey._inProgress = false;
+            survey._policySatisfied = false;
+            survey._hasUneraseableValue = false;
+            survey._isReadOnly = isReadOnly;
 
             // Create the questions
             $.each(surveyDefinition, function (indexInArray, questionInfo) {
@@ -172,8 +179,10 @@ define([], function () {
 
             // Reset the required-questions tracking
             survey._requiredFieldsStatus = survey._requiredFieldsMask;
+            survey._hasUneraseableValue = false;
 
             survey._notifyAboutSurveyStatus(false);
+            survey._notifyAboutSurveyPolicy(false);
         },
 
         fillInForm: function (values) {
@@ -758,8 +767,13 @@ define([], function () {
 
             // At least one question is required
             } else {
+                if (hasValue && (question.surveyFieldStyle === "button" || question.surveyFieldStyle === "dropdown"
+                    || question.surveyFieldStyle=== "list")) {
+                    survey._hasUneraseableValue = true;
+                }
+
                 // Notify survey controller because at least one question has been answered
-                survey._notifyAboutSurveyPolicy(hasValue);
+                survey._notifyAboutSurveyPolicy(hasValue || survey._hasUneraseableValue);
             }
         },
 
