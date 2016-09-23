@@ -506,7 +506,7 @@ define([], function () {
                 } else if (questionInfo.style === "text") {
                     questionHTML += survey._createTextLineInput(iQuestion, questionInfo, isReadOnly);
                 }
-                questionHTML += survey._wrapupQuestion();
+                questionHTML += survey._wrapupQuestion(iQuestion, questionInfo, isReadOnly);
                 $(surveyContainer).append(questionHTML);
 
                 // Fetch question block for returning and save its importance
@@ -578,7 +578,10 @@ define([], function () {
                 + (flagAsImportant ? "&nbsp;<div class='importantQuestion sprites star' title=\""
                 + survey._importantQuestionTooltip + "\"></div>"
                 : "")
-                    + "</label>";
+                    + "</label><br>";
+            if (questionInfo.image && questionInfo.image.length > 0 && questionInfo.startsWithImage) {
+                start += "<img src='" + questionInfo.image + "' class='image-before'/><br>";
+            }
             return start;
         },
 
@@ -702,13 +705,20 @@ define([], function () {
 
         /**
          * Completes the HTML for a survey question.
+         * @param {number} iQuestion Zero-based question number
+         * @param {object} questionInfo Survey question, which contains question, field, style, domain, important
+         * @param {boolean} isReadOnly Indicates if survey form elements are read-only
          * @return {string} HTML for the end of its div
          * @private
          */
-        _wrapupQuestion: function () {
+        _wrapupQuestion: function (iQuestion, questionInfo, isReadOnly) {
             // </div>
             // <div class='clearfix'></div>
-            var wrap = "</div><div class='clearfix'></div>";
+            var wrap = "";
+            if (questionInfo.image && questionInfo.image.length > 0 && !questionInfo.startsWithImage) {
+                wrap += "<img src='" + questionInfo.image + "' class='image-after'/><br>";
+            }
+            wrap += "</div><div class='clearfix'></div>";
             return wrap;
         },
 
