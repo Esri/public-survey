@@ -145,7 +145,7 @@ define([], function () {
                 var value;
                 if (question.surveyFieldStyle === "button") {
                     $.each(question.surveyValues, function (i, uiValue) {
-                        $(question.surveyId + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
+                        $("#" + question.surveyId + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
                     });
 
                 } else if (question.surveyFieldStyle === "list") {
@@ -154,7 +154,7 @@ define([], function () {
                     });
 
                 } else {
-                    value = $(question.surveyId).attr("disabled", isReadOnly);
+                    value = $("#" + question.surveyId).attr("disabled", isReadOnly);
 
                     // Emulate disabled appearance; bootstrap does this for buttons and lists
                     if (isReadOnly) {
@@ -207,11 +207,11 @@ define([], function () {
                     if (typeof iQuestion === "number") {
                         var question = survey._questions[iQuestion];
 
-                        console.log(question.surveyId + " field " + property + ": " + JSON.stringify(value));//???
+                        console.log("#" + question.surveyId + " field " + property + ": " + JSON.stringify(value));//???
                         if (question.surveyFieldStyle === "button") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
-                                    $(question.surveyId + ">:nth-child(" + (i + 1) + ")").addClass("active");
+                                    $("#" + question.surveyId + ">:nth-child(" + (i + 1) + ")").addClass("active");
                                     return false;
                                 }
                             });
@@ -227,13 +227,13 @@ define([], function () {
                         } else if (question.surveyFieldStyle === "dropdown") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
-                                    $(question.surveyId)[0].selectedIndex = i;
+                                    $("#" + question.surveyId)[0].selectedIndex = i;
                                     return false;
                                 }
                             });
 
                         } else {
-                            $(question.surveyId).val(value);
+                            $("#" + question.surveyId).val(value);
                         }
 
                         // Update the policy status for this question
@@ -525,7 +525,7 @@ define([], function () {
                 question.surveyFieldStyle = questionInfo.style;
                 question.surveyImportant = watchImportant;
                 question.surveyValues = questionInfo.values;
-                question.surveyId = "#q" + iQuestion;
+                question.surveyId = "q" + iQuestion;
 
                 // Fix radio-button toggling for both styles of radio button
                 if (questionInfo.style === "button") {
