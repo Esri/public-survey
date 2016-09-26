@@ -41,7 +41,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
          */
 
         /**
-         * Requests to go to a location with its collection of survey responses.
+         * Informs that a user has signed out.
          * @event user#signedOut-user
          */
 
