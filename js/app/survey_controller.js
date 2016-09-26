@@ -34,10 +34,43 @@ define([
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
+/**
+ * Requests to go to a location with its collection of survey responses.
+ * @event survey_controller#cluster-clicked
+ * @property {number} iSite - Zero-based slide number
+ */
+
         /**
-         * Requests to go to a location with its collection of survey responses.
-         * @event survey_controller#cluster-clicked
-         * @property {number} iSite - Zero-based slide number
+         * Forwards request for help display.
+         * @event survey_controller#show-help
+         */
+
+        /**
+         * Forwards request to sign out.
+         * @event survey_controller#request-signOut
+         */
+
+        /**
+         * @typedef {object} SurveyAnswers
+         * @property {string} <surveyFieldName> -
+         * @property {string|number} <surveyFieldValue> -
+         * @memberof survey_controller
+         */
+        /**
+         * Forwards request to submit survey.
+         * @event survey_controller#submit-survey
+         * @property {SurveyAnswers} -
+         */
+
+        /**
+         * Informs that a site on the to-do list has been completed.
+         * @event survey_controller#completed-response-site
+         * @property {number} - Zero-based site offset
+         */
+
+        /**
+         * Forwards request for new survey.
+         * @event survey_controller#request-new-survey
          */
 
         /**
@@ -48,7 +81,7 @@ define([
          * @memberof survey_controller
          */
         /**
-         * Requests to go to a location with its collection of survey responses.
+         * Forwards request to go to a location with its collection of survey responses.
          * @event survey_controller#goto-camera-pos
          * @property {CameraPosHash} -
          */
@@ -60,7 +93,7 @@ define([
          * @memberof survey_controller
          */
         /**
-         * Requests to go to a location with its collection of survey responses.
+         * Forwards request to go to a location with its collection of survey responses.
          * @event survey_controller#goto-response-site
          * @property {ClusterAttrsHash} -
          */
@@ -155,7 +188,7 @@ define([
                         $.publish("request-signOut");
                     });
 
-                    $.subscribe("submit-survey-form", function () {
+                    $.subscribe("_submit-survey-form", function () {
                         $.publish("submit-survey", survey.getFormAnswers());
                         survey_controller._numSubmissions++;
 
@@ -186,7 +219,7 @@ define([
                         }
                     });
 
-                    $.subscribe("goto-next-todo-response-site", function () {
+                    $.subscribe("_goto-next-todo-response-site", function () {
                         var iToDo;
 
                         if (survey_controller._iCurrentResponseSite !== undefined) {
@@ -216,7 +249,7 @@ define([
                         }
                     });
 
-                    $.subscribe("goto-next-response", function () {
+                    $.subscribe("_goto-next-response", function () {
                         survey_controller._iCurrentResponse += 1;
                         if (survey_controller._iCurrentResponse >= survey_controller._responses.length) {
                             survey_controller._iCurrentResponse = 0;
@@ -225,7 +258,7 @@ define([
                         survey_controller._showCurrentResponse();
                     });
 
-                    $.subscribe("see-responses", function () {
+                    $.subscribe("_see-responses", function () {
                         survey_controller._showResponses();
                     });
 
@@ -233,7 +266,7 @@ define([
                         survey_controller.resetSurvey();
                     });
 
-                    $.subscribe("finish-survey-form", function () {
+                    $.subscribe("_finish-survey-form", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
                         // Hide survey form
@@ -252,7 +285,7 @@ define([
 
                     $("#skipBtn").on("click", function () {
                         survey_controller._hideSurvey();
-                        $.publish("request:newSurvey");
+                        $.publish("request-new-survey");
                     });
 
                     $.subscribe("show:noSurveys", function () {
@@ -298,13 +331,13 @@ define([
                         return btn;
                     }
 
-                    survey_controller._submitBtn = activateButton("submit-survey-form", i18n.prompts.submitBtn);
-                    survey_controller._clearBtn = activateButton("clear-survey-form", i18n.prompts.clearBtn);
-                    survey_controller._nextToDoBtn = activateButton("goto-next-todo-response-site", i18n.prompts.nextBtn);
-                    survey_controller._finishBtn = activateButton("finish-survey-form", i18n.prompts.finishBtn);
-                    survey_controller._seeResponsesBtn = activateButton("see-responses", i18n.prompts.seeResponsesBtn);
-                    survey_controller._nextResponseBtn = activateButton("goto-next-response", i18n.prompts.nextResponseBtn);
-                    survey_controller._turnOffResponsesBtn = activateButton("turn-off-responses", i18n.prompts.turnOffResponsesBtn);
+                    survey_controller._submitBtn = activateButton("_submit-survey-form", i18n.prompts.submitBtn);
+                    survey_controller._clearBtn = activateButton("_clear-survey-form", i18n.prompts.clearBtn);
+                    survey_controller._nextToDoBtn = activateButton("_goto-next-todo-response-site", i18n.prompts.nextBtn);
+                    survey_controller._finishBtn = activateButton("_finish-survey-form", i18n.prompts.finishBtn);
+                    survey_controller._seeResponsesBtn = activateButton("_see-responses", i18n.prompts.seeResponsesBtn);
+                    survey_controller._nextResponseBtn = activateButton("_goto-next-response", i18n.prompts.nextResponseBtn);
+                    survey_controller._turnOffResponsesBtn = activateButton("_turn-off-responses", i18n.prompts.turnOffResponsesBtn);
 
                     // Done with setup
                     surveyControllerReady.resolve();

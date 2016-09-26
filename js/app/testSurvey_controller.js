@@ -105,17 +105,34 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             var controllerComponentsReady = $.Deferred();
 
             // Controls in test window
-            controller._activateButton("goto_location", i18n.prompts.goToResponses, null, {responses: {a: "a", b: "b"}});
+            controller._activateButton("_goto_location_1", i18n.prompts.goToResponses + " with 1");
+            $.subscribe("_goto_location_1", function () {
+                $.publish("goto_location",
+                    {responses: [{"geometry":{"x":-9812685,"y":5127560,"z":214,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":153,"surveyor":null,"slidename":"","heading":200,"tilt":71,"roll":0,"question1":"No","question2":"Disagree","z":null,"elevation":null,"comments":"Too built-up","z_m":null,"globalid":"{2B0FDE20-786A-4BFE-AFF0-87BA3602DCFF}"},"popupTemplate":null}]}
+                );
+            });
+            controller._activateButton("_goto_location_2", i18n.prompts.goToResponses + " with 2");
+            $.subscribe("_goto_location_2", function () {
+                $.publish("goto_location",
+                    {responses: [{"geometry":{"x":-9813047,"y":5126974,"z":218,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":122,"surveyor":null,"slidename":"","heading":51,"tilt":82,"roll":0,"question1":"No","question2":"Totally Disagree","z":null,"elevation":null,"comments":null,"z_m":null,"globalid":"{6F0AADCF-0DF4-47AE-89BE-CB81FF73483F}"},"popupTemplate":null},{"geometry":{"x":-9813040,"y":5126958,"z":218,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":129,"surveyor":null,"slidename":"","heading":31,"tilt":90,"roll":0,"question1":"No","question2":"Totally Disagree","z":null,"elevation":null,"comments":"blocks my view of the mountains","z_m":null,"globalid":"{D271BDF7-A337-4881-89E1-E1939358E271}"},"popupTemplate":null}]}
+                );
+            });
+            controller._activateButton("_goto_location_7", i18n.prompts.goToResponses + " with 7");
+            $.subscribe("_goto_location_7", function () {
+                $.publish("goto_location",
+                    {responses: [{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":159,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"Not sure","question2":"Indifferent","z":null,"elevation":null,"comments":null,"z_m":null,"globalid":"{007CDE47-D579-4CA4-BBF6-9A83A8BF0E72}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":105,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"Yes","question2":"Totally agree","z":null,"elevation":null,"comments":"ok","z_m":null,"globalid":"{C830C706-8E69-409D-8722-C8A5D5E8C217}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":139,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"No","question2":"Indifferent","z":null,"elevation":null,"comments":null,"z_m":null,"globalid":"{B0714EF1-C161-4593-9510-B6D47F5A5189}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":142,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"Not sure","question2":"Indifferent","z":null,"elevation":null,"comments":null,"z_m":null,"globalid":"{2D857B95-70FC-4BA1-A1CF-27A7B8E4F9EB}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":152,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"Yes","question2":"Agree","z":null,"elevation":null,"comments":"good corridor","z_m":null,"globalid":"{27843509-5845-4338-A1CC-25BBEDB8E0A2}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":156,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"No","question2":"Agree","z":null,"elevation":null,"comments":";laksdfj;","z_m":null,"globalid":"{A279AA9F-E9C8-4136-B257-74450E4EBA81}"},"popupTemplate":null},{"geometry":{"x":-9813257,"y":5126969,"z":268,"spatialReference":{"wkid":102100,"latestWkid":3857}},"symbol":null,"attributes":{"objectid":163,"surveyor":null,"slidename":"Slide 2","heading":82,"tilt":71,"roll":0,"question1":"Yes","question2":null,"z":null,"elevation":null,"comments":null,"z_m":null,"globalid":"{EB9A5738-EFE1-4677-87E3-7CD300DACA3E}"},"popupTemplate":null}]}
+                );
+            });
 
             // Monitoring in test window
             $.subscribe("request-signOut", controller._logSubscribedEvent);
-            $.subscribe("submit-survey-form", controller._logSubscribedEvent);
-            $.subscribe("clear-survey-form", controller._logSubscribedEvent);
-            $.subscribe("goto-next-todo-response-site", controller._logSubscribedEvent);
-            $.subscribe("finish-survey-form", controller._logSubscribedEvent);
-            $.subscribe("see-responses", controller._logSubscribedEvent);
-            $.subscribe("goto-next-response", controller._logSubscribedEvent);
-            $.subscribe("turn-off-responses", controller._logSubscribedEvent);
+            $.subscribe("_submit-survey-form", controller._logSubscribedEvent);
+            $.subscribe("_clear-survey-form", controller._logSubscribedEvent);
+            $.subscribe("_goto-next-todo-response-site", controller._logSubscribedEvent);
+            $.subscribe("_finish-survey-form", controller._logSubscribedEvent);
+            $.subscribe("_see-responses", controller._logSubscribedEvent);
+            $.subscribe("_goto-next-response", controller._logSubscribedEvent);
+            $.subscribe("_turn-off-responses", controller._logSubscribedEvent);
 
             $.subscribe("goto_location", controller._logSubscribedEvent);
             $.subscribe("signedIn-user", controller._logSubscribedEvent);
@@ -140,6 +157,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly,
                     !controller._config.featureSvcParams.canBeUpdated);
+                controller._config.appParams.numResponseSites =
+                    controller._toNumber(controller._config.appParams.numresponsesites, 2);
 
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
@@ -157,6 +176,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     $.subscribe("signedIn-user", function () {
                         survey_controller.launch();
                         $.publish("show-newSurvey");
+                    });
+
+                    controller._activateButton("_nav_clear", "Nav clear");
+                    $.subscribe("_nav_clear", function () {
+                        survey_controller.resetSurvey();
                     });
 
                     // Done with setup
@@ -237,6 +261,36 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             return defaultValue;
         },
 
+        /** Normalizes a number value.
+         * @param {number|string} numValue A number that is
+         *        returned directly or a string that is
+         *        attempted as a number; if neither a
+         *        a number or a usable string, falls back to
+         *        defaultValue
+         * @param {boolean} [defaultValue] A number
+         *        that is returned if numValue can't be
+         *        used; if not defined, 0 is returned
+         * @memberOf js.LGObject#
+         */
+        _toNumber: function (numValue, defaultValue) {
+            // Shortcut number
+            if (typeof numValue === "number") {
+                return numValue;
+            }
+
+            // Handle a non-number
+            numValue = parseFloat(numValue);
+            if (!isNaN(numValue)) {
+                return numValue;
+            }
+
+            // Fall back to default
+            if (defaultValue === undefined) {
+                return 0;
+            }
+            return defaultValue;
+        },
+
         /**
          * Completes text setup of a button and sets its click event to publish the id of the button.
          * @param {string} id - Id of button to modify
@@ -282,7 +336,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
         _logSubscribedEvent: function (evt, data) {
             var dataAsString = data ? JSON.stringify(data) : "";
             if (dataAsString.length > 50) {
-                dataAsString = dataAsString.substr(0, 50) + "...";
+                dataAsString = dataAsString.substr(0, 100) + "...";
             }
             controller._prependToLog(evt.type + " " + dataAsString);
         },
