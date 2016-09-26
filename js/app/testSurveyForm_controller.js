@@ -36,7 +36,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
 
         _config: {},
         _logNum: 0,
-        _isReadOnly: false,
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -140,17 +139,14 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
 
                 controller._activateButton("_set-form-readOnly");
                 $.subscribe("_set-form-readOnly", function () {
-                    controller._isReadOnly = !controller._isReadOnly
-                    survey.setFormReadOnly(controller._isReadOnly);
-                    if (controller._isReadOnly) {
-                        $("#_set-form-readOnly").addClass("btn-highlight");
-                    } else {
-                        $("#_set-form-readOnly").removeClass("btn-highlight");
-                    }
+                    controller._config.appParams.readonly = !controller._config.appParams.readonly;
+                    controller._echoReadOnlyState();
+                    survey.setFormReadOnly(controller._config.appParams.readonly);
                 });
 
                 // Start with a fresh survey form for newly-signed-in user
                 $.subscribe("signedIn-user", function () {
+                    controller._echoReadOnlyState();
                     survey.createSurveyForm($("#surveyContainer")[0],
                         controller._config.appParams._surveyDefinition, controller._config.appParams.readonly);
                 });
@@ -182,6 +178,14 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        _echoReadOnlyState: function () {
+            if (controller._config.appParams.readonly) {
+                $("#_set-form-readOnly").addClass("btn-highlight");
+            } else {
+                $("#_set-form-readOnly").removeClass("btn-highlight");
+            }
+        },
 
         _loadCSS: function (url) {
             var stylesheet = document.createElement("link");
