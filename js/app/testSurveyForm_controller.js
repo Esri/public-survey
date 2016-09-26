@@ -68,8 +68,10 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                         if (controller._config.appParams.surveydesc) {
                             $.getJSON(controller._config.appParams.surveydesc + ".json",
                                 function (surveyDesc) {
+                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
                                     controller._config.featureSvcParams.popupDescription = surveyDesc.description;
                                     controller._config.featureSvcParams.fields = surveyDesc.fields;
+                                    controller._config.featureSvcParams.fill = surveyDesc.fill;
                                     controllerReady.resolve();
                                 }
                             ).fail(
@@ -127,17 +129,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                     survey.clearForm();
                 });
 
-                controller._activateButton("fill-form");
-                $.subscribe("fill-form", function () {
-                    var values = {
-                        "question1": "oui",
-                        "question2": "peutêtre",
-                        "question3": "non",
-                        //"question4": "4",
-                        "question5": "q. 5",
-                        "question6": "question 6"
-                    };
-                    survey.fillInForm(values);
                 });
 
                 // Start with a fresh survey form for newly-signed-in user

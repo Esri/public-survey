@@ -1,6 +1,18 @@
 {
     "canBeUpdated": true,
-    "description": "<div><p>Title/subtitle</p><p>Question 1: button {question1} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png} {button}</p><p>Question 2: list {question2} {list} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png}</p><p>Question 3: dropdown {question3} {dropdown}</p><p>Question 4: number {question4} {number}</p><p>Question 5: short text {question5} {text}</p><p>Question 6: long text {question6} {text}</p></div>",
+    "description": "<div><p>This is a subtitle</p><p>This question uses buttons {question1} {button}</p><p>This question uses a list {question2} {list}</p><p>This question uses a dropdown {question3} {dropdown}</p><p>This question requests a number {question4} {number}</p><p>This question requests text &lt; 32 chars {question5} {text}</p><p>This question requests text &ge; 32 chars {question6} {text}</p><p>If policy is 'allImportant', this question is required because its field is not nullable {question7} {text}</p><p>This question is read-only because its field is not editable {question8} {text}</p><p>Any question can have an image between the question and the input {question9} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png} {text}</p><p>Or a question can have an image after the input {question10} {text} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png}</p></div>",
+    "fill": {
+        "question1": "yes",
+        "question2": "maybe",
+        "question3": "no",
+        "question4": 4,
+        "question5": "q. 5",
+        "question6": "question 6",
+        "question7": "question 7",
+        "question8": "question 8",
+        "question9": "question 9",
+        "question10": "question 10"
+    },
     "fields": [{
         "name": "objectid",
         "type": "esriFieldTypeOID",
@@ -52,16 +64,16 @@
         "alias": "Question #1",
         "domain": {
             "type": "codedValue",
-            "name": "OuiPeNon",
+            "name": "YesMaybeNo",
             "codedValues": [{
-                "name": "Oui",
-                "code": "oui"
+                "name": "Yes",
+                "code": "yes"
             }, {
-                "name": "Peut être",
-                "code": "peutêtre"
+                "name": "Maybe",
+                "code": "maybe"
             }, {
-                "name": "Non",
-                "code": "non"
+                "name": "No",
+                "code": "no"
             }]
         },
         "editable": true,
@@ -73,16 +85,16 @@
         "alias": "Question #2",
         "domain": {
             "type": "codedValue",
-            "name": "OuiPeNon",
+            "name": "YesMaybeNo",
             "codedValues": [{
-                "name": "Oui",
-                "code": "oui"
+                "name": "Yes",
+                "code": "yes"
             }, {
-                "name": "Peut être",
-                "code": "peutêtre"
+                "name": "Maybe",
+                "code": "maybe"
             }, {
-                "name": "Non",
-                "code": "non"
+                "name": "No",
+                "code": "no"
             }]
         },
         "editable": true,
@@ -94,16 +106,16 @@
         "alias": "Question #3",
         "domain": {
             "type": "codedValue",
-            "name": "OuiPeNon",
+            "name": "YesMaybeNo",
             "codedValues": [{
-                "name": "Oui",
-                "code": "oui"
+                "name": "Yes",
+                "code": "yes"
             }, {
-                "name": "Peut être",
-                "code": "peutêtre"
+                "name": "Maybe",
+                "code": "maybe"
             }, {
-                "name": "Non",
-                "code": "non"
+                "name": "No",
+                "code": "no"
             }]
         },
         "editable": true,
@@ -133,6 +145,38 @@
         "editable": true,
         "nullable": true,
         "length": 100
+    }, {
+        "name": "question7",
+        "type": "esriFieldTypeString",
+        "alias": "Question #7",
+        "domain": null,
+        "editable": true,
+        "nullable": false,
+        "length": 31
+    }, {
+        "name": "question8",
+        "type": "esriFieldTypeString",
+        "alias": "Question #8",
+        "domain": null,
+        "editable": false,
+        "nullable": true,
+        "length": 32
+    }, {
+        "name": "question9",
+        "type": "esriFieldTypeString",
+        "alias": "Question #9",
+        "domain": null,
+        "editable": true,
+        "nullable": true,
+        "length": 5
+    }, {
+        "name": "question10",
+        "type": "esriFieldTypeString",
+        "alias": "Question #10",
+        "domain": null,
+        "editable": true,
+        "nullable": true,
+        "length": 10
     }, {
         "name": "z",
         "type": "esriFieldTypeDouble",
