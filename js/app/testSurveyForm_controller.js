@@ -130,10 +130,16 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 });
 
                 if (controller._config.featureSvcParams.fill) {
-                    $("#_fill-form").removeClass("absent").addClass("present");
+                    $("#_fill-form").removeClass("absent");
                     controller._activateButton("_fill-form");
                     $.subscribe("_fill-form", function () {
                         survey.fillInForm(controller._config.featureSvcParams.fill);
+                    });
+
+                    $("#_get-form-answers").removeClass("absent");
+                    controller._activateButton("_get-form-answers");
+                    $.subscribe("_get-form-answers", function (evt) {
+                        controller._logSubscribedEvent(evt, survey.getFormAnswers());
                     });
                 }
 
