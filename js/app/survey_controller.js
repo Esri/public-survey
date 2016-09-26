@@ -165,23 +165,23 @@ define([
                             $.publish("completed-response-site", survey_controller._iCurrentResponseSite);
                         }
 
-                        survey_controller._resetSurvey();
+                        survey_controller.resetSurvey();
                     });
 
-                    $.subscribe("clear-survey-form", function () {
-                        survey_controller._resetSurvey();
+                    $.subscribe("_clear-survey-form", function () {
+                        survey_controller.resetSurvey();
                     });
 
                     $.subscribe("current-response-site", function (ignore, siteInfo) {
                         if (!siteInfo || siteInfo.set === undefined) {
                             survey_controller._iCurrentResponseSite = undefined;
                             survey_controller._responses = [];
-                            survey_controller._resetSurvey();
+                            survey_controller.resetSurvey();
                         } else {
                             survey_controller._iCurrentResponseSite = siteInfo.set;
                             if (!siteInfo.fromCamera) {
                                 survey_controller._responses = [];
-                                survey_controller._resetSurvey();
+                                survey_controller.resetSurvey();
                             }
                         }
                     });
@@ -229,15 +229,15 @@ define([
                         survey_controller._showResponses();
                     });
 
-                    $.subscribe("turn-off-responses", function () {
-                        survey_controller._resetSurvey();
+                    $.subscribe("_turn-off-responses", function () {
+                        survey_controller.resetSurvey();
                     });
 
                     $.subscribe("finish-survey-form", function () {
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
                         // Hide survey form
-                        survey_controller._resetSurvey();
+                        survey_controller.resetSurvey();
                         survey_controller._showDomItem(survey_controller._container, DISEMBODIED);
                     });
 
@@ -318,7 +318,7 @@ define([
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Show survey form
-            survey_controller._resetSurvey();
+            survey_controller.resetSurvey();
             survey_controller._showDomItem(survey_controller._container, ENABLED);
             survey_controller._showSurvey(true);
         },
@@ -330,38 +330,12 @@ define([
 
             if (survey_controller._responses.length > 0) {
                 survey_controller._iCurrentResponse = 0;
-                survey_controller._resetSurvey();
+                survey_controller.resetSurvey();
                 survey_controller._showCurrentResponseLocation();
             }
         },
 
-        //----- Procedures meant for internal module use only --------------------------------------------------------//
-
-        _hideSurvey: function () {
-            $("#skipBtn").fadeTo(100, 0.0).blur();
-            $("#submitBtn").fadeTo(100, 0.0).blur();
-            $("#surveyContainer").fadeTo(100, 0.0);
-        },
-
-        _showSurvey: function (isReadOnly) {
-            $("#surveyContainer").fadeTo(500, (isReadOnly
-                ? 0.75
-                : 1.0));
-            $("#skipBtn").fadeTo(500, 1.0);
-            if (!isReadOnly) {
-                $("#submitBtn").fadeTo(500, 1.0);
-            }
-        },
-
-        _accumulate: function(sum, num) {
-            return sum + num;
-        },
-
-        _numRemainingToDo: function () {
-            return survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
-        },
-
-        _resetSurvey: function () {
+        resetSurvey: function () {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Set initial action buttons states
@@ -398,6 +372,32 @@ define([
 
             survey.setFormReadOnly(false);
             survey.clearForm();
+        },
+
+        //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        _hideSurvey: function () {
+            $("#skipBtn").fadeTo(100, 0.0).blur();
+            $("#submitBtn").fadeTo(100, 0.0).blur();
+            $("#surveyContainer").fadeTo(100, 0.0);
+        },
+
+        _showSurvey: function (isReadOnly) {
+            $("#surveyContainer").fadeTo(500, (isReadOnly
+                ? 0.75
+                : 1.0));
+            $("#skipBtn").fadeTo(500, 1.0);
+            if (!isReadOnly) {
+                $("#submitBtn").fadeTo(500, 1.0);
+            }
+        },
+
+        _accumulate: function(sum, num) {
+            return sum + num;
+        },
+
+        _numRemainingToDo: function () {
+            return survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
         },
 
         _showResponses: function () {
