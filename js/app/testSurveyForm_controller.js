@@ -36,6 +36,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
 
         _config: {},
         _logNum: 0,
+        _isReadOnly: false,
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -124,11 +125,28 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 // Controls in test window
-                controller._activateButton("clear-form");
-                $.subscribe("clear-form", function () {
+                controller._activateButton("_clear-form");
+                $.subscribe("_clear-form", function () {
                     survey.clearForm();
                 });
 
+                if (controller._config.featureSvcParams.fill) {
+                    $("#_fill-form").removeClass("absent").addClass("present");
+                    controller._activateButton("_fill-form");
+                    $.subscribe("_fill-form", function () {
+                        survey.fillInForm(controller._config.featureSvcParams.fill);
+                    });
+                }
+
+                controller._activateButton("_set-form-readOnly");
+                $.subscribe("_set-form-readOnly", function () {
+                    controller._isReadOnly = !controller._isReadOnly
+                    survey.setFormReadOnly(controller._isReadOnly);
+                    if (controller._isReadOnly) {
+                        $("#_set-form-readOnly").addClass("btn-highlight");
+                    } else {
+                        $("#_set-form-readOnly").removeClass("btn-highlight");
+                    }
                 });
 
                 // Start with a fresh survey form for newly-signed-in user
