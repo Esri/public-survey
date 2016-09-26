@@ -66,6 +66,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // Template options
                 prepend: true,
                 complete: function () {
+                    // Adjust config parameters as needed
+                    if (controller._config.appParams.brandingicon) {
+                        controller._config.appParams.brandingIcon = controller._config.appParams.brandingicon;
+                    }
+
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
@@ -75,9 +80,9 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                         if (controller._config.appParams.surveydesc) {
                             $.getJSON(controller._config.appParams.surveydesc + ".json",
                                 function (surveyDesc) {
+                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
                                     controller._config.featureSvcParams.popupDescription = surveyDesc.description;
                                     controller._config.featureSvcParams.fields = surveyDesc.fields;
-                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
                                     controllerReady.resolve();
                                 }
                             ).fail(
@@ -154,9 +159,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
 
             require(["app/survey", "app/survey_controller"], function(survey, survey_controller) {
                 // Adjust config parameters as needed
-                controller._config.appParams.readonly =
-                    controller._toBoolean(controller._config.appParams.readonly,
-                    !controller._config.featureSvcParams.canBeUpdated);
                 controller._config.appParams.numResponseSites =
                     controller._toNumber(controller._config.appParams.numresponsesites, 2);
 
@@ -178,8 +180,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                         $.publish("show-newSurvey");
                     });
 
-                    controller._activateButton("_nav_clear", "Nav clear");
-                    $.subscribe("_nav_clear", function () {
+                    controller._activateButton("_nav_reset");
+                    $.subscribe("_nav_reset", function () {
                         survey_controller.resetSurvey();
                     });
 
