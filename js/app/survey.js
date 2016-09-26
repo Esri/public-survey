@@ -139,6 +139,7 @@ define([], function () {
 
         setFormReadOnly: function (isReadOnly) {
             $.each(survey._questions, function (iQuestion, question) {
+                var value;
                 if (question.surveyFieldStyle === "button") {
                     $.each(question.surveyValues, function (i, uiValue) {
                         $("#q" + (iQuestion + 1) + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
@@ -150,7 +151,13 @@ define([], function () {
                     });
 
                 } else {
-                    $("#q" + (iQuestion + 1)).attr("disabled", isReadOnly);
+                    value = $("#q" + (iQuestion + 1)).attr("disabled", isReadOnly);
+                    // Emulate disabled appearance; bootstrap does this for buttons and lists
+                    if (isReadOnly) {
+                        value.addClass("disabled-appearance");
+                    } else {
+                        value.removeClass("disabled-appearance");
+                    }
                 }
             });
         },

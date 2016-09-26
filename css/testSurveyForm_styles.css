@@ -63,6 +63,10 @@
 .btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus, input[type="radio"]:focus {
     outline: none;
 }
+.btn-highlight {
+    color: #fff;
+    background-color: #007ac2;
+}
 .checkbox, .radio {
     margin-top: 0px;
 }
@@ -119,6 +123,12 @@
 .image-after {
     padding-top: 4px;
     max-width: 100%;
+}
+.disabled-appearance {
+    pointer-events: none;
+    cursor: not-allowed;
+    filter: alpha(opacity=65);
+    opacity: 0.65;
 }
 
 /* ---------- buttons ---------- */
@@ -277,10 +287,6 @@ img {
 .help-icon {
     cursor: pointer;
     z-index: 10;
-}
-.skip-button {
-    font-size: 14px;
-    border: none;
 }
 .dropdown.open>span.lg-a {
     background-color: #e2f1fb;
