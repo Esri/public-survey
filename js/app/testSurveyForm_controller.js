@@ -187,9 +187,9 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
 
         _echoReadOnlyState: function () {
             if (controller._config.appParams.readonly) {
-                $("#_set-form-readOnly").addClass("btn-highlight");
+                $("#_set-form-readOnly").addClass("highlight-btn");
             } else {
-                $("#_set-form-readOnly").removeClass("btn-highlight");
+                $("#_set-form-readOnly").removeClass("highlight-btn");
             }
         },
 

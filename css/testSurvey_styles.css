@@ -63,10 +63,6 @@
 .btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus, input[type="radio"]:focus {
     outline: none;
 }
-.btn-highlight {
-    color: #fff;
-    background-color: #007ac2;
-}
 .checkbox, .radio {
     margin-top: 0px;
 }
