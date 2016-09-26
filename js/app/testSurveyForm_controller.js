@@ -55,23 +55,20 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 // Template options
                 prepend: true,
                 complete: function () {
-                    // Adjust config parameters as needed
-                    controller._config.appParams.readonly =
-                        controller._toBoolean(controller._config.appParams.readonly, false);
 
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
                         controllerReady.resolve();
                     }, function () {
-                        // Attempt to load the survey form description
+                        // As a backup, attempt to load the survey form description
                         if (controller._config.appParams.surveydesc) {
                             $.getJSON(controller._config.appParams.surveydesc + ".json",
                                 function (surveyDesc) {
                                     controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
                                     controller._config.featureSvcParams.popupDescription = surveyDesc.description;
                                     controller._config.featureSvcParams.fields = surveyDesc.fields;
-                                    controller._config.featureSvcParams.fill = surveyDesc.fill;
+                                    controller._config.featureSvcParams.test = surveyDesc.test;
                                     controllerReady.resolve();
                                 }
                             ).fail(
@@ -100,40 +97,26 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
         launch: function () {
             var controllerComponentsReady = $.Deferred();
 
-            // Controls in test window
-            controller._activateButton("request-signOut");
-
-            // Monitoring in test window
-            $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
-            $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
-            $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
-            $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
-            $.subscribe("signedIn-user", controller._logSubscribedEvent);
-            $.subscribe("signedOut-user", controller._logSubscribedEvent);
-
             require(["app/survey"], function(survey) {
-                // Prepare the survey
-                controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
-                    controller._config.featureSvcParams.popupDescription,
-                    controller._config.featureSvcParams.fields,
-                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
-                );
-                controller._prependToLog("Survey definition created");
-                controller._prependToLog("Survey question policy: " + controller._config.appParams.policy);
 
-                controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
+                // ----- Testing -------------------------------------------------------------------------------------//
+                // Adjust config parameters as needed
+                controller._config.appParams.readonly =
+                    controller._toBoolean(controller._config.appParams.readonly, false);
 
-                // Controls in test window
+                // Controls
+                controller._activateButton("request-signOut");
+
                 controller._activateButton("_clear-form");
                 $.subscribe("_clear-form", function () {
                     survey.clearForm();
                 });
 
-                if (controller._config.featureSvcParams.fill) {
+                if (controller._config.featureSvcParams.test) {
                     $("#_fill-form").removeClass("absent");
                     controller._activateButton("_fill-form");
                     $.subscribe("_fill-form", function () {
-                        survey.fillInForm(controller._config.featureSvcParams.fill);
+                        survey.fillInForm(controller._config.featureSvcParams.test);
                     });
 
                     $("#_get-form-answers").removeClass("absent");
@@ -149,6 +132,26 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                     controller._echoReadOnlyState();
                     survey.setFormReadOnly(controller._config.appParams.readonly);
                 });
+
+                // Monitoring pub/subs
+                $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
+                $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
+                $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
+                $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
+                $.subscribe("signedIn-user", controller._logSubscribedEvent);
+                $.subscribe("signedOut-user", controller._logSubscribedEvent);
+                // ---------------------------------------------------------------------------------------------------//
+
+                // Prepare the survey
+                controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
+                    controller._config.featureSvcParams.popupDescription,
+                    controller._config.featureSvcParams.fields,
+                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
+                );
+                controller._prependToLog("Survey definition created");
+                controller._logSubscribedEvent("Survey question policy:", controller._config.appParams.policy);
+
+                controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 // Start with a fresh survey form for newly-signed-in user
                 $.subscribe("signedIn-user", function () {
@@ -289,7 +292,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
             if (dataAsString.length > 50) {
                 dataAsString = dataAsString.substr(0, 50) + "...";
             }
-            controller._prependToLog(evt.type + " " + dataAsString);
+            controller._prependToLog(((evt && evt.type) || evt || "") + " " + dataAsString);
         },
 
         /**
