@@ -207,7 +207,7 @@ define([], function () {
                     if (typeof iQuestion === "number") {
                         var question = survey._questions[iQuestion];
 
-                        console.log("#" + question.surveyId + " field " + property + ": " + JSON.stringify(value));//???
+                        //console.log("#" + question.surveyId + " field " + property + ": " + JSON.stringify(value));//???
                         if (question.surveyFieldStyle === "button") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
