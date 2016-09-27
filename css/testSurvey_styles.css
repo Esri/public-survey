@@ -284,6 +284,9 @@ img {
     cursor: pointer;
     z-index: 10;
 }
+#survey {
+    width: 100%;
+}
 .dropdown.open>span.lg-a {
     background-color: #e2f1fb;
 }

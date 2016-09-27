@@ -278,9 +278,8 @@ img {
     cursor: pointer;
     z-index: 10;
 }
-.skip-button {
-    font-size: 14px;
-    border: none;
+#survey {
+    width: 100%;
 }
 .dropdown.open>span.lg-a {
     background-color: #e2f1fb;
