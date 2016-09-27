@@ -123,6 +123,9 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // Adjust config parameters as needed
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly, false);
+                if (controller._config.appParams.showseeresponsesbutton) {
+                    controller._config.appParams.showSeeResponsesButton = controller._config.appParams.showseeresponsesbutton;
+                }
                 if (controller._config.appParams.brandingicon) {
                     controller._config.appParams.brandingIcon = controller._config.appParams.brandingicon;
                 }
@@ -135,29 +138,31 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     survey_controller.resetSurvey();
                 });
 
-                function assembleButton(num) {
-                    var numFlag = num < 0 ? undefined : num;
-                    controller._createButton(testButtonsContainer, "_set_site_" + numFlag, "Go to site " + numFlag);
-                    $.subscribe("_set_site_" + numFlag, function () {
-                        $.publish("current-response-site", numFlag);
-                        $("#_set_site_" + numFlag).addClass("highlight-btn").siblings().removeClass("highlight-btn");
-                        controller._iCurrentResponseSite = numFlag;
-                    });
-                    if (numFlag === controller._iCurrentResponseSite) {
-                        $("#_set_site_" + numFlag).addClass("highlight-btn");
+                if (controller._config.appParams.numResponseSites > 0) {
+                    function assembleAtSiteButton(num) {
+                        var siteNum = num < 0 ? undefined : num;
+                        controller._createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
+                        $.subscribe("_at_site_" + siteNum, function () {
+                            $.publish("update-current-response-site", siteNum);
+                            $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                            controller._iCurrentResponseSite = siteNum;
+                        });
+                        if (siteNum === controller._iCurrentResponseSite) {
+                            $("#_at_site_" + siteNum).addClass("highlight-btn");
+                        }
                     }
-                }
-                for (num = -1; num < controller._config.appParams.numResponseSites; ++num) {
-                    assembleButton(num);
+                    for (num = -1; num < controller._config.appParams.numResponseSites; ++num) {
+                        assembleAtSiteButton(num);
+                    }
                 }
 
                 if (controller._config.featureSvcParams.test) {
                     $.each(controller._config.featureSvcParams.test, function (indexInArray, testCase) {
                         num = testCase.responses[0].num;
                         controller._createButton(testButtonsContainer,
-                            "_goto_location_" + num, i18n.prompts.goToResponses + " with " + num);
-                        $.subscribe("_goto_location_" + num, function () {
-                            $.publish("goto_location", testCase);
+                            "_current_responses_set_" + num, "Set " + num + " curr resp.");
+                        $.subscribe("_current_responses_set_" + num, function () {
+                            $.publish("update-current-responses-set", testCase);
                         });
                     });
                 }
@@ -170,8 +175,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 $.subscribe("_see-responses", controller._logSubscribedEvent);
                 $.subscribe("_submit-survey-form", controller._logSubscribedEvent);
                 $.subscribe("_turn-off-responses", controller._logSubscribedEvent);
-                $.subscribe("current-response-site", controller._logSubscribedEvent);
-                $.subscribe("goto_location", controller._logSubscribedEvent);
+                $.subscribe("update-current-response-site", controller._logSubscribedEvent);
+                $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
                 $.subscribe("request-signOut", controller._logSubscribedEvent);
                 $.subscribe("show-newSurvey", controller._logSubscribedEvent);
                 $.subscribe("show-noSurveys", controller._logSubscribedEvent);

@@ -119,7 +119,7 @@ define([
         _cameraFields: null,
         _responseSitesToDo: [],
         _iCurrentResponseSite: undefined,
-        _responses: [],
+        _current_responses: [],
         _iCurrentResponse: 0,
         _numSubmissions: 0,
         _surveyInProgress: false,
@@ -176,7 +176,6 @@ define([
 
                     survey_controller._nextToDoBtn = activateButton("_goto_next_todo_response_site", i18n.prompts.nextBtn);
                     $.subscribe("_goto_next_todo_response_site", function () {
-console.log("_goto_next_todo_response_site");/*
                         var iToDo;
 
                         if (survey_controller._iCurrentResponseSite !== undefined) {
@@ -204,7 +203,7 @@ console.log("_goto_next_todo_response_site");/*
                                 }
                             })
                         }
-*/                  });
+                    });
 
                     survey_controller._finishBtn = activateButton("_finish_survey_form", i18n.prompts.finishBtn);
                     $.subscribe("_finish_survey_form", function () {
@@ -215,24 +214,24 @@ console.log("_goto_next_todo_response_site");/*
                         survey_controller._showState($("#survey")[0], DISEMBODIED);
                     });
 
-                    survey_controller._seeResponsesBtn = activateButton("_see_responses", i18n.prompts.seeResponsesBtn);
-                    $.subscribe("_see_responses", survey_controller._showPageTwo);
+                    survey_controller._seeResponsesBtn = activateButton("_see_current_responses", i18n.prompts.seeResponsesBtn);
+                    $.subscribe("_see_current_responses", survey_controller._showPageTwo);
 
                     survey_controller._nextResponseBtn = activateButton("_goto_next_response", i18n.prompts.nextResponseBtn);
                     $.subscribe("_goto_next_response", function () {
-console.log("_goto_next_response");/*
                         survey_controller._iCurrentResponse += 1;
-                        if (survey_controller._iCurrentResponse >= survey_controller._responses.length) {
+                        if (survey_controller._iCurrentResponse >= survey_controller._current_responses.length) {
                             survey_controller._iCurrentResponse = 0;
                         }
+                        console.log("Response #" + survey_controller._iCurrentResponse);
 
-                        survey_controller._showCurrentResponse();
-*/                  });
+//                        survey_controller._showCurrentResponse();
+                    });
 
-                    survey_controller._turnOffResponsesBtn = activateButton("_turn_off_responses", i18n.prompts.turnOffResponsesBtn);
-                    $.subscribe("_turn_off_responses", survey_controller._showPageOne);
+                    survey_controller._turnOffResponsesBtn = activateButton("_turn_off_current_responses", i18n.prompts.turnOffResponsesBtn);
+                    $.subscribe("_turn_off_current_responses", survey_controller._showPageOne);
 
-                    //----- UI updating ------------------------------------------------------------------------------//
+                    //----- UI and information updating --------------------------------------------------------------//
                     $.subscribe("signedIn-user", function (ignore, loginInfo) {
                         survey_controller._updateUser(loginInfo);
                         survey_controller._launch();
@@ -271,28 +270,19 @@ console.log("_goto_next_response");/*
                         survey_controller._updatePageOneActions();
                     });
 
+                    // Update what we know about the current response site (for submitting surveys),
+                    // current responses set (for viewing survey results)
+                    $.subscribe("update-current-response-site", function (ignore, siteNum) {
+                        survey_controller._iCurrentResponseSite = siteNum;
+                        survey_controller._updatePageOneActions();
+                    });
 
-
-
-
-
-
-                    // Handle actions
-
-                    $.subscribe("current-response-site", function (ignore, siteInfo) {
-console.log("current-response-site");/*
-                        if (!siteInfo || siteInfo.set === undefined) {
-                            survey_controller._iCurrentResponseSite = undefined;
-                            survey_controller._responses = [];
-                            survey_controller.resetSurvey();
-                        } else {
-                            survey_controller._iCurrentResponseSite = siteInfo.set;
-                            if (!siteInfo.fromCamera) {
-                                survey_controller._responses = [];
-                                survey_controller.resetSurvey();
-                            }
-                        }
-*/                  });
+                    $.subscribe("update-current-responses-set", function (ignore, carrier) {
+                        survey_controller._current_responses = carrier.responses;
+                        survey_controller._iCurrentResponse = 0;
+                        survey_controller._updatePageOneActions();
+                        survey_controller._updatePageTwoActions();
+                    });
 
 
 
@@ -331,10 +321,6 @@ console.log("show-newSurvey");/*
                         });
                     });
 
-                    $.subscribe("goto_location", function (ignore, carrier) {
-                        // Start the responses display
-//???                   survey_controller._surveyController.gotoLocation(carrier.responses);
-                    });
 */
 
 
@@ -385,9 +371,9 @@ console.log("show-newSurvey");/*
         gotoLocation: function (responses) {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
-            survey_controller._responses = responses || [];
+            survey_controller._current_responses = responses || [];
 
-            if (survey_controller._responses.length > 0) {
+            if (survey_controller._current_responses.length > 0) {
                 survey_controller._iCurrentResponse = 0;
                 survey_controller.resetSurvey();
                 survey_controller._showCurrentResponseLocation();
@@ -408,7 +394,7 @@ console.log("show-newSurvey");/*
 
             // Clear user-specific status
             survey_controller._iCurrentResponseSite = undefined;
-            survey_controller._responses = [];
+            survey_controller._current_responses = [];
             survey_controller._iCurrentResponse = 0;
             survey_controller._numSubmissions = 0;
             survey_controller._surveyInProgress = false;
@@ -444,11 +430,15 @@ console.log("show-newSurvey");/*
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0,
                 enableIfNotInProgress;
 
+            // Submit button
             survey_controller._showState(survey_controller._submitBtn,
                 (survey_controller._policySatisfied ? ENABLED : DISABLED));
+
+            // Clear button
             survey_controller._showState(survey_controller._clearBtn,
                 (survey_controller._surveyInProgress ? ENABLED : DISABLED));
 
+            // Next [site] and Finish buttons
             enableIfNotInProgress = survey_controller._surveyInProgress ? DISABLED : ENABLED;
             if (survey_controller._config.appParams.numResponseSites > 0) {
                 var remainingToDo = survey_controller._numRemainingToDo();
@@ -475,11 +465,10 @@ console.log("show-newSurvey");/*
                     (survey_controller._numSubmissions > 0 ? enableIfNotInProgress : DISEMBODIED));
             }
 
+            // See responses button
             survey_controller._showState(survey_controller._seeResponsesBtn,
-                (survey_controller._responses.length > 0 && survey_controller._config.appParams.showSeeResponsesButton ?
+                (survey_controller._current_responses.length > 0 && survey_controller._config.appParams.showSeeResponsesButton ?
                 ENABLED : DISEMBODIED));
-            survey_controller._showState(survey_controller._nextResponseBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._turnOffResponsesBtn, DISEMBODIED);
         },
 
         _showPageTwo: function () {
@@ -493,6 +482,13 @@ console.log("show-newSurvey");/*
         },
 
         _updatePageTwoActions: function () {
+            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+
+            // Next response button
+            // Turn off responses button
+            survey_controller._showState(survey_controller._nextResponseBtn,
+                (survey_controller._current_responses.length > 1 ? ENABLED : DISEMBODIED));
+//            survey_controller._showState(survey_controller._turnOffResponsesBtn, DISEMBODIED);
 
         },
 
@@ -604,7 +600,7 @@ console.log("show-newSurvey");/*
             survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
             survey_controller._showState(survey_controller._finishBtn, DISEMBODIED);
             survey_controller._showState(survey_controller._seeResponsesBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._nextResponseBtn, (survey_controller._responses.length > 1 ? ENABLED : DISEMBODIED));
+            survey_controller._showState(survey_controller._nextResponseBtn, (survey_controller._current_responses.length > 1 ? ENABLED : DISEMBODIED));
             survey_controller._showState(survey_controller._turnOffResponsesBtn, ENABLED);
 
             survey.setFormReadOnly(true);
@@ -615,14 +611,14 @@ console.log("show-newSurvey");/*
         },
 
         _showCurrentResponse: function () {
-            var values = survey_controller._responses[survey_controller._iCurrentResponse];
+            var values = survey_controller._current_responses[survey_controller._iCurrentResponse];
             survey.fillInForm(values);
 
             survey_controller._showCurrentResponseLocation();
         },
 
         _showCurrentResponseLocation: function () {
-            var values = survey_controller._responses[survey_controller._iCurrentResponse];
+            var values = survey_controller._current_responses[survey_controller._iCurrentResponse];
             if (values.attributes && values.geometry) {
                 var cameraOptions = {
                     position: values.geometry,
