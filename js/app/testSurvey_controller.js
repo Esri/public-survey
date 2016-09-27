@@ -173,10 +173,19 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 }
 
                 // Monitoring pub/subs
-                $.subscribe("update-current-response-site", controller._logSubscribedEvent);
+                $.subscribe("goto-response-site", function (evt, siteNum) {
+                    controller._logSubscribedEvent(evt, siteNum);
+                    $.publish("update-current-response-site", siteNum);
+                });
+                $.subscribe("update-current-response-site", function (evt, siteNum) {
+                    controller._logSubscribedEvent(evt, siteNum);
+                    $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                });
                 $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
                 $.subscribe("request-signOut", controller._logSubscribedEvent);
                 $.subscribe("submit-survey", controller._logSubscribedEvent);
+                $.subscribe("completed-response-site", controller._logSubscribedEvent);
+                $.subscribe("goto-camera-pos", controller._logSubscribedEvent);
                 $.subscribe("signedIn-user", controller._logSubscribedEvent);
                 $.subscribe("signedOut-user", controller._logSubscribedEvent);
                 $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
