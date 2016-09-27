@@ -260,11 +260,14 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
          * @private
          */
         _logSubscribedEvent: function (evt, data) {
-            var dataAsString = data !== undefined ? JSON.stringify(data) : "";
-            if (dataAsString.length > 50) {
-                dataAsString = dataAsString.substr(0, 50) + "...";
+            var logEntry, dataAsString = data !== undefined ? JSON.stringify(data) : "";
+            logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
+            console.log(logEntry);
+
+            if (logEntry.length > 50) {
+                logEntry = logEntry.substr(0, 100) + "...";
             }
-            controller._prependToLog(evt.type + " " + dataAsString);
+            controller._prependToLog(logEntry);
         },
 
         /**
