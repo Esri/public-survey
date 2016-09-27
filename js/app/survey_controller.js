@@ -208,13 +208,12 @@ console.log("_goto_next_todo_response_site");/*
 
                     survey_controller._finishBtn = activateButton("_finish_survey_form", i18n.prompts.finishBtn);
                     $.subscribe("_finish_survey_form", function () {
-console.log("_finish_survey_form");/*
                         var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
-                        // Hide survey form
-                        survey_controller.resetSurvey();
-                        survey_controller._showState(survey_controller._container, DISEMBODIED);
-*/                  });
+                        // Clear and hide survey form and action bars
+                        survey.clearForm();
+                        survey_controller._showState($("#survey")[0], DISEMBODIED);
+                    });
 
                     survey_controller._seeResponsesBtn = activateButton("_see_responses", i18n.prompts.seeResponsesBtn);
                     $.subscribe("_see_responses", survey_controller._showPageTwo);
@@ -234,13 +233,9 @@ console.log("_goto_next_response");/*
                     $.subscribe("_turn_off_responses", survey_controller._showPageOne);
 
                     //----- UI updating ------------------------------------------------------------------------------//
-                    // Set up a map to keep track of response sites; indicate that none has a survey completed for it
-                    survey_controller._responseSitesToDo = new Array(survey_controller._config.appParams.numResponseSites).fill(1);
-
                     $.subscribe("signedIn-user", function (ignore, loginInfo) {
                         survey_controller._updateUser(loginInfo);
-
-                        survey_controller._showPageOne();
+                        survey_controller._launch();
                     });
 
                     $("#userSignoutSelection").on("click", function () {
@@ -405,6 +400,25 @@ console.log("show-newSurvey");/*
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
 
+        _launch: function () {
+            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+
+            // Set up a map to keep track of response sites; indicate that none has a survey completed for it
+            survey_controller._responseSitesToDo = new Array(survey_controller._config.appParams.numResponseSites).fill(1);
+
+            // Clear user-specific status
+            survey_controller._iCurrentResponseSite = undefined;
+            survey_controller._responses = [];
+            survey_controller._iCurrentResponse = 0;
+            survey_controller._numSubmissions = 0;
+            survey_controller._surveyInProgress = false;
+            survey_controller._policySatisfied = false;
+
+            // Show the survey page and action buttons
+            survey_controller._showState($("#survey")[0], ENABLED);
+            survey_controller._showPageOne();
+        },
+
         _updateUser: function (loginInfo) {
             survey_controller._currentUser = loginInfo;
 
@@ -456,6 +470,7 @@ console.log("show-newSurvey");/*
                     survey_controller._showState(survey_controller._finishBtn, DISEMBODIED);
                 }
             } else {
+                survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
                 survey_controller._showState(survey_controller._finishBtn,
                     (survey_controller._numSubmissions > 0 ? enableIfNotInProgress : DISEMBODIED));
             }
@@ -549,6 +564,14 @@ console.log("show-newSurvey");/*
             }
         },
 
+        _accumulate: function(sum, num) {
+            return sum + num;
+        },
+
+        _numRemainingToDo: function () {
+            return survey_controller._responseSitesToDo.length === 0 ? 0 :
+                survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
+        },
 
 
 
@@ -570,14 +593,6 @@ console.log("show-newSurvey");/*
             if (!isReadOnly) {
                 $("#submitBtn").fadeTo(500, 1.0);
             }
-        },
-
-        _accumulate: function(sum, num) {
-            return sum + num;
-        },
-
-        _numRemainingToDo: function () {
-            return survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
         },
 
         _showResponses: function () {
@@ -724,4 +739,3 @@ console.log("show-newSurvey");/*
     };
     return survey_controller;
 });
-
