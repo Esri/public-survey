@@ -47,6 +47,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             id: "",
             canSubmit: true
         },
+        _iCurrentResponseSite: undefined,
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -117,6 +118,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             require(["app/survey", "app/survey_controller"], function(survey, survey_controller) {
 
                 // ----- Testing -------------------------------------------------------------------------------------//
+                var num, testButtonsContainer = $("#test_buttons");
+
                 // Adjust config parameters as needed
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly, false);
@@ -132,23 +135,30 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     survey_controller.resetSurvey();
                 });
 
+                function assembleButton(num) {
+                    var numFlag = num < 0 ? undefined : num;
+                    controller._createButton(testButtonsContainer, "_set_site_" + numFlag, "Go to site " + numFlag);
+                    $.subscribe("_set_site_" + numFlag, function () {
+                        $.publish("current-response-site", numFlag);
+                        $("#_set_site_" + numFlag).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                        controller._iCurrentResponseSite = numFlag;
+                    });
+                    if (numFlag === controller._iCurrentResponseSite) {
+                        $("#_set_site_" + numFlag).addClass("highlight-btn");
+                    }
+                }
+                for (num = -1; num < controller._config.appParams.numResponseSites; ++num) {
+                    assembleButton(num);
+                }
+
                 if (controller._config.featureSvcParams.test) {
-                    $("#_goto_location_1").removeClass("absent");
-                    controller._activateButton("_goto_location_1", i18n.prompts.goToResponses + " with " + controller._config.featureSvcParams.test["1"].label);
-                    $.subscribe("_goto_location_1", function () {
-                        $.publish("goto_location", controller._config.featureSvcParams.test["1"].responses);
-                    });
-
-                    $("#_goto_location_2").removeClass("absent");
-                    controller._activateButton("_goto_location_2", i18n.prompts.goToResponses + " with " + controller._config.featureSvcParams.test["2"].label);
-                    $.subscribe("_goto_location_2", function () {
-                        $.publish("goto_location", controller._config.featureSvcParams.test["2"].responses);
-                    });
-
-                    $("#_goto_location_3").removeClass("absent");
-                    controller._activateButton("_goto_location_3", i18n.prompts.goToResponses + " with " + controller._config.featureSvcParams.test["3"].label);
-                    $.subscribe("_goto_location_3", function () {
-                        $.publish("goto_location", controller._config.featureSvcParams.test["3"].responses);
+                    $.each(controller._config.featureSvcParams.test, function (indexInArray, testCase) {
+                        num = testCase.responses[0].num;
+                        controller._createButton(testButtonsContainer,
+                            "_goto_location_" + num, i18n.prompts.goToResponses + " with " + num);
+                        $.subscribe("_goto_location_" + num, function () {
+                            $.publish("goto_location", testCase);
+                        });
                     });
                 }
 
@@ -160,6 +170,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 $.subscribe("_see-responses", controller._logSubscribedEvent);
                 $.subscribe("_submit-survey-form", controller._logSubscribedEvent);
                 $.subscribe("_turn-off-responses", controller._logSubscribedEvent);
+                $.subscribe("current-response-site", controller._logSubscribedEvent);
                 $.subscribe("goto_location", controller._logSubscribedEvent);
                 $.subscribe("request-signOut", controller._logSubscribedEvent);
                 $.subscribe("show-newSurvey", controller._logSubscribedEvent);
@@ -183,16 +194,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 // Prepare and start the survey controller
-                survey_controller.init(controller._config, $("#sidebarContent")).then(function () {
-
-                    $.subscribe("signedIn-user", function () {
-                        survey_controller.launch();
-                        $.publish("show-newSurvey");
-                    });
-
-                    // Done with setup
-                    controllerComponentsReady.resolve();
-                });
+                survey_controller.init(controller._config, "sidebarContent").then(controllerComponentsReady.resolve);
             });
 
             return controllerComponentsReady;
@@ -298,6 +300,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             return defaultValue;
         },
 
+        _createButton: function (container, id, label, tooltip, data) {
+            $(container).append("<button id='" + id + "' type='button' class='btn'></button>");
+            controller._activateButton(id, label, tooltip, data);
+        },
+
         /**
          * Completes text setup of a button and sets its click event to publish the id of the button.
          * @param {string} id - Id of button to modify
@@ -341,7 +348,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
          * @private
          */
         _logSubscribedEvent: function (evt, data) {
-            var dataAsString = data ? JSON.stringify(data) : "";
+            var dataAsString = data !== undefined ? JSON.stringify(data) : "";
             if (dataAsString.length > 50) {
                 dataAsString = dataAsString.substr(0, 100) + "...";
             }
