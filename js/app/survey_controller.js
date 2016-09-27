@@ -124,6 +124,7 @@ define([
         _numSubmissions: 0,
         _surveyInProgress: false,
         _policySatisfied: false,
+        _currentPage: 1,
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -223,9 +224,8 @@ define([
                         if (survey_controller._iCurrentResponse >= survey_controller._current_responses.length) {
                             survey_controller._iCurrentResponse = 0;
                         }
-                        console.log("Response #" + survey_controller._iCurrentResponse);
 
-//                        survey_controller._showCurrentResponse();
+                        survey_controller._showCurrentResponse();
                     });
 
                     survey_controller._turnOffResponsesBtn = activateButton("_turn_off_current_responses", i18n.prompts.turnOffResponsesBtn);
@@ -280,53 +280,13 @@ define([
                     $.subscribe("update-current-responses-set", function (ignore, carrier) {
                         survey_controller._current_responses = carrier.responses;
                         survey_controller._iCurrentResponse = 0;
-                        survey_controller._updatePageOneActions();
-                        survey_controller._updatePageTwoActions();
+                        if (survey_controller._currentPage === 1) {
+                            survey_controller._updatePageOneActions();
+                        } else if (survey_controller._currentPage === 2) {
+                            survey_controller._updatePageTwoActions();
+                            survey_controller._showCurrentResponse();
+                        }
                     });
-
-
-
-
-
-                    $.subscribe("show-newSurvey", function () {
-console.log("show-newSurvey");/*
-                        survey_controller._showNewSurvey);
-*/                  });
-
-/*
-                    $("#submitBtn").on("click", survey_controller._submitSurvey);
-
-                    $("#skipBtn").on("click", function () {
-                        survey_controller._hideSurvey();
-                        $.publish("request-new-survey");
-                    });
-
-                    $.subscribe("show:noSurveys", function () {
-                        // Show the profile view & help window
-                        $("#profileActionBar").css("display", "none");
-                        $.publish("show:profile");
-                        message.showMessage(i18n.signin.noMoreSurveys,
-                            survey_controller._config.appParams.title)
-                    });
-
-                    $.subscribe("show:profile", function () {
-                        $("#survey").fadeOut("fast", function () {
-                            $("#profile").fadeIn("fast");
-                        });
-                    });
-
-                    $.subscribe("hide:profile", function () {
-                        $("#profile").fadeOut("fast", function () {
-                            $("#survey").fadeIn("fast");
-                        });
-                    });
-
-*/
-
-
-
-
-
 
                     // Activate the action-bar buttons
                     function buttonPublish (evt) {
@@ -357,31 +317,10 @@ console.log("show-newSurvey");/*
             return surveyControllerReady;
         },
 
-        launch: function () {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-
-            // Show survey form
-/*
-            survey_controller.resetSurvey();
-            survey_controller._showState(survey_controller._container, ENABLED);
-            survey_controller._showSurvey(true);
-*/
-        },
-
-        gotoLocation: function (responses) {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-
-            survey_controller._current_responses = responses || [];
-
-            if (survey_controller._current_responses.length > 0) {
-                survey_controller._iCurrentResponse = 0;
-                survey_controller.resetSurvey();
-                survey_controller._showCurrentResponseLocation();
-            }
-        },
-
         resetSurvey: function () {
-            alert("reset survey");//???
+            if (survey_controller._currentPage === 1) {
+                survey.clearForm();
+            }
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
@@ -413,6 +352,8 @@ console.log("show-newSurvey");/*
         },
 
         _showPageOne: function () {
+            survey_controller._currentPage = 1;
+
             survey.clearForm();
             survey.setFormReadOnly(!(survey_controller._config.featureSvcParams.canBeUpdated &&
                 survey_controller._currentUser.canSubmit));
@@ -472,6 +413,8 @@ console.log("show-newSurvey");/*
         },
 
         _showPageTwo: function () {
+            survey_controller._currentPage = 2;
+
             survey.clearForm();
             survey.setFormReadOnly(true);
             survey_controller._show($("#action-group-1"), false,
@@ -479,17 +422,17 @@ console.log("show-newSurvey");/*
 
             // Set initial action buttons states
             survey_controller._updatePageTwoActions();
+
+            // Show the first response
+            survey_controller._showCurrentResponse();
         },
 
         _updatePageTwoActions: function () {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Next response button
-            // Turn off responses button
             survey_controller._showState(survey_controller._nextResponseBtn,
                 (survey_controller._current_responses.length > 1 ? ENABLED : DISEMBODIED));
-//            survey_controller._showState(survey_controller._turnOffResponsesBtn, DISEMBODIED);
-
         },
 
         /**
@@ -560,6 +503,34 @@ console.log("show-newSurvey");/*
             }
         },
 
+        /**
+         * Fills in the survey form with the current response.
+         */
+        _showCurrentResponse: function () {
+            var response = survey_controller._current_responses[survey_controller._iCurrentResponse];
+            if (response && response.attributes) {
+                survey.fillInForm(response.attributes);
+
+                // Publish a request to go to camera position matching this response
+                survey_controller._showCurrentResponseLocation();
+            }
+        },
+
+        /**
+         * Publishes request to go to camera position matching current response.
+         */
+        _showCurrentResponseLocation: function () {
+            var response = survey_controller._current_responses[survey_controller._iCurrentResponse];
+            if (response.attributes && response.geometry) {
+                var cameraOptions = {
+                    position: response.geometry,
+                    heading: response.attributes[survey_controller._config.appParams.headingFieldName],
+                    tilt: response.attributes[survey_controller._config.appParams.tiltFieldName]
+                };
+                $.publish("goto-camera-pos", cameraOptions);
+            }
+        },
+
         _accumulate: function(sum, num) {
             return sum + num;
         },
@@ -567,168 +538,6 @@ console.log("show-newSurvey");/*
         _numRemainingToDo: function () {
             return survey_controller._responseSitesToDo.length === 0 ? 0 :
                 survey_controller._responseSitesToDo.reduce(survey_controller._accumulate);
-        },
-
-
-
-
-
-        _hideSurvey: function () {
-            $("#skipBtn").fadeTo(100, 0.0).blur();
-            $("#submitBtn").fadeTo(100, 0.0).blur();
-            $("#surveyContainer").fadeTo(100, 0.0);
-        },
-
-        _showSurvey: function (isReadOnly) {
-            isReadOnly = true;
-
-            $("#surveyContainer").fadeTo(500, (isReadOnly
-                ? 0.75
-                : 1.0));
-            $("#skipBtn").fadeTo(500, 1.0);
-            if (!isReadOnly) {
-                $("#submitBtn").fadeTo(500, 1.0);
-            }
-        },
-
-        _showResponses: function () {
-            // Set initial action buttons states
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-
-            survey_controller._showState(survey_controller._submitBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._clearBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._finishBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._seeResponsesBtn, DISEMBODIED);
-            survey_controller._showState(survey_controller._nextResponseBtn, (survey_controller._current_responses.length > 1 ? ENABLED : DISEMBODIED));
-            survey_controller._showState(survey_controller._turnOffResponsesBtn, ENABLED);
-
-            survey.setFormReadOnly(true);
-            survey.clearForm();
-
-            survey_controller._iCurrentResponse = 0;
-            survey_controller._showCurrentResponse();
-        },
-
-        _showCurrentResponse: function () {
-            var values = survey_controller._current_responses[survey_controller._iCurrentResponse];
-            survey.fillInForm(values);
-
-            survey_controller._showCurrentResponseLocation();
-        },
-
-        _showCurrentResponseLocation: function () {
-            var values = survey_controller._current_responses[survey_controller._iCurrentResponse];
-            if (values.attributes && values.geometry) {
-                var cameraOptions = {
-                    position: values.geometry,
-                    heading: values.attributes[survey_controller._cameraFields.heading],
-                    tilt: values.attributes[survey_controller._cameraFields.tilt]
-                };
-                $.publish("goto-camera-pos", cameraOptions);
-            }
-        },
-
-
-
-
-
-
-        _submitSurvey: function () {
-            var firstMissing = survey.validateForm($('#surveyContainer'),
-                survey_controller._config.appParams._surveyDefinition, survey_controller._currentCandidate.obj.attributes);
-
-            // Submit the survey if it has the important responses
-            if (firstMissing === undefined) {
-                survey_controller._currentCandidate.obj.attributes[
-                    survey_controller._config.appParams.surveyorNameField] =
-                    survey_controller._currentUser.name;
-                if (survey_controller._iSelectedPhoto >= 0) {
-                    survey_controller._currentCandidate.obj.attributes[
-                        survey_controller._config.appParams.bestPhotoField] =
-                        survey_controller._currentCandidate.attachments[survey_controller._iSelectedPhoto].id;
-                }
-                diag.appendWithLF("saving survey for property <i>"
-                    + JSON.stringify(survey_controller._currentCandidate.obj.attributes) + "</i>");  //???
-                survey_controller._dataAccess.updateCandidate(survey_controller._currentCandidate).then(function () {
-                    survey_controller._completions += 1;
-                    survey_controller._updateCount();
-
-                    survey_controller._hideSurvey();
-                    $.publish("request-newSurvey");
-                });
-
-            // Jump to the first missing important question otherwise
-            // From http://stackoverflow.com/a/6677069
-            } else {
-                $("#sidebarContent").animate({
-                    scrollTop: firstMissing.offsetTop - 5
-                }, 500);
-            }
-        },
-
-        _showNewSurvey: function (ignore, candidate) {
-            // id:num
-            // obj:feature{}
-            // numPhotos:num
-            // attachments:[{id,url},...]
-            survey_controller._currentCandidate = candidate;
-
-
-            // Continue the visual feedback for the switch to a new survey
-            survey_controller._showSurvey(isReadOnly);
-        },
-
-        _updateCount: function () {
-            $("#score")[0].innerHTML = survey_controller._completions;
-            $("#score2")[0].innerHTML = survey_controller._completions;
-            $("#profileCount").fadeIn();
-
-            if (survey_controller._config.appParams.contribLevels.length > 0) {
-                // Find the user's level
-                var level = survey_controller._config.appParams.contribLevels.length - 1;
-                var surveysForNextLevel = -1;
-                while (survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded >
-                    survey_controller._completions) {
-                    surveysForNextLevel =
-                        survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded;
-                    level -= 1;
-                }
-
-                // Show ranking via text and stars
-                $("#rankLabel")[0].innerHTML =
-                    survey_controller._config.appParams.contribLevels[level].label;
-                $("#level")[0].innerHTML = i18n.labels.label_level.replace("${0}", level);
-                if (level === 0) {
-                    $("div", ".profileRankStars").removeClass("filled-star").addClass("empty-star");
-                } else {
-                    var stars = $("div:eq(" + (level - 1) + ")", ".profileRankStars");
-                    stars.prevAll().andSelf().removeClass("empty-star").addClass("filled-star");
-                    stars.nextAll().removeClass("filled-star").addClass("empty-star");
-                }
-
-                // If below top level, show how far to next level
-                var doneThisLevel = survey_controller._completions -
-                    survey_controller._config.appParams.contribLevels[level].minimumSurveysNeeded;
-                var remainingToNextLevel = Math.max(0, surveysForNextLevel - survey_controller._completions);
-                var surveysThisLevel = doneThisLevel + remainingToNextLevel;
-                if (surveysForNextLevel >= 0 && surveysThisLevel > 0) {
-                    var cRankBarWidthPx = 170;
-                    $("#profileRankBarFill")[0].style.width =
-                        (cRankBarWidthPx * doneThisLevel / surveysThisLevel) + "px";
-                    $("#profileRankBar").css("display", "block");
-
-                    $("#remainingToNextLevel")[0].innerHTML =
-                            i18n.labels.label_remaining_surveys.replace("${0}", remainingToNextLevel);
-                } else {
-                    $("#remainingToNextLevel")[0].innerHTML = "";
-                    $("#profileRankBar").css("display", "none");
-                }
-
-                $("#ranking").fadeIn();
-            } else {
-                $("#ranking").css("display", "none");
-            }
         }
 
         //------------------------------------------------------------------------------------------------------------//

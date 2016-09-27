@@ -120,6 +120,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // ----- Testing -------------------------------------------------------------------------------------//
                 var num, testButtonsContainer = $("#test_buttons");
 
+                // Supplement config
+                controller._config.appParams.headingFieldName = "heading";
+                controller._config.appParams.tiltFieldName = "tilt";
+                controller._config.appParams.rollFieldName = "roll";
+
                 // Adjust config parameters as needed
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly, false);
@@ -168,18 +173,10 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 }
 
                 // Monitoring pub/subs
-                $.subscribe("_clear-survey-form", controller._logSubscribedEvent);
-                $.subscribe("_finish-survey-form", controller._logSubscribedEvent);
-                $.subscribe("_goto-next-response", controller._logSubscribedEvent);
-                $.subscribe("_goto-next-todo-response-site", controller._logSubscribedEvent);
-                $.subscribe("_see-responses", controller._logSubscribedEvent);
-                $.subscribe("_submit-survey-form", controller._logSubscribedEvent);
-                $.subscribe("_turn-off-responses", controller._logSubscribedEvent);
                 $.subscribe("update-current-response-site", controller._logSubscribedEvent);
                 $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
                 $.subscribe("request-signOut", controller._logSubscribedEvent);
-                $.subscribe("show-newSurvey", controller._logSubscribedEvent);
-                $.subscribe("show-noSurveys", controller._logSubscribedEvent);
+                $.subscribe("submit-survey", controller._logSubscribedEvent);
                 $.subscribe("signedIn-user", controller._logSubscribedEvent);
                 $.subscribe("signedOut-user", controller._logSubscribedEvent);
                 $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
