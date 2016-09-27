@@ -6,6 +6,7 @@
 
     "allowGuestSubmissions": true,
     "useWebmapOrigImg": false,
+    "showSeeResponsesButton": true,
 
 
     "headingFieldName": "heading",
@@ -29,7 +30,7 @@
     ],
 
 
-    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy", "numresponsesites", "brandingicon"],
+    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy", "numresponsesites", "brandingicon", "showseeresponsesbutton"],
 
     "proxyProgram": "proxy/proxy.ashx",
     "portalurl": "https://www.arcgis.com",
