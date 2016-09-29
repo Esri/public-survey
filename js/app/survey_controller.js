@@ -175,20 +175,23 @@ define([
                         survey.clearForm();
                     });
 
-                    survey_controller._nextToDoBtn = activateButton("_goto_next_todo_response_site", i18n.prompts.nextBtn);
+                    survey_controller._nextToDoBtn =
+                        activateButton("_goto_next_todo_response_site", i18n.prompts.nextBtn);
                     $.subscribe("_goto_next_todo_response_site", function () {
                         var iToDo;
 
                         if (survey_controller._iCurrentResponseSite !== undefined) {
                             // Check sites after the current one
-                            for (iToDo = survey_controller._iCurrentResponseSite + 1; iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
+                            for (iToDo = survey_controller._iCurrentResponseSite + 1;
+                                iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
                                 if(survey_controller._responseSitesToDo[iToDo] === 1) {
                                     $.publish("goto-response-site", iToDo)
                                     return;
                                 }
                             }
 
-                            // If all sites after the current one are completed, wrap around and start from the beginning
+                            // If all sites after the current one are completed, wrap around
+                            // and start from the beginning
                             for (iToDo = 0; iToDo < survey_controller._iCurrentResponseSite; ++iToDo) {
                                 if(survey_controller._responseSitesToDo[iToDo] === 1) {
                                     $.publish("goto-response-site", iToDo)
@@ -196,7 +199,7 @@ define([
                                 }
                             }
                         } else {
-                            // Start search from beginning of todo list
+                            // Use first uncompleted site starting from beginning of todo list
                             $.each(survey_controller._responseSitesToDo, function (iToDo, status) {
                                 if (status === 1) {
                                     $.publish("goto-response-site", iToDo)
@@ -215,10 +218,12 @@ define([
                         survey_controller._showState($("#survey")[0], DISEMBODIED);
                     });
 
-                    survey_controller._seeResponsesBtn = activateButton("_see_current_responses", i18n.prompts.seeResponsesBtn);
+                    survey_controller._seeResponsesBtn = activateButton("_see_current_responses",
+                        i18n.prompts.seeResponsesBtn);
                     $.subscribe("_see_current_responses", survey_controller._showPageTwo);
 
-                    survey_controller._nextResponseBtn = activateButton("_goto_next_response", i18n.prompts.nextResponseBtn);
+                    survey_controller._nextResponseBtn = activateButton("_goto_next_response",
+                        i18n.prompts.nextResponseBtn);
                     $.subscribe("_goto_next_response", function () {
                         survey_controller._iCurrentResponse += 1;
                         if (survey_controller._iCurrentResponse >= survey_controller._current_responses.length) {
@@ -228,7 +233,8 @@ define([
                         survey_controller._showCurrentResponse();
                     });
 
-                    survey_controller._turnOffResponsesBtn = activateButton("_turn_off_current_responses", i18n.prompts.turnOffResponsesBtn);
+                    survey_controller._turnOffResponsesBtn = activateButton("_turn_off_current_responses",
+                        i18n.prompts.turnOffResponsesBtn);
                     $.subscribe("_turn_off_current_responses", survey_controller._showPageOne);
 
                     //----- UI and information updating --------------------------------------------------------------//
@@ -306,7 +312,8 @@ define([
                     }
 
                     // Create survey form
-                    survey.createSurveyForm($("#surveyContainer")[0], survey_controller._config.appParams._surveyDefinition);
+                    survey.createSurveyForm($("#surveyContainer")[0],
+                        survey_controller._config.appParams._surveyDefinition);
 
                     //------------------------------------------------------------------------------------------------//
                     // Done with setup
@@ -329,7 +336,8 @@ define([
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Set up a map to keep track of response sites; indicate that none has a survey completed for it
-            survey_controller._responseSitesToDo = new Array(survey_controller._config.appParams.numResponseSites).fill(1);
+            survey_controller._responseSitesToDo =
+                new Array(survey_controller._config.appParams.numResponseSites).fill(1);
 
             // Clear user-specific status
             survey_controller._iCurrentResponseSite = undefined;
@@ -408,8 +416,9 @@ define([
 
             // See responses button
             survey_controller._showState(survey_controller._seeResponsesBtn,
-                (survey_controller._current_responses.length > 0 && survey_controller._config.appParams.showSeeResponsesButton ?
-                ENABLED : DISEMBODIED));
+                (survey_controller._current_responses.length > 0
+                && survey_controller._config.appParams.showSeeResponsesButton ?
+                enableIfNotInProgress : DISEMBODIED));
         },
 
         _showPageTwo: function () {
