@@ -28,10 +28,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
-        /**
-         * Requests that a new survey be started.
-         * @event controller#show-newSurvey
-         */
 
          // Consumed
          // survey-form-in-progress
@@ -40,8 +36,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
-        _config: {},
         _logNum: 0,
+        _config: {},
         _currentUser: {
             name: "",
             id: "",
@@ -140,7 +136,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // Controls
                 controller._activateButton("_nav_reset");
                 $.subscribe("_nav_reset", function () {
-                    survey_controller.resetSurvey();
+                    $.publish("reset-survey");
                 });
                 controller._activateButton("_clear_curr_resp");
                 $.subscribe("_clear_curr_resp", function () {
@@ -206,10 +202,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 );
                 controller._prependToLog("Survey definition created");
 
+                // Prepare and start the survey controller
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
-                // Prepare and start the survey controller
-                survey_controller.init(controller._config, "sidebarContent").then(controllerComponentsReady.resolve);
+                survey_controller.init(controller._config, "sidebarContent")
+                    .then(controllerComponentsReady.resolve);
             });
 
             return controllerComponentsReady;

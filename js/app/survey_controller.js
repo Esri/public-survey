@@ -253,6 +253,8 @@ define([
                         $.publish("request-signOut");
                     });
 
+                    $.subscribe("reset-survey", survey_controller.resetSurvey);
+
                     // As soon as the survey form has an answer, the Clear button is relevant; hide Next button until
                     // survey completed or cleared
                     $.subscribe("survey-form-in-progress", function () {
