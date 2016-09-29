@@ -19,6 +19,6 @@
         "private": true,
         "encoding": "utf8",
         "readme": "README.md",
-        "destination": "__doc"
+        "destination": "doc"
     }
 }
