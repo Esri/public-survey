@@ -142,6 +142,10 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 $.subscribe("_nav_reset", function () {
                     survey_controller.resetSurvey();
                 });
+                controller._activateButton("_clear_curr_resp");
+                $.subscribe("_clear_curr_resp", function () {
+                    $.publish("update-current-responses-set", {"responses":[]});
+                });
 
                 if (controller._config.appParams.numResponseSites > 0) {
                     function assembleAtSiteButton(num) {
