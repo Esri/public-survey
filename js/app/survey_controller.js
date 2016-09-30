@@ -282,7 +282,7 @@ define([
                     // current responses set (for viewing survey results)
                     $.subscribe("update-current-response-site", function (ignore, responseSite) {
                         if (responseSite && responseSite.slide) {
-                            survey_controller._iCurrentResponseSite = slide;
+                            survey_controller._iCurrentResponseSite = responseSite.slide;
                         } else {
                             survey_controller._iCurrentResponseSite = undefined;
                         }
