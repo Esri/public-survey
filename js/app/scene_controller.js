@@ -44,7 +44,7 @@ define([
          */
         /**
          * Provides result of trying to match current position with slides in slide gallery.
-         * @event scene_controller#current-response-site
+         * @event scene_controller#update-current-response-site
          * @property {?ResponseSiteHash} - Info about current slide
          */
 
@@ -55,7 +55,7 @@ define([
          */
         /**
          * Requests to go to a location with its collection of survey responses.
-         * @event scene_controller#goto_location
+         * @event scene_controller#update-current-responses-set
          * @property {ResponsesHash} - Survey responses
          */
 
@@ -97,16 +97,16 @@ define([
          * @param {object} container - DOM container for controller's graphics
          * @memberof scene_controller
          */
-        init: function (config, container, clusterViewBuilder, _okToNavigate) {
+        init: function (config, containerName, clusterViewBuilder, _okToNavigate) {
             var sceneControllerReady = $.Deferred();
             scene_controller._config = config;
-            scene_controller._container = container;
+            scene_controller._container = $("#" + containerName + "");
             scene_controller._okToNavigate = _okToNavigate;
 
             scene_controller.mapParamsReady = $.Deferred();
 
             // Instantiate the scene_controller template
-            container.loadTemplate("js/app/scene_controller.html", {
+            scene_controller._container.loadTemplate("js/app/scene_controller.html", {
             }, {
                 prepend: true,
                 complete: function () {
@@ -168,7 +168,7 @@ define([
          * Loads libraries and creates a WebScene and SceneView for the supplied webscene item.
          * @param {object} webId - AGOL id of webscene item
          * @param {deferred} mapParamsReady - For reporting when setup is done
-         * @fires scene_controller#goto_location
+         * @fires scene_controller#update-current-responses-set
          * @listens survey_controller#cluster-clicked
          * @listens survey_controller#goto-camera-pos
          * @listens survey_controller#goto-response-site
@@ -255,7 +255,7 @@ define([
                             scene_controller.view.popup.close();
 
                             // Package array because lightweight pub/sub only passes first element of arrays
-                            $.publish("goto_location", {responses: clusterSurveys});
+                            $.publish("update-current-responses-set", {responses: clusterSurveys});
                         }
                     });
 
@@ -465,19 +465,19 @@ define([
          * @param {number} slideNum - Zero-based slide number
          * @param {boolean|undefined} isFromCameraMatch - Indicates if slide number was result of
          *      matching by camera location
-         * @fires scene_controller#current-response-site
+         * @fires scene_controller#update-current-response-site
          * @memberof scene_controller
          * @private
          */
         _updateCurrentSlide: function (slideNum, isFromCameraMatch) {
             if (scene_controller.numResponseSites > 0) {
                 if (slideNum === undefined) {
-                    $.publish("current-response-site");
+                    $.publish("update-current-response-site");
 
                 } else {
                     scene_controller._currentSlideNum = slideNum;
-                    $.publish("current-response-site", {
-                        set: slideNum,
+                    $.publish("update-current-response-site", {
+                        slide: slideNum,
                         title: scene_controller._slides[slideNum].title.text,
                         fromCamera: !!isFromCameraMatch
                     });

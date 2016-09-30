@@ -143,18 +143,12 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 controller._loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
-                scene_controller.init(controller._config, $("#mainContent"),
+                scene_controller.init(controller._config, "mainContent",
                     controller._clusterViewBuilder, controller._okToNavigate)
                     .then(controllerComponentsReady.resolve());
 
                 // Prepare and start the survey controller
-                survey_controller.init(controller._config, $("#sidebarContent")).then(function () {
-
-                    $.subscribe("signedIn-user", function () {
-                        survey_controller.launch();
-                        $.publish("show-newSurvey");
-                    });
-                });
+                survey_controller.init(controller._config, "sidebarContent");
             });
 
             return controllerComponentsReady;

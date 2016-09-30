@@ -16,7 +16,7 @@
 //====================================================================================================================//
 
 /**
- * Manages the display of a pair of visuals and survey controllers.
+ * Manages the display of a survey controller.
  * @namespace controller
  * @version 0.1
  */
@@ -28,10 +28,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
-        /**
-         * Requests that the survey be reset.
-         * @event controller#reset-survey
-         */
 
          // Consumed
          // survey-form-in-progress
@@ -40,6 +36,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
+        _logNum: 0,
         _config: {},
         _averagingFieldValues: null,
         _clusterer: null,
@@ -49,7 +46,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         _pieChartTheme: "GreySkies",
         _surveyInProgress: false,
 
-        _logNum: 0,
 
         //----- Procedures available for external access -------------------------------------------------------------//
 
@@ -69,18 +65,20 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Template options
                 prepend: true,
                 complete: function () {
+
                     // When the feature service and survey are ready, we can set up the module that reads from and
                     // writes to the service
                     controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
                         controllerReady.resolve();
                     }, function () {
-                        // Attempt to load the survey form description
+                        // As a backup, attempt to load the survey form description
                         if (controller._config.appParams.surveydesc) {
                             $.getJSON(controller._config.appParams.surveydesc + ".json",
                                 function (surveyDesc) {
+                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
                                     controller._config.featureSvcParams.popupDescription = surveyDesc.description;
                                     controller._config.featureSvcParams.fields = surveyDesc.fields;
-                                    controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
+                                    controller._config.featureSvcParams.test = surveyDesc.test;
                                     controllerReady.resolve();
                                 }
                             ).fail(
@@ -101,43 +99,11 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         /**
          * Launches the controller.
-         * @listens controller#survey-form-in-progress
-         * @listens controller#survey-form-is-empty
          * @listens controller#show-help
          * @memberof controller
          */
         launch: function () {
             var controllerComponentsReady = $.Deferred();
-
-            // Controls in test window
-            controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
-            controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
-            controller._activateButton("survey-form-in-progress", "Fill in survey");
-            controller._activateButton("survey-form-is-empty", "Clear survey");
-            controller._activateButton("reset-survey", "Reset survey");
-
-            // Monitoring in test window
-            $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
-            $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
-            $.subscribe("show-help", controller._logSubscribedEvent);
-            $.subscribe("reset-survey", controller._logSubscribedEvent);
-            $.subscribe("goto_location", controller._logSubscribedEvent);
-            $.subscribe("current-response-site", controller._logSubscribedEvent);
-
-            $.subscribe("signedIn-user", controller._logSubscribedEvent);
-            $.subscribe("request-signOut", controller._logSubscribedEvent);
-            $.subscribe("signedOut-user", controller._logSubscribedEvent);
-
-            // Monitor survey messages for coordination between visuals and survey
-            $.subscribe("survey-form-in-progress", function () {
-                controller._surveyInProgress = true;
-                console.log("survey in progress: " + controller._surveyInProgress);
-            });
-
-            $.subscribe("survey-form-is-empty", function () {
-                controller._surveyInProgress = false;
-                console.log("survey in progress: " + controller._surveyInProgress);
-            });
 
             // Display help for app
             require(["app/message"], function (message) {
@@ -148,11 +114,45 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             });
 
             require(["app/survey", "app/scene_controller"], function(survey, scene_controller) {
+
+                // ----- Testing -------------------------------------------------------------------------------------//
+
+                // Supplement config
+
+                // Adjust config parameters as needed
+
+                // Controls
+                controller._activateButton("_survey_form_in_progress", "Fill in survey");
+                $.subscribe("_survey_form_in_progress", function () {
+                    controller._surveyInProgress = true;
+                    console.log("survey in progress: " + controller._surveyInProgress);
+                });
+
+                controller._activateButton("_survey_form_is_empty", "Clear survey");
+                $.subscribe("_survey_form_is_empty", function () {
+                    controller._surveyInProgress = false;
+                    console.log("survey in progress: " + controller._surveyInProgress);
+                });
+
+                controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
+                controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
+
+                // Monitoring pub/subs
+                $.subscribe("signedIn-user", controller._logSubscribedEvent);
+                $.subscribe("request-signOut", controller._logSubscribedEvent);
+                $.subscribe("signedOut-user", controller._logSubscribedEvent);
+                $.subscribe("goto-response-site", controller._logSubscribedEvent);
+                $.subscribe("update-current-response-site", controller._logSubscribedEvent);
+                $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
+                $.subscribe("reset-survey", controller._logSubscribedEvent);
+
+                // -----------------------------------------------------------------------------------------------//
+
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    ">=1", i18n.tooltips.importantQuestion
+                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
 
@@ -161,9 +161,9 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._loadCSS("//js.arcgis.com/4.0/dijit/themes/claro/claro.css");
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
-                scene_controller.init(controller._config, $("#mainContent"),
+                scene_controller.init(controller._config, "mainContent",
                     controller._clusterViewBuilder, controller._okToNavigate)
-                    .then(controllerComponentsReady.resolve());
+                    .then(controllerComponentsReady.resolve);
             });
 
             return controllerComponentsReady;
@@ -281,10 +281,6 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
         _prependToLog: function (text) {
             $("#logText").prepend(++controller._logNum + ": " + text + "\n");
         },
-
-
-
-
 
         _clusterViewBuilder: function(view) {
             var clusterViewReady = $.Deferred();
