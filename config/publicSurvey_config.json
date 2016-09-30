@@ -6,6 +6,8 @@
 
     "allowGuestSubmissions": true,
     "useWebmapOrigImg": false,
+    "showSeeResponsesButton": true,
+    "brandingIcon": "images/esri3.png",
 
 
     "headingFieldName": "heading",
