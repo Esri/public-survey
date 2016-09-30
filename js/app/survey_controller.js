@@ -280,8 +280,12 @@ define([
 
                     // Update what we know about the current response site (for submitting surveys),
                     // current responses set (for viewing survey results)
-                    $.subscribe("update-current-response-site", function (ignore, siteNum) {
-                        survey_controller._iCurrentResponseSite = siteNum;
+                    $.subscribe("update-current-response-site", function (ignore, responseSite) {
+                        if (responseSite && responseSite.slide) {
+                            survey_controller._iCurrentResponseSite = slide;
+                        } else {
+                            survey_controller._iCurrentResponseSite = undefined;
+                        }
                         survey_controller._updatePageOneActions();
                     });
 
