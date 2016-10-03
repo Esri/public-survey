@@ -46,7 +46,12 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         _clustererView: null,
         _featureLayerOptions: null,
         _multipleChoiceQuestions: null,
-        _pieChartTheme: "GreySkies",
+        _pieChartTheme: [
+            ["#00ff00","#ff0000"],                              // for 2 choices
+            ["#00ff00","#ff0000","#ffff00"],                    // for 3 choices
+            "CubanShirts",                                      // for 4 choices
+            ["#00ff00","#80ff00","#ffff00","#ff8000","#ff0000"] // for 5 or more choices (cycles for more)
+        ],
         _surveyInProgress: false,
 
         _logNum: 0,
@@ -108,6 +113,12 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
          */
         launch: function () {
             var controllerComponentsReady = $.Deferred();
+
+
+
+controller._config.appParams.numResponseSites = 4;//???
+
+
 
             // Monitor survey messages for coordination between visuals and survey
             $.subscribe("survey-form-in-progress", function () {
@@ -279,6 +290,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 "dojo/_base/lang",
                 "dojo/dom",
                 "dojo/dom-class",
+                "dojox/charting/SimpleTheme",
                 "app/Clusterer",
                 "app/ClustererView",
                 "esri/Graphic",
@@ -288,12 +300,14 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 "esri/symbols/PointSymbol3D",
                 "esri/PopupTemplate",
                 "esri/renderers/SimpleRenderer",
-                "esri/symbols/TextSymbol3DLayer"
+                "esri/symbols/TextSymbol3DLayer",
+                "lib/popupPolyfill_4.0_min"
             ], function (
                     array,
                     lang,
                     dom,
                     domClass,
+                    Theme,
                     Clusterer,
                     ClustererView,
                     Graphic,
@@ -453,12 +467,22 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     });
 
                     // Define this question's pie chart and add it to the popup template
+                    var iThemeSelector =
+                        Math.max(2 /*min choices*/,
+                        Math.min(controller._pieChartTheme.length + 1 /*max choices*/,
+                        pieChartFields.length /*num choices*/)) - 2;
+                    var theme = controller._pieChartTheme[iThemeSelector];
+                    if (Array.isArray(theme)) {
+                        theme = new Theme({colors: theme});
+                    }
                     var pieChart = {
                         title: mcQuestionInfo.question,
                         type: "pie-chart",
                         caption: "",
+                        showLabels: true,
+                        useTooltipAsLabel: true,
                         value: {
-                            theme: controller._pieChartTheme,
+                            theme: theme,
                             fields: pieChartFields,
                             normalizeField: null
                         }
