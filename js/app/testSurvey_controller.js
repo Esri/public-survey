@@ -136,7 +136,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // Controls
                 controller._activateButton("_nav_reset");
                 $.subscribe("_nav_reset", function () {
-                    $.publish("reset-survey");
+                    $.publish("clear-survey-form");
                 });
                 controller._activateButton("_clear_curr_resp");
                 $.subscribe("_clear_curr_resp", function () {

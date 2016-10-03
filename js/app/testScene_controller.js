@@ -144,7 +144,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 $.subscribe("goto-response-site", controller._logSubscribedEvent);
                 $.subscribe("update-current-response-site", controller._logSubscribedEvent);
                 $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
-                $.subscribe("reset-survey", controller._logSubscribedEvent);
+                $.subscribe("clear-survey-form", controller._logSubscribedEvent);
 
                 // -----------------------------------------------------------------------------------------------//
 
@@ -200,7 +200,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
 
         /**
          * Prompts user if he/she is about to do something that will invalidate an in-progress survey.
-         * @fires controller#reset-survey
+         * @fires controller#clear-survey-form
          * @memberof controller
          * @private
          */
@@ -209,7 +209,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
             if (controller._surveyInProgress) {
                 if (confirm(i18n.prompts.currentResponsesWillBeCleared)) {
                     controller._surveyInProgress = false;
-                    $.publish("reset-survey");
+                    $.publish("clear-survey-form");
                 } else {
                     ok = false;
                 }
