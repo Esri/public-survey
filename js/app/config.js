@@ -100,9 +100,6 @@ define(["app/fetchConfigInfo"],
                             paramsFromUrl
                         );
 
-                        //???
-                        //???postprocessAppParams(config.appParams);
-
                         parametersReady.resolve();
                     }).fail(function (error) {
                         parametersReady.reject(error);

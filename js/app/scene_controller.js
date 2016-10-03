@@ -124,7 +124,7 @@ define([
                             scene_controller._clustererView = clustering.clustererView;
 
                             // Go to first slide
-                            if (scene_controller.numResponseSites > 0) {
+                            if (scene_controller._config.appParams.numResponseSites > 0) {
                                 scene_controller._goToSlide(0);
 
                             // Make sure that the cluster layer is visible and its underlying data layer is not
@@ -226,10 +226,10 @@ define([
                     });
 
                     // Are we displaying slides?
-                    scene_controller.numResponseSites =
+                    scene_controller._config.appParams.numResponseSites =
                         scene_controller.map.presentation && scene_controller.map.presentation.slides
                         ? scene_controller.map.presentation.slides.length : 0;
-                    if (scene_controller.numResponseSites > 0) {
+                    if (scene_controller._config.appParams.numResponseSites > 0) {
                         scene_controller._slides = scene_controller.map.presentation.slides.items;
                     }
 
@@ -284,7 +284,7 @@ define([
                     });
 
                     // Create the slide gallery
-                    if (scene_controller.numResponseSites > 0) {
+                    if (scene_controller._config.appParams.numResponseSites > 0) {
                         // Create gallery frame, its label tab, and its slides container
                         var gallery = $("<div id='gallery' class='gallery'></div>");
                         $("#viewDiv").append(gallery);
@@ -325,6 +325,11 @@ define([
 
                         // Gallery is ready for use
                         $(gallery).css("visibility", "visible");
+
+                        // Start with first slide whenever we have a login
+                        $.subscribe("signedIn-user", function (ignore, loginInfo) {
+                            scene_controller._goToSlide(0);
+                        });
 
                     } else {
                         // Otherwise, add a Home widget
@@ -454,7 +459,7 @@ define([
 
         _goToNextSlide: function () {
             scene_controller._currentSlideNum += 1;
-            if (scene_controller._currentSlideNum >= scene_controller.numResponseSites) {
+            if (scene_controller._currentSlideNum >= scene_controller._config.appParams.numResponseSites) {
                 scene_controller._currentSlideNum = 0;
             }
             scene_controller._goToSlide(scene_controller._currentSlideNum);
@@ -470,7 +475,7 @@ define([
          * @private
          */
         _updateCurrentSlide: function (slideNum, isFromCameraMatch) {
-            if (scene_controller.numResponseSites > 0) {
+            if (scene_controller._config.appParams.numResponseSites > 0) {
                 if (slideNum === undefined) {
                     $.publish("update-current-response-site");
 

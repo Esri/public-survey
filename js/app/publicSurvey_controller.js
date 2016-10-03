@@ -30,7 +30,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         // Published
         /**
          * Requests that the survey be reset.
-         * @event controller#reset-survey
+         * @event controller#clear-survey-form
          */
 
          // Consumed
@@ -114,12 +114,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         launch: function () {
             var controllerComponentsReady = $.Deferred();
 
-
-
-controller._config.appParams.numResponseSites = 4;//???
-
-
-
             // Monitor survey messages for coordination between visuals and survey
             $.subscribe("survey-form-in-progress", function () {
                 controller._surveyInProgress = true;
@@ -156,10 +150,15 @@ controller._config.appParams.numResponseSites = 4;//???
 
                 scene_controller.init(controller._config, "mainContent",
                     controller._clusterViewBuilder, controller._okToNavigate)
-                    .then(controllerComponentsReady.resolve());
+                    .then(controllerComponentsReady.resolve);
 
-                // Prepare and start the survey controller
+                // Prepare  the survey controller
                 survey_controller.init(controller._config, "sidebarContent");
+
+                scene_controller.mapParamsReady.then(function () {
+                    // Start the survey controller
+                    survey_controller.launch();
+                });
             });
 
             return controllerComponentsReady;
@@ -196,7 +195,7 @@ controller._config.appParams.numResponseSites = 4;//???
 
         /**
          * Prompts user if he/she is about to do something that will invalidate an in-progress survey.
-         * @fires controller#reset-survey
+         * @fires controller#clear-survey-form
          * @memberof controller
          * @private
          */
@@ -205,7 +204,7 @@ controller._config.appParams.numResponseSites = 4;//???
             if (controller._surveyInProgress) {
                 if (confirm(i18n.prompts.currentResponsesWillBeCleared)) {
                     controller._surveyInProgress = false;
-                    $.publish("reset-survey");
+                    $.publish("clear-survey-form");
                 } else {
                     ok = false;
                 }

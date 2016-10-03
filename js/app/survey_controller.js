@@ -119,6 +119,7 @@ define([
         _cameraFields: null,
         _responseSitesToDo: [],
         _iCurrentResponseSite: undefined,
+        _initialized: false,
         _current_responses: [],
         _iCurrentResponse: 0,
         _numSubmissions: 0,
@@ -240,7 +241,10 @@ define([
                     //----- UI and information updating --------------------------------------------------------------//
                     $.subscribe("signedIn-user", function (ignore, loginInfo) {
                         survey_controller._updateUser(loginInfo);
-                        survey_controller._launch();
+
+                        if (survey_controller._initialized) {
+                            survey_controller._startSurveying();
+                        }
                     });
 
                     $("#userSignoutSelection").on("click", function () {
@@ -253,7 +257,7 @@ define([
                         $.publish("request-signOut");
                     });
 
-                    $.subscribe("reset-survey", survey_controller.resetSurvey);
+                    $.subscribe("clear-survey-form", survey_controller.clearSurveyForm);
 
                     // As soon as the survey form has an answer, the Clear button is relevant; hide Next button until
                     // survey completed or cleared
@@ -281,7 +285,7 @@ define([
                     // Update what we know about the current response site (for submitting surveys),
                     // current responses set (for viewing survey results)
                     $.subscribe("update-current-response-site", function (ignore, responseSite) {
-                        if (responseSite && responseSite.slide) {
+                        if (responseSite && (responseSite.slide != undefined)) {
                             survey_controller._iCurrentResponseSite = responseSite.slide;
                         } else {
                             survey_controller._iCurrentResponseSite = undefined;
@@ -330,7 +334,21 @@ define([
             return surveyControllerReady;
         },
 
-        resetSurvey: function () {
+        /**
+         * Launches the controller.
+         * @listens controller#show-help
+         * @memberof controller
+         */
+        launch: function () {
+            if (survey_controller._config.appParams.numResponseSites === undefined) {
+                survey_controller._config.appParams.numResponseSites = 0;
+            }
+            survey_controller._initialized = true;
+
+            survey_controller._startSurveying();
+        },
+
+        clearSurveyForm: function () {
             if (survey_controller._currentPage === 1) {
                 survey.clearForm();
             }
@@ -338,7 +356,7 @@ define([
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
 
-        _launch: function () {
+        _startSurveying: function () {
             var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
 
             // Set up a map to keep track of response sites; indicate that none has a survey completed for it
@@ -354,7 +372,7 @@ define([
             survey_controller._policySatisfied = false;
 
             // Show the survey page and action buttons
-            survey_controller._showState($("#survey")[0], ENABLED);
+            survey_controller._show([$("#survey"), true]);
             survey_controller._showPageOne();
         },
 
