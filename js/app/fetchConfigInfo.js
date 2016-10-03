@@ -131,6 +131,7 @@ define([], function () {
          * Gets operational layer and feature service information from parameters in webmap's data section.
          * @param {string} arcgisUrl URL to arcgis items, e.g., "http://www.arcgis.com/sharing/content/items/"
          * @param {string} webmapId Id of webmap
+         * @param {string} [featureLayerTitle] Name of operational layer to use; if null, first layer is selected
          * @param {object} [deferred] Deferred to use for fetch notification; if not supplied, function
          * creates one
          * @return {object} Deferred indicating when service information is ready; successful resolution includes
@@ -149,6 +150,7 @@ define([], function () {
                         // If we have a feature layer title, find it in the operational layers; otherwise, use first
                         // operational layer
                         if (featureLayerTitle) {
+                            iOpLayer = -1;
                             $.each(data.operationalLayers, function(i, opLayer) {
                                 if (opLayer.title === featureLayerTitle) {
                                     iOpLayer = i;
@@ -157,12 +159,18 @@ define([], function () {
                                 return true;
                             });
                         }
+                        if (iOpLayer < 0) {
+                            console.log("Operational layer \"" + featureLayerTitle + "\" not found");
+                            deferred.reject();
+                            return;
+                        }
                         featureSvcData.opLayerParams = data.operationalLayers[iOpLayer];
 
                         // Get the app's webmap's feature service's data
                         fetchConfigInfo.getFeatureSvcData(featureSvcData.opLayerParams.url).done(function (data) {
                             if (!data || data.error) {
                                 deferred.reject();
+                                return;
                             }
                             featureSvcData.featureSvcParams = data;
 
