@@ -4,7 +4,19 @@
     "title": "Public Survey",
     "helpText": "3D survey is used to gather comments from various 3D perspectives",
 
+
+    "showGuest": true,
     "allowGuestSubmissions": true,
+
+    "showFacebook": false,
+    "facebookAppId": "",
+
+    "showGooglePlus": false,
+    "googleplusClientId": "",
+
+    "showTwitter": false,
+
+
     "useWebmapOrigImg": false,
 
 
@@ -27,7 +39,6 @@
         {"value": 1, "size": 20},
         {"value": 10, "size": 60}
     ],
-
 
     "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy"],
 

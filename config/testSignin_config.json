@@ -3,7 +3,18 @@
     "splashText": "Public survey is used to gather comments from various perspectives",
     "title": "Public Survey",
 
+    "showGuest": true,
     "allowGuestSubmissions": true,
+
+    "showFacebook": false,
+    "facebookAppId": "",
+
+    "showGooglePlus": false,
+    "googleplusClientId": "",
+
+    "showTwitter": false,
+
+
     "useWebmapOrigImg": false,
 
     "urlParamsFilter": ["diag", "test", "cansubmit"],
