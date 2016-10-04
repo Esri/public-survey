@@ -19,7 +19,9 @@ define({
             loadingApp: "Loading application...",
             unsupportedBrowser: "This version of Internet Explorer is not supported. Please use Internet Explorer 10 or newer.",
             needProxy: "This version of Internet Explorer is not supported by our server. Please use Internet Explorer 10 or newer.",
-            unableToStartApp: "Unable to start application due to incomplete configuration."
+            unableToStartApp: "Unable to start application due to incomplete configuration.",
+            signinFetching: "Checking availability of login possibilities...",
+            noSigninsAvailable: "There are no logins available"
         },
         prompts: {
             signIn: "Please sign in to get started"

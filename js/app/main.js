@@ -62,7 +62,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                         var appReady, signinReady = $.Deferred();
 
                         // Prepare app components
-                        require(["app/user_guest"], function (user) {
+                        require(["app/user"], function (user) {
                             signinReady.resolve(user);
                         });
 

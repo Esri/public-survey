@@ -20,8 +20,8 @@
  * @namespace user
  * @version 0.1
  */
-define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
-    function (i18n, diag) {
+define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"],
+    function (i18n,handleUserSignin, diag) {
     "use strict";
     var user = {
         //----- Events -----------------------------------------------------------------------------------------------//
@@ -45,6 +45,11 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
          * @event user#signedOut-user
          */
 
+        /**
+         * Informs about the availability of an avatar image.
+         * @event user#avatar-update
+         */
+
          // Consumed
 
         //----- Module variables -------------------------------------------------------------------------------------//
@@ -52,20 +57,40 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
         //----- Procedures available for external access -------------------------------------------------------------//
 
         launch: function (config, splash) {
-            $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>"
-                + i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
-            $("#guestSignin").on("click", function () {
-                $.publish("signedIn-user", {
-                    name: i18n.labels.guestName,
-                    id: "",
-                    canSubmit: config.appParams.allowGuestSubmissions
-                });
+            splash.replacePrompt(i18n.messages.signinFetching);
+
+            // Start up the social media connections
+            var userSigninReady = handleUserSignin.init(config.appParams, function (notificationType) {
+                // Callback from current social medium
+                switch (notificationType) {
+                case handleUserSignin.notificationSignIn:
+                    $.publish("signedIn-user", handleUserSignin.getUser());
+                    break;
+                case handleUserSignin.notificationSignOut:
+                    $.publish("signedOut-user");
+                    break;
+                case handleUserSignin.notificationAvatarUpdate:
+                    $.publish("avatar-update", handleUserSignin.getUser().avatar);
+                    break;
+                }
             });
-            splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
+
+            // When the social media connections are ready, we can enable the social-media sign-in buttons
+            userSigninReady.then(function () {
+                // Add the sign-in buttons
+                handleUserSignin.initUI(splash.getActionsContainer());
+
+                // Switch to the sign-in prompt
+                splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
+
+            }, function () {
+                // Switch to the no-logins message
+                splash.replacePrompt(i18n.messages.noSigninsAvailable);
+            });
         },
 
         signout: function () {
-            $.publish("signedOut-user");
+            handleUserSignin.signOut();
         }
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
