@@ -44,6 +44,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         _averagingFieldValues: null,
         _clusterer: null,
         _clustererView: null,
+        _currentSlideTitle: "",
         _featureLayerOptions: null,
         _multipleChoiceQuestions: null,
         _pieChartTheme: [
@@ -117,12 +118,10 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
             // Monitor survey messages for coordination between visuals and survey
             $.subscribe("survey-form-in-progress", function () {
                 controller._surveyInProgress = true;
-                console.log("survey in progress: " + controller._surveyInProgress);
             });
 
             $.subscribe("survey-form-is-empty", function () {
                 controller._surveyInProgress = false;
-                console.log("survey in progress: " + controller._surveyInProgress);
             });
 
             // Display help for app
@@ -158,6 +157,38 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 scene_controller.mapParamsReady.then(function () {
                     // Start the survey controller
                     survey_controller.launch();
+                });
+
+                // Combine survey form answers with camera position for submission
+                $.subscribe("submit-survey", function (ignore, answers) {
+                    controller._surveyInProgress = false;
+
+                    // Combine the current camera position with the survey answers, must
+                    // transform camera position from scene coordinates to answer feature
+                    // layer coordinates if they're different
+                    scene_controller.getCurrentCameraPos(controller._config.featureSvcParams.spatialReference.wkid)
+                        .then(function (surveyPoint) {
+                            // Mix in camera orientation, current webscene slide name, and
+                            // the name of the person taking the survey
+                            var viewpointDesc = {};
+                            viewpointDesc[scene_controller._config.appParams.headingFieldName] = surveyPoint.attributes.heading;
+                            viewpointDesc[scene_controller._config.appParams.tiltFieldName] = surveyPoint.attributes.tilt;
+                            viewpointDesc[scene_controller._config.appParams.rollFieldName] = surveyPoint.attributes.roll;
+                            viewpointDesc[scene_controller._config.appParams.slidenameFieldName] = scene_controller._currentSlideTitle;
+                            viewpointDesc[scene_controller._config.appParams.surveyorFieldName] = null;
+                            $.extend(answers, viewpointDesc);
+
+                            surveyPoint.attributes = answers;
+                            controller._postSurvey(surveyPoint);
+                        });
+                });
+
+                $.subscribe("update-current-response-site", function (ignore, responseSite) {
+                    if (responseSite && (responseSite.title != undefined)) {
+                        controller._currentSlideTitle = responseSite.title;
+                    } else {
+                        controller._currentSlideTitle = "";
+                    }
                 });
             });
 
@@ -210,6 +241,47 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 }
             }
             return ok;
+        },
+
+        _postSurvey: function (surveyPoint) {
+            var url, update;
+
+            // Post the packet
+            url = controller._config.featureSvcParams.url + "/applyEdits";
+            update = "f=json&id=" + controller._config.featureSvcParams.id
+                + "&adds=%5B" + controller._stringifyForApplyEdits(surveyPoint) + "%5D";
+
+            console.log("*** Submit " + JSON.stringify(surveyPoint) + " ***");
+            $.post(url, update, function (results, status) {
+                console.log("*** POST status: " + status + "; " + JSON.stringify(results) + " ***");
+
+                // Update the response clusters
+                controller._clustererView.refresh();
+            });
+        },
+
+        _stringifyForApplyEdits: function (value) {
+            var isFirst = true, result = "";
+
+            if (value === null) {
+                result += 'null';
+            } else if (typeof value === "string") {
+                result += '%22' + value + '%22';
+            } else if (typeof value === "object") {
+                result += '%7B';
+                $.each(value, function (part) {
+                    if (value.hasOwnProperty(part)) {
+                        result += (isFirst
+                            ? ''
+                            : '%2C') + part + '%3A' + controller._stringifyForApplyEdits(value[part]);
+                        isFirst = false;
+                    }
+                });
+                result += '%7D';
+            } else {
+                result += value;
+            }
+            return result;
         },
 
         /**
