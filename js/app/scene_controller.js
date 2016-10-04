@@ -412,13 +412,17 @@ define([
                     scene_controller._goToSlide(iSite);
                 });
 
-                $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
-                    console.log("goto " + JSON.stringify(cameraOptions.position) + ", "
-                        + cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
-                    var camera = new Camera(cameraOptions);
-                    scene_controller.view.goTo(camera);
-                    scene_controller._updateCurrentSlide(scene_controller._getMatchingSlide(camera), true);
-                });
+                require(["esri/Camera"],
+                    function (Camera) {
+                        $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
+                            console.log("goto " + JSON.stringify(cameraOptions.position) + ", "
+                                + cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
+                            var camera = new Camera(cameraOptions);
+                            scene_controller.view.goTo(camera);
+                            scene_controller._updateCurrentSlide(scene_controller._getMatchingSlide(camera), true);
+                        });
+                    }
+                );
 
                 // Save cluster features list when one clicks on a cluster
                 $.subscribe("cluster-clicked", function (ignore, clusterClickInfo) {
@@ -562,7 +566,7 @@ define([
             var matchingSlideNum;
 
             // Determine if the view's camera (heading, position, tilt) matches any slides
-            array.forEach(scene_controller._slides, lang.hitch(scene_controller, function (slide, slideNum) {
+            $.each(scene_controller._slides, function (slideNum, slide) {
                 var slideCamera = slide.viewpoint.camera;
                 if (
                     scene_controller._essentiallyEqualNums(slideCamera.heading, camera.heading) &&
@@ -572,7 +576,7 @@ define([
                     matchingSlideNum = slideNum;
                     return true;
                 }
-            }));
+            });
 
             return matchingSlideNum;
         },
