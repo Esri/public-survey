@@ -149,15 +149,18 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
 
                 scene_controller.init(controller._config, "mainContent",
                     controller._clusterViewBuilder, controller._okToNavigate)
-                    .then(controllerComponentsReady.resolve);
+                    .then(function () {
+                        // Prepare  the survey controller
+                        survey_controller.init(controller._config, "sidebarContent");
 
-                // Prepare  the survey controller
-                survey_controller.init(controller._config, "sidebarContent");
+                        scene_controller.mapParamsReady.then(function () {
+                            // Start the survey controller
+                            survey_controller.launch();
+                        });
 
-                scene_controller.mapParamsReady.then(function () {
-                    // Start the survey controller
-                    survey_controller.launch();
-                });
+                        controllerComponentsReady.resolve();
+                    });
+
 
                 // Combine survey form answers with camera position for submission
                 $.subscribe("submit-survey", function (ignore, answers) {
@@ -331,7 +334,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
             logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
             console.log(logEntry);
 
-            if (logEntry.length > 50) {
+            if (logEntry.length > 100) {
                 logEntry = logEntry.substr(0, 100) + "...";
             }
             controller._prependToLog(logEntry);
@@ -348,10 +351,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         _prependToLog: function (text) {
             $("#logText").prepend(++controller._logNum + ": " + text + "\n");
         },
-
-
-
-
 
         _clusterViewBuilder: function(view) {
             var clusterViewReady = $.Deferred();

@@ -206,7 +206,10 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                 survey_controller.init(controller._config, "sidebarContent")
-                    .then(controllerComponentsReady.resolve);
+                    .then(function () {
+                        survey_controller.launch();
+                        controllerComponentsReady.resolve();
+                    });
             });
 
             return controllerComponentsReady;
