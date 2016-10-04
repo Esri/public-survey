@@ -292,7 +292,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
             logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
             console.log(logEntry);
 
-            if (logEntry.length > 50) {
+            if (logEntry.length > 100) {
                 logEntry = logEntry.substr(0, 100) + "...";
             }
             controller._prependToLog(logEntry);
