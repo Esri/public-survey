@@ -163,6 +163,8 @@ define([], function () {
                             console.log("Operational layer \"" + featureLayerTitle + "\" not found");
                             deferred.reject();
                             return;
+                        } else {
+                            console.log("Survey responses into layer \"" + featureLayerTitle + "\"");
                         }
                         featureSvcData.opLayerParams = data.operationalLayers[iOpLayer];
 
