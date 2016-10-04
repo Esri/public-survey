@@ -133,6 +133,8 @@ define(["app/fetchConfigInfo"],
                             config.featureSvcParams.canBeUpdated = featureSvcParams.canBeUpdated;
                             config.featureSvcParams.popupDescription = popupDesc;
                             config.featureSvcParams.fields = featureSvcParams.fields;
+                            config.featureSvcParams.spatialReference =
+                                featureSvcParams.spatialReference || featureSvcParams.extent.spatialReference;
 
                             config.featureSvcParams.surveyFeatureLayerReady.resolve();
                         } else {
