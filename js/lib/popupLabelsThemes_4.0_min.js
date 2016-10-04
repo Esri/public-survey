@@ -1,4 +1,4 @@
-/* popup pie chart polyfill
+/* popup pie chart labels and custom themes
    Copyright 2015 Esri
    Licensed under the Apache License, Version 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 */

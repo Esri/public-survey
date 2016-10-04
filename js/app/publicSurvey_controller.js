@@ -372,7 +372,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 "esri/PopupTemplate",
                 "esri/renderers/SimpleRenderer",
                 "esri/symbols/TextSymbol3DLayer",
-                "lib/popupPolyfill_4.0_min"
+                "lib/popupLabelsThemes_4.0_min"
             ], function (
                     array,
                     lang,
