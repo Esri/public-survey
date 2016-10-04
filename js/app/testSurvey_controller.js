@@ -148,7 +148,11 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                         var siteNum = num < 0 ? undefined : num;
                         controller._createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
                         $.subscribe("_at_site_" + siteNum, function () {
-                            $.publish("update-current-response-site", siteNum);
+                            $.publish("update-current-response-site", {
+                                slide: siteNum,
+                                title: "",
+                                fromCamera: false
+                            });
                             $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
                             controller._iCurrentResponseSite = siteNum;
                         });
@@ -175,11 +179,15 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // Monitoring pub/subs
                 $.subscribe("goto-response-site", function (evt, siteNum) {
                     controller._logSubscribedEvent(evt, siteNum);
-                    $.publish("update-current-response-site", siteNum);
+                    $.publish("update-current-response-site", {
+                        slide: siteNum,
+                        title: "",
+                        fromCamera: false
+                    });
                 });
-                $.subscribe("update-current-response-site", function (evt, siteNum) {
-                    controller._logSubscribedEvent(evt, siteNum);
-                    $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                $.subscribe("update-current-response-site", function (evt, responseSite) {
+                    controller._logSubscribedEvent(evt, responseSite.slide);
+                    $("#_at_site_" + responseSite.slide).addClass("highlight-btn").siblings().removeClass("highlight-btn");
                 });
                 $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
                 $.subscribe("request-signOut", controller._logSubscribedEvent);
