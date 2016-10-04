@@ -162,6 +162,62 @@ define([
             }
         },
 
+        getCurrentCameraPos: function (desiredWkid) {
+            var camera, position, positionReady, surveyPoint, orientation;
+
+            camera = scene_controller.view.viewpoint.camera;
+            position = camera.position;
+            orientation = {
+                heading: camera.heading,
+                tilt: camera.tilt,
+                roll: 0
+            }
+            positionReady = $.Deferred();
+
+            if (position.spatialReference.wkid !== scene_controller._config.featureSvcParams.spatialReference.wkid) {
+                require([
+                  "esri/tasks/GeometryService",
+                  "esri/tasks/support/ProjectParameters",
+                  "esri/geometry/SpatialReference"
+                 ], function (GeometryService, ProjectParameters, SpatialReference) {
+                    var geomSer = new GeometryService({
+                        url: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
+                    });
+                    var params = new ProjectParameters({
+                        geometries: [position],
+                        outSR: new SpatialReference(scene_controller._config.featureSvcParams.spatialReference)
+                    });
+                    geomSer.project(params).then(function (flPoint) {
+                        surveyPoint = {
+                            geometry: {
+                                x: flPoint[0].x,
+                                y: flPoint[0].y,
+                                z: flPoint[0].z
+                            },
+                            attributes: orientation
+                        };
+
+                        positionReady.resolve(surveyPoint);
+                    }, function (error) {
+                        console.log("GeometryService error " + JSON.stringify(error));
+                    });
+                });
+            } else {
+                surveyPoint = {
+                    geometry: {
+                        x: position.x,
+                        y: position.y,
+                        z: position.z
+                    },
+                    attributes: orientation
+                };
+
+                positionReady.resolve(surveyPoint);
+            }
+
+            return positionReady;
+        },
+
         //----- Procedures meant for internal module use only --------------------------------------------------------//
 
         /**
@@ -481,6 +537,7 @@ define([
 
                 } else {
                     scene_controller._currentSlideNum = slideNum;
+                    scene_controller._currentSlideTitle = scene_controller._slides[slideNum].title.text;
                     $.publish("update-current-response-site", {
                         slide: slideNum,
                         title: scene_controller._slides[slideNum].title.text,
