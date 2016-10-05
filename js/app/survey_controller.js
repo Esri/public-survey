@@ -142,6 +142,7 @@ define([
 
                     //----- UI setup: page title, help, branding -----------------------------------------------------//
                     $("#page-title")[0].innerHTML = survey_controller._config.appParams.title;
+                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.signOut;
 
                     if (survey_controller._config.appParams.helpText) {
                         $("#helpButton")[0].title = i18n.tooltips.helpTip;
