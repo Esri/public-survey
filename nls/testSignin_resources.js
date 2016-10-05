@@ -23,7 +23,6 @@ define({
             signOut: "Sign out"
         },
         tooltips: {
-            signOut: "Sign out of application"
         }
     }),
     "de": 0,

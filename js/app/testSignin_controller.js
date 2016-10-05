@@ -70,7 +70,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
             var controllerComponentsReady = $.Deferred();
 
             // Controls in test window
-            controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
+            controller._activateButton("request-signOut", i18n.labels.signOut);
 
             // Monitoring in test window
             $.subscribe("signedIn-user", controller._logSubscribedEvent);

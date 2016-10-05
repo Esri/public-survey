@@ -32,7 +32,6 @@ define({
             signOut: "Sign out"
         },
         tooltips: {
-            signOut: "Sign out of application",
             helpTip: "More information"
         }
     }),

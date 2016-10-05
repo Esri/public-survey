@@ -18,21 +18,10 @@ define({
         noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation."
     },
     prompts: {
-        clearBtn: "Effacer",
-        finishBtn: "Finir",
-        nextBtn: "Sauter",
-        nextResponseBtn: "Réponse suivante",
-        seeResponsesBtn: "Voir les réponses",
-        submitBtn: "Soumettre le questionnaire",
-        turnOffResponsesBtn: "Cacher les réponses",
-        goToResponses: "Aller à l'emplacement de réponse"
     },
     labels: {
-        signOut: "Déconnexion"
     },
     tooltips: {
-        signOut: "Déconnexion d'application",
-        helpTip: "Plus d'information",
         importantQuestion: "S'il vous plaît répondre à cette question"
     }
 });

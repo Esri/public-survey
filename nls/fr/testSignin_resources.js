@@ -22,6 +22,5 @@ define({
         signOut: "Déconnexion"
     },
     tooltips: {
-        signOut: "Déconnexion d'application"
     }
 });

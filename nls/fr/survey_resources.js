@@ -20,10 +20,10 @@ define({
     prompts: {
         clearBtn: "Effacer",
         finishBtn: "Finir",
-        nextBtn: "Sauter",
+        nextBtn: "Aller à l'emplacement suivant",
         nextResponseBtn: "Réponse suivante",
         seeResponsesBtn: "Voir les réponses",
-        submitBtn: "Soumettre le questionnaire",
+        submitBtn: "Soumettre",
         turnOffResponsesBtn: "Cacher les réponses",
         goToResponses: "Aller à l'emplacement de réponse"
     },
@@ -31,7 +31,6 @@ define({
         signOut: "Déconnexion"
     },
     tooltips: {
-        signOut: "Déconnexion d'application",
         helpTip: "Plus d'information"
     }
 });

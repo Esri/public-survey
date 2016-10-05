@@ -26,7 +26,6 @@ define({
         multipleResponsesHere: "{count} réponses au sondage ici"
     },
     tooltips: {
-        signOut: "Déconnexion d'application",
         helpTip: "Plus d'information"
     }
 });

@@ -27,7 +27,6 @@ define({
             multipleResponsesHere: "{count} responses here"
         },
         tooltips: {
-            signOut: "Sign out of application",
             helpTip: "More information"
         }
     }),

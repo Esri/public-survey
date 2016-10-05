@@ -134,7 +134,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     console.log("survey in progress: " + controller._surveyInProgress);
                 });
 
-                controller._activateButton("request-signOut", i18n.labels.signOut, i18n.tooltips.signOut);
+                controller._activateButton("request-signOut", i18n.labels.signOut);
                 controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
 
                 // Monitoring pub/subs
