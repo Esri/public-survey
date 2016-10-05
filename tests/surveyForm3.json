@@ -5,11 +5,11 @@
         "question3": "no",
         "question4": 4,
         "question5": "q. 5",
-        "question6": "question 6",
-        "question7": "question 7",
-        "question8": "question 8",
-        "question9": "question 9",
-        "question10": "question 10"
+        "question6": "q. 6",
+        "question7": "q. 7",
+        "question8": "q. 8",
+        "question9": "q. 9",
+        "question10": "q. 10"
     },
     "canBeUpdated": true,
     "description": "<div><p>Question types</p><p>This question uses buttons {question1} {button}</p><p>This question uses a list {question2} {list}</p><p>This question uses a dropdown {question3} {dropdown}</p><p>This question requests a number {question4} {number}</p><p>This question requests text &lt; 32 chars {question5} {text}</p><p>This question requests text &ge; 32 chars {question6} {text}</p><p>Options</p><p>If policy is 'allImportant', this question is required because its field is not nullable {question7} {text}</p><p>This question is read-only because its field is not editable {question8} {text}</p><p>Embedded images</p><p>Any question can have an image between the question and the input {question9} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png} {text}</p><p>Or a question can have an image after the input {question10} {text} {image=http://tryitlive.arcgis.com/TaxParcelViewer/images/logo.png}</p></div>",
