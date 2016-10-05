@@ -140,7 +140,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     controller._config.featureSvcParams.fields,
                     ">=1", i18n.tooltips.importantQuestion
                 );
-                controller._prependToLog("Survey definition created");
 
                 // Prepare and start the scene controller
                 controller._loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
@@ -285,71 +284,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 result += value;
             }
             return result;
-        },
-
-        /**
-         * Completes text setup of a button and sets its click event to publish the id of the button.
-         * @param {string} id - Id of button to modify
-         * @param {?string} label - Text to display in button display
-         * @param {?string} tooltip - Text to display in button tooltip
-         * @param {?object} data - Data to pass to event handler
-         * @memberof controller
-         * @private
-         */
-        _activateButton: function (id, label, tooltip, data) {
-            var btn = $("#" + id);
-            btn.on("click", data, controller._buttonPublish);
-
-            btn = btn[0];
-            if (label) {
-                btn.innerHTML = label;
-            }
-            if (tooltip) {
-                btn.title = tooltip;
-            }
-
-            return btn;
-        },
-
-        /**
-         * Click event function to publish the id of the target.
-         * @param {object} evt - Click event
-         * @memberof controller
-         * @private
-         */
-        _buttonPublish: function (evt) {
-            var btn = evt.currentTarget;
-            btn.blur();  // Allow button to be defocused without clicking elsewhere
-            $.publish(btn.id, evt.data);
-        },
-
-        /**
-         * Initializes the controller.
-         * @param {object} config - App config info
-         * @memberof controller
-         * @private
-         */
-        _logSubscribedEvent: function (evt, data) {
-            var logEntry, dataAsString = data !== undefined ? JSON.stringify(data) : "";
-            logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
-            console.log(logEntry);
-
-            if (logEntry.length > 100) {
-                logEntry = logEntry.substr(0, 100) + "...";
-            }
-            controller._prependToLog(logEntry);
-        },
-
-        /**
-         * Prepends sequence number and supplied text to #logText item.
-         * <br>
-         * Note: does not work while controller page is not displayed
-         * @param {string} text - Text to prepend
-         * @memberof controller
-         * @private
-         */
-        _prependToLog: function (text) {
-            $("#logText").prepend(++controller._logNum + ": " + text + "\n");
         },
 
         _clusterViewBuilder: function(view) {
