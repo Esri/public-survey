@@ -14,18 +14,19 @@
  | limitations under the License.
  */
 define({
-    root: ({
-        messages: {
-        },
-        prompts: {
-        },
-        labels: {
-            signOut: "Sign out"
-        },
-        tooltips: {
-            signOut: "Sign out of application"
-        }
-    }),
-    "de": 0,
-    "fr": 1
+    messages: {
+        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation."
+    },
+    prompts: {
+        goToResponses: "Aller à l'emplacement de réponse",
+        currentResponsesWillBeCleared: "La réponse actuelle sera effacée. Voulez-vous continuer?"
+    },
+    labels: {
+        signOut: "Déconnexion",
+        multipleResponsesHere: "{count} réponses au sondage ici"
+    },
+    tooltips: {
+        signOut: "Déconnexion d'application",
+        helpTip: "Plus d'information"
+    }
 });

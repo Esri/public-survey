@@ -14,18 +14,13 @@
  | limitations under the License.
  */
 define({
-    root: ({
-        messages: {
-        },
-        prompts: {
-        },
-        labels: {
-            signOut: "Sign out"
-        },
-        tooltips: {
-            signOut: "Sign out of application"
-        }
-    }),
-    "de": 0,
-    "fr": 1
+    messages: {
+    },
+    prompts: {
+    },
+    labels: {
+    },
+    tooltips: {
+        importantQuestion: "S'il vous plaît répondre à cette question"
+    }
 });

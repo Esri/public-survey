@@ -13,23 +13,23 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-define(
-    ({
-        messages: {
-            loadingApp: "Chargement de l'application...",
-            unsupportedBrowser: "Cette version d'Internet Explorer ne sont pas pris en charge. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
-            needProxy: "Cette version d'Internet Explorer ne sont pas pris en charge par notre serveur. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
-            unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète."
-        },
-        prompts: {
-            signIn: "S'il vous plaît vous connecter pour commencer"
-        },
-        labels: {
-            closeBtn: "Fermez",
-            guestName: "Invité"
-        },
-        tooltips: {
-            closeBtn: "Fait avec cet affichage"
-        }
-    })
-);
+define({
+    messages: {
+        loadingApp: "Chargement de l'application...",
+        unsupportedBrowser: "Cette version d'Internet Explorer ne sont pas pris en charge. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
+        needProxy: "Cette version d'Internet Explorer ne sont pas pris en charge par notre serveur. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
+        unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
+        signinFetching: "fr/Checking availability of login possibilities...",
+        noSigninsAvailable: "fr/There are no logins available"
+    },
+    prompts: {
+        signIn: "S'il vous plaît vous connecter pour commencer"
+    },
+    labels: {
+        closeBtn: "Fermez",
+        guestName: "Invité"
+    },
+    tooltips: {
+        closeBtn: "Fait avec cet affichage"
+    }
+});

@@ -33,10 +33,9 @@ define({
         },
         tooltips: {
             signOut: "Sign out of application",
-            helpTip: "More information",
-            flagImportantQuestion: "Please answer this question"
+            helpTip: "More information"
         }
     }),
     "de": 0,
-    "fr": 0
+    "fr": 1
 });
