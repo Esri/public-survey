@@ -33,12 +33,19 @@
     <script>
     // Main module is in js/app directory, and it refers to third-party libraries in the js/lib directory
     var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
-    requirejs.config({
+    var config = {
         paths: {
             app: package_path + "/js/app",
             lib: package_path + "/js/lib"
         }
-    });
+    };
+
+    // Have to handle a locale parameter before require is loaded
+    if (location.search.match(/locale=([\w\-]+)/)) {
+        config.locale = RegExp.$1.toLowerCase();
+    }
+
+    requirejs.config(config);
 
     // Load the main app module to start the app
     require(["app/main"]);
