@@ -87,3 +87,12 @@ u("data-id",C,A,B,function(D,E){D.attr("id",e(D,E,"id",B))});u("data-class",C,A,
  * Copyright (c) 2011 "Cowboy" Ben Alman; Licensed MIT */
 (function(a){var b=a({});a.subscribe=function(){b.on.apply(b,arguments)},a.unsubscribe=function(){b.off.apply(b,arguments)},a.publish=function(){b.trigger.apply(b,arguments)}})(jQuery)
 
+/*
+ Array.prototype.fill()
+ © 2005-2016 Mozilla Developer Network and individual contributors.
+ "Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/"
+ see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill for details
+ Changed variable "final" to "ifinal" for compressor.
+*/
+Array.prototype.fill||(Array.prototype.fill=function(e,a,c){if(null==this)throw new TypeError("this is null or not defined");for(var d=Object(this),b=d.length>>>0,a=a>>0,a=0>a?Math.max(b+a,0):Math.min(a,b),c=void 0===c?b:c>>0,b=0>c?Math.max(b+c,0):Math.min(c,b);a<b;)d[a]=e,a++;return d});
+
