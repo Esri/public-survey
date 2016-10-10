@@ -213,11 +213,7 @@ define([
 
                     survey_controller._finishBtn = activateButton("_finish_survey_form", i18n.prompts.finishBtn);
                     $.subscribe("_finish_survey_form", function () {
-                        var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
-
-                        // Clear and hide survey form and action bars
-                        survey.clearForm();
-                        survey_controller._showState($("#survey")[0], DISEMBODIED);
+                        survey_controller._requestSignout(true);
                     });
 
                     survey_controller._seeResponsesBtn = activateButton("_see_current_responses",
@@ -248,15 +244,7 @@ define([
                         }
                     });
 
-                    $("#userSignoutSelection").on("click", function () {
-                        survey_controller._updateUser({
-                            name: "",
-                            id: "",
-                            canSubmit: false
-                        });
-                        survey.clearForm();
-                        $.publish("request-signOut");
-                    });
+                    $("#userSignoutSelection").on("click", survey_controller._requestSignout);
 
                     $.subscribe("clear-survey-form", survey_controller.clearSurveyForm);
 
@@ -375,6 +363,16 @@ define([
             // Show the survey page and action buttons
             survey_controller._show([$("#survey"), true]);
             survey_controller._showPageOne();
+        },
+
+        _requestSignout: function (isFinished) {
+            survey_controller._updateUser({
+                name: "",
+                id: "",
+                canSubmit: false
+            });
+            survey.clearForm();
+            $.publish("request-signOut", isFinished);
         },
 
         _updateUser: function (loginInfo) {
