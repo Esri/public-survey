@@ -160,7 +160,11 @@ define([
                     //----- Action buttons ---------------------------------------------------------------------------//
                     survey_controller._submitBtn = activateButton("_submit_survey_form", i18n.prompts.submitBtn);
                     $.subscribe("_submit_survey_form", function () {
-                        $.publish("submit-survey", survey.getFormAnswers());
+                        var submission = {};
+                        submission[survey_controller._config.appParams.surveyorFieldName] =
+                            survey_controller._currentUser.name;
+                        $.extend(submission, survey.getFormAnswers());
+                        $.publish("submit-survey", submission);
                         survey_controller._numSubmissions++;
 
                         // Update our to-do list

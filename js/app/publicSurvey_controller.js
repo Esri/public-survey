@@ -173,11 +173,10 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                             // Mix in camera orientation, current webscene slide name, and
                             // the name of the person taking the survey
                             var viewpointDesc = {};
-                            viewpointDesc[scene_controller._config.appParams.headingFieldName] = surveyPoint.attributes.heading;
-                            viewpointDesc[scene_controller._config.appParams.tiltFieldName] = surveyPoint.attributes.tilt;
-                            viewpointDesc[scene_controller._config.appParams.rollFieldName] = surveyPoint.attributes.roll;
-                            viewpointDesc[scene_controller._config.appParams.slidenameFieldName] = scene_controller._currentSlideTitle;
-                            viewpointDesc[scene_controller._config.appParams.surveyorFieldName] = null;
+                            viewpointDesc[controller._config.appParams.headingFieldName] = surveyPoint.attributes.heading;
+                            viewpointDesc[controller._config.appParams.tiltFieldName] = surveyPoint.attributes.tilt;
+                            viewpointDesc[controller._config.appParams.rollFieldName] = surveyPoint.attributes.roll;
+                            viewpointDesc[controller._config.appParams.slidenameFieldName] = scene_controller._currentSlideTitle;
                             $.extend(answers, viewpointDesc);
 
                             surveyPoint.attributes = answers;
