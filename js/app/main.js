@@ -82,8 +82,11 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                         // Run app components
                         $.when(signinReady, appReady).then(
                             function (user) {
-                                $.subscribe("request-signOut", function () {
+                                $.subscribe("request-signOut", function (ignore, isFinished) {
                                     user.signout();
+                                    if (isFinished) {
+                                        splash.replacePrompt(i18n.messages.thankYou);
+                                    }
                                 });
 
                                 appController.launch().then(
