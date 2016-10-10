@@ -19,8 +19,9 @@ define({
         unsupportedBrowser: "Cette version d'Internet Explorer ne sont pas pris en charge. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
         needProxy: "Cette version d'Internet Explorer ne sont pas pris en charge par notre serveur. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
         unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
-        signinFetching: "fr/Checking availability of login possibilities...",
-        noSigninsAvailable: "fr/There are no logins available"
+        signinFetching: "Vérification de la disponibilité des possibilités de connexion...",
+        noSigninsAvailable: "Il n'y a pas les connexions disponibles",
+        thankYou: "Merci de participer à cette enquête. Si vous souhaitez faire une autre enquête, s'il vous plaît vous connecter à nouveau."
     },
     prompts: {
         signIn: "S'il vous plaît vous connecter pour commencer"

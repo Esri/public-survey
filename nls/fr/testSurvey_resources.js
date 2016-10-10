@@ -15,7 +15,8 @@
  */
 define({
     messages: {
-        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation."
+        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
+        thankYou: "Merci de participer à cette enquête. Si vous souhaitez faire une autre enquête, s'il vous plaît vous connecter à nouveau."
     },
     prompts: {
     },

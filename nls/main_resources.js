@@ -21,7 +21,8 @@ define({
             needProxy: "This version of Internet Explorer is not supported by our server. Please use Internet Explorer 10 or newer.",
             unableToStartApp: "Unable to start application due to incomplete configuration.",
             signinFetching: "Checking availability of login possibilities...",
-            noSigninsAvailable: "There are no logins available"
+            noSigninsAvailable: "There are no logins available",
+            thankYou: "Thank you for participating in this survey. If you wish to do another survey, please login again."
         },
         prompts: {
             signIn: "Please sign in to get started"
