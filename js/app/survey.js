@@ -607,7 +607,8 @@ define([], function () {
             var buttons = "<div id='q" + iQuestion + "' class='btn-group'>";
             var domain = questionInfo.domain.split('|');
             $.each(domain, function (i, choice) {
-                buttons += "<button type='button' class='btn' value='" + i + "'>" + choice + "</button>";
+                buttons += "<button type='button' id='q" + iQuestion + "_" + i
+                    + "' class='btn' value='" + i + "'>" + choice + "</button>";
             });
             buttons += "</div>";
             return buttons;
