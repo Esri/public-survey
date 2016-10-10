@@ -103,6 +103,8 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 // Adjust config parameters as needed
                 controller._config.appParams.readonly =
                     controller._toBoolean(controller._config.appParams.readonly, false);
+                controller._config.appParams.surveyNotificationPolicy =
+                    controller._config.appParams.policy || controller._config.appParams.surveyNotificationPolicy;
 
                 // Controls
                 controller._activateButton("request-signOut");
@@ -146,10 +148,11 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
+                    controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
-                controller._logSubscribedEvent("Survey question policy:", controller._config.appParams.policy);
+                controller._logSubscribedEvent("Survey question policy:",
+                    controller._config.appParams.surveyNotificationPolicy);
 
                 controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 

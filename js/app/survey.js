@@ -54,7 +54,7 @@ define([], function () {
         _containerId: null,
         _questions: [],
         _questionLookup: [],
-        _notificationPolicy: ">=1",  // must answer ">=1", "allImportant", "all"
+        _notificationPolicy: ">=1",  // options: ">=1", "allImportant", "all"
         _importantQuestionTooltip: "Please answer this question",  // backup for missing argument
         _requiredFieldsMask: 0,     // N.B.: Form is restricted to a maximum of 31 required fields because of
         _requiredFieldsStatus: 0,   // the way that required fields are tracked.

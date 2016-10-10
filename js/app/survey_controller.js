@@ -393,9 +393,6 @@ define([
             survey_controller._show($("#action-group-2"), false,
                 survey_controller._show, [$("#action-group-1"), true]);
 
-            survey_controller._policySatisfied =
-                survey_controller._config.appParams.surveyNotificationPolicy === "none";
-
             // Set initial action buttons states
             survey_controller._updatePageOneActions();
         },

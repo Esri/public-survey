@@ -206,7 +206,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
+                    controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
 

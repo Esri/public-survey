@@ -41,6 +41,7 @@
         {"value": 1, "size": 20},
         {"value": 10, "size": 60}
     ],
+    "surveyNotificationPolicy": ">=1",
 
     "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy", "numresponsesites", "brandingicon", "showseeresponsesbutton"],
 

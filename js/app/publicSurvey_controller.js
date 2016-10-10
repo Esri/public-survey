@@ -138,7 +138,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    ">=1", i18n.tooltips.importantQuestion
+                    controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                 );
 
                 // Prepare and start the scene controller

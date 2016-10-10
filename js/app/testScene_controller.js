@@ -120,6 +120,8 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 // Supplement config
 
                 // Adjust config parameters as needed
+                controller._config.appParams.surveyNotificationPolicy =
+                    controller._config.appParams.policy || controller._config.appParams.surveyNotificationPolicy;
 
                 // Controls
                 controller._activateButton("_survey_form_in_progress", "Fill in survey");
@@ -152,9 +154,11 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
                     controller._config.featureSvcParams.fields,
-                    controller._config.appParams.policy, i18n.tooltips.importantQuestion
+                    controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                 );
                 controller._prependToLog("Survey definition created");
+                controller._logSubscribedEvent("Survey question policy:",
+                    controller._config.appParams.surveyNotificationPolicy);
 
                 // Prepare and start the scene controller
                 controller._loadCSS("//js.arcgis.com/4.0/esri/css/main.css");
