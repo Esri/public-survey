@@ -110,7 +110,7 @@ define([], function () {
             survey._inProgress = false;
             survey._policySatisfied = false;
             survey._hasUneraseableValue = false;
-            survey._isReadOnly = isReadOnly;
+            survey._isReadOnly = !!isReadOnly;
 
             // Create the questions
             $.each(surveyDefinition, function (indexInArray, questionInfo) {
@@ -196,7 +196,7 @@ define([], function () {
             survey._notifyAboutSurveyPolicy(false);
         },
 
-        fillInForm: function (values) {
+        fillInForm: function (values, monitorNotificationPolicy) {
             var _this = this;
             survey.clearForm();
 
@@ -236,8 +236,10 @@ define([], function () {
                             $("#" + question.surveyId).val(value);
                         }
 
-                        // Update the policy status for this question
-                        survey._checkNotificationPolicy(question, true);
+                        if (monitorNotificationPolicy) {
+                            // Update the policy status for this question
+                            survey._checkNotificationPolicy(question, true);
+                        }
                     }
                 });
             }
