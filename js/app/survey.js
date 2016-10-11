@@ -73,9 +73,6 @@ define([], function () {
          * properties
          */
         createSurveyDefinition: function (surveyDescription, featureSvcFields, notificationPolicy, importantQuestionTooltip) {
-            // Patch older browsers
-            survey._installPolyfills();
-
             // Adjust parameters as needed
             if (notificationPolicy !== "allImportant"
                 && notificationPolicy !== "all") {
@@ -337,16 +334,6 @@ define([], function () {
             if (survey._policySatisfied != satisfied) {
                 survey._policySatisfied = satisfied;
                 $.publish(satisfied ? "survey-form-policy-satisfied" : "survey-form-policy-not-satisfied");
-            }
-        },
-
-        _installPolyfills: function () {
-            // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
-            if (!String.prototype.startsWith) {
-                String.prototype.startsWith = function(searchString, position){
-                    position = position || 0;
-                    return survey.substr(position, searchString.length) === searchString;
-                };
             }
         },
 

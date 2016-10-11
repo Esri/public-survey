@@ -4,6 +4,7 @@ http://modernizr.com/download/#-load
 http://requirejs.org/docs/release/2.1.18/minified/require.js
 https://cdn.jsdelivr.net/leaflet.esri/2.0.0-beta.8/esri-leaflet.js
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
 https://gist.github.com/cowboy/661855
 https://github.com/codepb/jquery-template
 https://github.com/maaaaark/bcSwipe
