@@ -143,6 +143,12 @@ define([
             return sceneControllerReady;
         },
 
+        launch: function () {
+            // Display gallery now that we're closer to it being usable
+            scene_controller._showItem($(gallery), true);
+            //$(gallery).css("visibility", "visible");
+        },
+
         /**
          * Shows or hides the DOM container managed by the controller.
          * @param {boolean} makeVisible - Visibility to set for container
@@ -151,15 +157,7 @@ define([
          * @memberof scene_controller
          */
         show: function (makeVisible, thenDo, thenDoArg) {
-            if (makeVisible) {
-                $(scene_controller._container).fadeIn("fast", function () {
-                    thenDo && thenDo(thenDoArg);
-                });
-            } else {
-                $(scene_controller._container).fadeOut("fast", function () {
-                    thenDo && thenDo(thenDoArg);
-                });
-            }
+            scene_controller._showItem($(scene_controller._container), makeVisible, thenDo, thenDoArg);
         },
 
         getCurrentCameraPos: function (desiredWkid) {
@@ -219,6 +217,33 @@ define([
         },
 
         //----- Procedures meant for internal module use only --------------------------------------------------------//
+
+        /**
+         * Shows or hides a jQuery item.
+         * @param {object} item - jQuery item to change
+         * @param {boolean} makeVisible - Visibility to set for container
+         * @param {?function} thenDo - Function to execute after show/hide animation completes
+         * @param {?object} thenDoArg - Argument for thenDo function; if thenDo is _showItem() and
+         * thenDoArg is an array, thenDoArg is treated as the arguments to _showItem()
+         * @memberof survey_controller
+         */
+        _showItem: function (item, makeVisible, thenDo, thenDoArg) {
+            if (item.length > 1) {
+                thenDoArg = item[3];
+                thenDo = item[2];
+                makeVisible = item[1];
+                item = item[0];
+            }
+            if (makeVisible) {
+                item.fadeIn("fast", function () {
+                    thenDo && thenDo(thenDoArg);
+                });
+            } else {
+                item.fadeOut("fast", function () {
+                    thenDo && thenDo(thenDoArg);
+                });
+            }
+        },
 
         /**
          * Loads libraries and creates a WebScene and SceneView for the supplied webscene item.
@@ -342,7 +367,7 @@ define([
                     // Create the slide gallery
                     if (scene_controller._config.appParams.numResponseSites > 0) {
                         // Create gallery frame, its label tab, and its slides container
-                        var gallery = $("<div id='gallery' class='gallery'></div>");
+                        var gallery = $("<div id='gallery' class='gallery absent'></div>");
                         $("#viewDiv").append(gallery);
                         scene_controller.view.ui.add(gallery[0], "manual");
 
@@ -378,9 +403,6 @@ define([
                                 scene_controller._goToSlide(slideNum);
                             });
                         });
-
-                        // Gallery is ready for use
-                        $(gallery).css("visibility", "visible");
 
                         // Start with first slide whenever we have a login
                         $.subscribe("signedIn-user", function (ignore, loginInfo) {
