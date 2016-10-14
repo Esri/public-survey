@@ -365,7 +365,7 @@ define([
             survey_controller._policySatisfied = false;
 
             // Show the survey page and action buttons
-            survey_controller._show([$("#survey"), true]);
+            survey_controller._showItem([$("#survey"), true]);
             survey_controller._showPageOne();
         },
 
@@ -392,8 +392,8 @@ define([
             survey.clearForm();
             survey.setFormReadOnly(!(survey_controller._config.featureSvcParams.canBeUpdated &&
                 survey_controller._currentUser.canSubmit));
-            survey_controller._show($("#action-group-2"), false,
-                survey_controller._show, [$("#action-group-1"), true]);
+            survey_controller._showItem($("#action-group-2"), false,
+                survey_controller._showItem, [$("#action-group-1"), true]);
 
             // Set initial action buttons states
             survey_controller._updatePageOneActions();
@@ -450,8 +450,8 @@ define([
 
             survey.clearForm();
             survey.setFormReadOnly(true);
-            survey_controller._show($("#action-group-1"), false,
-                survey_controller._show, [$("#action-group-2"), true]);
+            survey_controller._showItem($("#action-group-1"), false,
+                survey_controller._showItem, [$("#action-group-2"), true]);
 
             // Set initial action buttons states
             survey_controller._updatePageTwoActions();
@@ -473,11 +473,11 @@ define([
          * @param {object} item - jQuery item to change
          * @param {boolean} makeVisible - Visibility to set for container
          * @param {?function} thenDo - Function to execute after show/hide animation completes
-         * @param {?object} thenDoArg - Argument for thenDo function; if thenDo is _show() and
-         * thenDoArg is an array, thenDoArg is treated as the arguments to _show()
+         * @param {?object} thenDoArg - Argument for thenDo function; if thenDo is _showItem() and
+         * thenDoArg is an array, thenDoArg is treated as the arguments to _showItem()
          * @memberof survey_controller
          */
-        _show: function (item, makeVisible, thenDo, thenDoArg) {
+        _showItem: function (item, makeVisible, thenDo, thenDoArg) {
             if (item.length > 1) {
                 thenDoArg = item[3];
                 thenDo = item[2];
