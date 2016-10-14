@@ -153,8 +153,47 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                         survey_controller.init(controller._config, "sidebarContent");
 
                         scene_controller.mapParamsReady.then(function () {
-                            // Start the survey controller
-                            survey_controller.launch();
+
+                            // Adapted from an idea how to monitor the active/idle state of the browser
+                            // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
+                            // We'll use a 100-count averaging buffer to get past lull in Firefox around time that the
+                            // 3D processors start up
+                            var loadingProbablyDone = $.Deferred();
+                            (function start(){
+                                var timer_start = (+new Date()), timer_end, stack = [], last100Sum = 0, timespan;
+
+                                (function collect() {
+                                    timer_end = (+new Date());
+                                    timespan = timer_end - timer_start;
+                                    stack.push(timespan);
+                                    last100Sum += timespan;
+
+                                    timer_start = timer_end;
+                                    if (stack.length > 100) {
+                                        // Remove oldest from sum and stack
+                                        last100Sum -= stack[0];
+                                        stack = stack.slice(1);
+
+                                        // If we're averaging less than 12 milliseconds between calls,
+                                        // we're probably done
+                                        if (last100Sum < 1200) {
+                                            loadingProbablyDone.resolve();
+                                        } else {
+                                            setTimeout(collect, 0);
+                                        }
+                                    } else {
+                                        setTimeout(collect, 0);
+                                    }
+                                })();
+
+                                return stack;
+                            })();
+
+                            loadingProbablyDone.then(function () {
+                                // Start the controllers
+                                survey_controller.launch();
+                                scene_controller.launch();
+                            });
                         });
 
                         controllerComponentsReady.resolve();
