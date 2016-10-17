@@ -29,9 +29,10 @@
     "surveyorFieldName": "surveyor",
     "socialMediaFieldName": "socialmedia",
     "helpText": "3D survey is used to gather comments from various 3D perspectives",
-    "finishText": "Thank you for your participation",
     "averagingFieldName": "question2",
     "averagingColorStops": [
+    "finishText": "Thank you for participating in this survey. If you wish to do another survey, please login again.",
+
         {"value": 0, "color": "#00ff00"},
         {"value": 1, "color": "#80ff00"},
         {"value": 2, "color": "#ffff00"},

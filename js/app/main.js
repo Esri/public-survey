@@ -85,7 +85,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                                 $.subscribe("request-signOut", function (ignore, isFinished) {
                                     user.signout();
                                     if (isFinished) {
-                                        splash.replacePrompt(i18n.messages.thankYou);
+                                        splash.replacePrompt(config.appParams.finishText);
                                     }
                                 });
 
