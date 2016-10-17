@@ -47,12 +47,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
         _currentSlideTitle: "",
         _featureLayerOptions: null,
         _multipleChoiceQuestions: null,
-        _pieChartTheme: [
-            ["#00ff00","#ff0000"],                              // for 2 choices
-            ["#00ff00","#ff0000","#ffff00"],                    // for 3 choices
-            "CubanShirts",                                      // for 4 choices
-            ["#00ff00","#80ff00","#ffff00","#ff8000","#ff0000"] // for 5 or more choices (cycles for more)
-        ],
         _surveyInProgress: false,
 
         _logNum: 0,
@@ -375,7 +369,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                 domainIndexLookup[answer] = i;
                             });
 
-                            if (questionInfo.field === controller._config.appParams.averagingFieldName) {
+                            if (questionInfo.field === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                 controller._averagingFieldValues = {};
                                 array.forEach(answerDomain, function (answer, i) {
                                     controller._averagingFieldValues[answer] = i;
@@ -402,12 +396,12 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     },
                     sizeInfo: {
                         field: "count",
-                        minDataValue: controller._config.appParams.featureCountSizeStops[0].value,
-                        minSize: controller._config.appParams.featureCountSizeStops[0].size,
-                        maxDataValue: controller._config.appParams.featureCountSizeStops[
-                            controller._config.appParams.featureCountSizeStops.length - 1].value,
-                        maxSize: controller._config.appParams.featureCountSizeStops[
-                            controller._config.appParams.featureCountSizeStops.length - 1].size
+                        minDataValue: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[0].value,
+                        minSize: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[0].size,
+                        maxDataValue: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[
+                            controller._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].value,
+                        maxSize: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[
+                            controller._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].size
                     },
                     labelPlacement: "center-center",
                     symbol: new LabelSymbol3D({
@@ -422,7 +416,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     visualVariables: [{
                         type: "size",
                         field: "count",  // number of features in cluster
-                        stops: controller._config.appParams.featureCountSizeStops
+                        stops: controller._config.appParams.clusterSymDisplay.featureCountSizeStops
                     }]
                 });
 
@@ -443,11 +437,11 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     visualVariables: [{
                         type: "size",
                         field: "count",  // number of features in cluster
-                        stops: controller._config.appParams.featureCountSizeStops
+                        stops: controller._config.appParams.clusterSymDisplay.featureCountSizeStops
                     }, {
                         type: "color",
                         field: "average",  // average score of features in cluster
-                        stops: controller._config.appParams.averagingColorStops
+                        stops: controller._config.appParams.clusterSymDisplay.averagingColorStops
                     }]
                 });
 
@@ -508,14 +502,14 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     });
 
                     // Define this question's pie chart and add it to the popup template
-                    var iThemeSelector =
-                        Math.max(2 /*min choices*/,
-                        Math.min(controller._pieChartTheme.length + 1 /*max choices*/,
-                        pieChartFields.length /*num choices*/)) - 2;
-                    var theme = controller._pieChartTheme[iThemeSelector];
+                    var theme = controller._config.appParams.pieChartColors[mcQuestionInfo.field];
+                    if (!theme) {
+                        theme = "GreySkies";
+                    }
                     if (Array.isArray(theme)) {
                         theme = new Theme({colors: theme});
                     }
+
                     var pieChart = {
                         title: mcQuestionInfo.question,
                         type: "pie-chart",
@@ -613,7 +607,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                         }
 
                                         // Accumulate the average score of the clusterSurveys if this is the averaging field
-                                        if (questionField === controller._config.appParams.averagingFieldName) {
+                                        if (questionField === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                             numScores += 1;
                                             scoreSum += iChoice;
                                         }

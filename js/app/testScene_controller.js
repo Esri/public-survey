@@ -335,7 +335,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                                 domainIndexLookup[answer] = i;
                             });
 
-                            if (questionInfo.field === controller._config.appParams.averagingFieldName) {
+                            if (questionInfo.field === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                 controller._averagingFieldValues = {};
                                 array.forEach(answerDomain, function (answer, i) {
                                     controller._averagingFieldValues[answer] = i;
@@ -362,12 +362,12 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     },
                     sizeInfo: {
                         field: "count",
-                        minDataValue: controller._config.appParams.featureCountSizeStops[0].value,
-                        minSize: controller._config.appParams.featureCountSizeStops[0].size,
-                        maxDataValue: controller._config.appParams.featureCountSizeStops[
-                            controller._config.appParams.featureCountSizeStops.length - 1].value,
-                        maxSize: controller._config.appParams.featureCountSizeStops[
-                            controller._config.appParams.featureCountSizeStops.length - 1].size
+                        minDataValue: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[0].value,
+                        minSize: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[0].size,
+                        maxDataValue: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[
+                            controller._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].value,
+                        maxSize: controller._config.appParams.clusterSymDisplay.featureCountSizeStops[
+                            controller._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].size
                     },
                     labelPlacement: "center-center",
                     symbol: new LabelSymbol3D({
@@ -382,7 +382,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     visualVariables: [{
                         type: "size",
                         field: "count",  // number of features in cluster
-                        stops: controller._config.appParams.featureCountSizeStops
+                        stops: controller._config.appParams.clusterSymDisplay.featureCountSizeStops
                     }]
                 });
 
@@ -403,11 +403,11 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     visualVariables: [{
                         type: "size",
                         field: "count",  // number of features in cluster
-                        stops: controller._config.appParams.featureCountSizeStops
+                        stops: controller._config.appParams.clusterSymDisplay.featureCountSizeStops
                     }, {
                         type: "color",
                         field: "average",  // average score of features in cluster
-                        stops: controller._config.appParams.averagingColorStops
+                        stops: controller._config.appParams.clusterSymDisplay.averagingColorStops
                     }]
                 });
 
@@ -563,7 +563,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                                         }
 
                                         // Accumulate the average score of the clusterSurveys if this is the averaging field
-                                        if (questionField === controller._config.appParams.averagingFieldName) {
+                                        if (questionField === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                             numScores += 1;
                                             scoreSum += iChoice;
                                         }
