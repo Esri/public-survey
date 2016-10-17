@@ -289,6 +289,11 @@ define([
                     $.subscribe("update-current-responses-set", function (ignore, carrier) {
                         survey_controller._current_responses = carrier.responses;
                         survey_controller._iCurrentResponse = 0;
+
+                        // Publish a request to go to camera position matching this response
+                        survey_controller._showCurrentResponseLocation();
+
+                        // Update the survey control buttons
                         if (survey_controller._currentPage === 1) {
                             survey_controller._updatePageOneActions();
                         } else if (survey_controller._currentPage === 2) {
