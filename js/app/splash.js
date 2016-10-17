@@ -36,15 +36,15 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                         $("#splashPage").fadeIn();
 
                         // If we're not going to wait for the webmap's original image, just set the splash
-                        if (config.appParams.useWebmapOrigImg) {
+                        if (!config.appParams.useWebmapOrigImg) {
+                            splash.setBackground(config.appParams.splashBackgroundUrl);
+                        } else {
                             config.appParams.webmapOrigImageUrlReady.then(function (url) {
                                 if (url) {
                                     config.appParams.splashBackgroundUrl = url;
                                 }
                                 splash.setBackground(config.appParams.splashBackgroundUrl);
                             });
-                        } else {
-                            splash.setBackground(config.appParams.splashBackgroundUrl);
                         }
 
                         // Test browser level and proxy availability for older IE
