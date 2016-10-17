@@ -172,6 +172,7 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.user = {
                         name: i18n.labels.guestName,
                         id: "",
+                        org: "",
                         canSubmit: handleUserSignin.appParams.allowGuestSubmissions
                     };
 
@@ -319,6 +320,7 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                         handleUserSignin.user = {
                             name: apiResponse.name,
                             id: apiResponse.id,
+                            org: "Facebook",
                             canSubmit: true
                         };
                         // Update the calling app
@@ -365,6 +367,7 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.user = {
                         name: apiResponse.result.displayName,
                         id: apiResponse.result.id,
+                        org: "Google+",
                         access_token: response.access_token,
                         canSubmit: true
                     };
@@ -494,6 +497,7 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                         handleUserSignin.user = {
                             name: data.name,
                             id: data.id_str,
+                            org: "Twitter",
                             canSubmit: true
                         };
 

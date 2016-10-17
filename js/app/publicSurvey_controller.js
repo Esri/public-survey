@@ -209,8 +209,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     // layer coordinates if they're different
                     scene_controller.getCurrentCameraPos(controller._config.featureSvcParams.spatialReference.wkid)
                         .then(function (surveyPoint) {
-                            // Mix in camera orientation, current webscene slide name, and
-                            // the name of the person taking the survey
+                            // Mix in camera orientation and current webscene slide name
                             var viewpointDesc = {};
                             viewpointDesc[controller._config.appParams.headingFieldName] = surveyPoint.attributes.heading;
                             viewpointDesc[controller._config.appParams.tiltFieldName] = surveyPoint.attributes.tilt;

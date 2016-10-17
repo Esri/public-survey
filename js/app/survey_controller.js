@@ -163,6 +163,8 @@ define([
                         var submission = {};
                         submission[survey_controller._config.appParams.surveyorFieldName] =
                             survey_controller._currentUser.name;
+                        submission[survey_controller._config.appParams.socialMediaFieldName] =
+                            survey_controller._currentUser.org;
                         $.extend(submission, survey.getFormAnswers());
                         $.publish("submit-survey", submission);
                         survey_controller._numSubmissions++;

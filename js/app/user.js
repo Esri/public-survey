@@ -31,6 +31,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"
          * @typedef {object} UserInfoHash
          * @property {string} name - User name reported by provider
          * @property {string} id - User id reported by provider
+         * @property {string} org - Social media name
          * @property {boolean} canSubmit - Indicates if user has submit privileges
          * @memberof user
          */
