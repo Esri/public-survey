@@ -515,8 +515,11 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                         title: mcQuestionInfo.question,
                         type: "pie-chart",
                         caption: "",
-                        showLabels: true,
-                        useTooltipAsLabel: true,
+                        chartOptions: {
+                            showLabels: true,
+                            labelOffset: 50,
+                            useTooltipAsLabel: true
+                        },
                         value: {
                             theme: theme,
                             fields: pieChartFields,
