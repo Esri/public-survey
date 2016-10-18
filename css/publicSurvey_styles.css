@@ -383,8 +383,8 @@ label+.radio {
     bottom: 0;
 }
 
-.esri-popup-renderer .esri-popup-renderer-media-summary .esri-popup-renderer-media-image-summary {
-    display: none;
+.esri-popup-renderer__media-summary {
+    display: none!important;
 }
 
 .esri-popup-renderer-button:focus {
