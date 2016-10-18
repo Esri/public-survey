@@ -141,7 +141,7 @@ define([
                 complete: function () {
 
                     //----- UI setup: page title, help, branding -----------------------------------------------------//
-                    $("#page-title")[0].innerHTML = survey_controller._config.appParams.title;
+                    $("#page-title")[0].innerHTML = survey_controller._config.appParams.titleText;
                     $("#userSignoutSelection")[0].innerHTML = i18n.labels.signOut;
 
                     if (survey_controller._config.appParams.helpText) {
@@ -152,8 +152,8 @@ define([
                         $("#helpButton").removeClass("absent");
                     }
 
-                    if (survey_controller._config.appParams.brandingIcon) {
-                        $("#brandingIcon").attr("src", survey_controller._config.appParams.brandingIcon);
+                    if (survey_controller._config.appParams.brandingIconUrl) {
+                        $("#brandingIcon").attr("src", survey_controller._config.appParams.brandingIconUrl);
                         $("#branding").removeClass("absent");
                     }
 

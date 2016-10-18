@@ -1,7 +1,6 @@
 ﻿{
-    "splashBackgroundUrl": "images/splash.jpg",
+    "titleText": "Public Survey",
     "splashText": "Public survey is used to gather comments from various perspectives",
-    "title": "Public Survey",
     "helpText": "3D survey is used to gather comments from various 3D perspectives",
     "finishText": "Thank you for participating in this survey. If you wish to do another survey, please login again.",
 
@@ -16,17 +15,18 @@
 
     "showTwitter": false,
 
-    "useWebmapOrigImg": false,
-    "showSeeResponsesButton": true,
-    "brandingIcon": "images/esri3.png",
-
     "headingFieldName": "heading",
     "tiltFieldName": "tilt",
     "rollFieldName": "roll",
     "slidenameFieldName": "slidename",
     "surveyorFieldName": "surveyor",
     "socialMediaFieldName": "socialmedia",
+
     "surveyNotificationPolicy": "allImportant",
+    "showSeeResponsesButton": true,
+    "useWebmapOrigImg": false,
+    "splashBackgroundUrl": "images/splash.jpg",
+    "brandingIconUrl": "images/esri3.png",
 
     "clusterSymDisplay": {
         "averagingFieldName": "question2",
@@ -47,9 +47,7 @@
         "question2": ["#00ff00","#80ff00","#ffff00","#ff8000","#ff0000"]
     },
 
-    "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey"],
-
-    "proxyProgram": "proxy/proxy.ashx",
+    "urlParamsFilter": ["diag", "test", "portalurl", "webscene", "survey"],
     "portalurl": "https://www.arcgis.com",
     "googleplusLogoutUrl": "https://accounts.google.com/logout",
     "twitterSigninUrl": "https://utility.arcgis.com/tproxy/signin",

@@ -84,7 +84,7 @@ define([], function () {
                     }
 
                     if (fetchConfigInfo._isUsableString(data.title)) {
-                        normalizedData.title = data.title;
+                        normalizedData.titleText = data.title;
                     }
                     if (fetchConfigInfo._isUsableString(data.snippet)) {
                         normalizedData.splashText = data.snippet;

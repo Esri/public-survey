@@ -107,7 +107,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             require(["app/message"], function (message) {
                 $.subscribe("show-help", function () {
                     message.showMessage(controller._config.appParams.helpText,
-                        controller._config.appParams.title);
+                        controller._config.appParams.titleText);
                 });
             });
 
@@ -128,7 +128,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     controller._config.appParams.showSeeResponsesButton = controller._config.appParams.showseeresponsesbutton;
                 }
                 if (controller._config.appParams.brandingicon) {
-                    controller._config.appParams.brandingIcon = controller._config.appParams.brandingicon;
+                    controller._config.appParams.brandingIconUrl = controller._config.appParams.brandingicon;
                 }
                 controller._config.appParams.numResponseSites =
                     controller._toNumber(controller._config.appParams.numresponsesites, 2);

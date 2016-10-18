@@ -24,7 +24,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
             // Config tells us app specifics in addition to app's parameters
             config.init().then(
                 function () {
-                    document.title = config.appParams.title;
+                    document.title = config.appParams.titleText;
                     if (config.appParams.diag !== undefined) {
                         diag.init();
                     }

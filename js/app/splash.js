@@ -27,7 +27,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             $().ready(function () {
                 // Instantiate the splash template
                 $("body").loadTemplate("js/app/splash.html", {
-                    splashInfoTitle: config.appParams.title,
+                    splashInfoTitle: config.appParams.titleText,
                     splashInfoBody: config.appParams.splashText
                 }, {
                     prepend: true,

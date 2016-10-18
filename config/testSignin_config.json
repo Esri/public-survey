@@ -1,7 +1,7 @@
 ﻿{
     "splashBackgroundUrl": "images/splash.jpg",
     "splashText": "Public survey is used to gather comments from various perspectives",
-    "title": "Public Survey",
+    "titleText": "Public Survey",
 
     "showGuest": true,
     "allowGuestSubmissions": true,

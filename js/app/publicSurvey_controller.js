@@ -122,7 +122,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
             require(["app/message"], function (message) {
                 $.subscribe("show-help", function () {
                     message.showMessage(controller._config.appParams.helpText,
-                        controller._config.appParams.title);
+                        controller._config.appParams.titleText);
                 });
             });
 
