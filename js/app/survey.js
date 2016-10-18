@@ -78,7 +78,7 @@ define([], function () {
                 && notificationPolicy !== "all") {
                 notificationPolicy = ">=1";
             }
-            survey._notificationPolicy = notificationPolicy;
+            survey._notificationPolicy = notificationPolicy || survey._notificationPolicy;
 
             survey._importantQuestionTooltip = importantQuestionTooltip || survey._importantQuestionTooltip;
 
