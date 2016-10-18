@@ -91,12 +91,15 @@ u("data-id",C,A,B,function(D,E){D.attr("id",e(D,E,"id",B))});u("data-class",C,A,
  Array.prototype.fill()
  © 2005-2016 Mozilla Developer Network and individual contributors.
  "Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/"
- see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill for details
+ see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill for details
  Changed variable "final" to "ifinal" for compressor.
- Array.prototype.startsWith()
+*/
+Array.prototype.fill||(Array.prototype.fill=function(e,a,c){if(null==this)throw new TypeError("this is null or not defined");for(var d=Object(this),b=d.length>>>0,a=a>>0,a=0>a?Math.max(b+a,0):Math.min(a,b),c=void 0===c?b:c>>0,b=0>c?Math.max(b+c,0):Math.min(c,b);a<b;)d[a]=e,a++;return d});
+/*
+ String.prototype.startsWith()
  © 2005-2016 Mozilla Developer Network and individual contributors.
  "Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/"
- see: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith for details
+ see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith for details
 */
-Array.prototype.fill||(Array.prototype.fill=function(d,a,c){if(null==this)throw new TypeError("this is null or not defined");for(var e=Object(this),b=e.length>>>0,a=a>>0,a=0>a?Math.max(b+a,0):Math.min(a,b),c=void 0===c?b:c>>0,b=0>c?Math.max(b+c,0):Math.min(c,b);a<b;)e[a]=d,a++;return e});String.prototype.startsWith||(String.prototype.startsWith=function(d,a){return this.substr(a||0,d.length)===d});
+String.prototype.startsWith||(String.prototype.startsWith=function(a,b){return this.substr(b||0,a.length)===a});
 
