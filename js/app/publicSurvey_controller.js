@@ -91,6 +91,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                     controllerReady.reject(i18n.messages.unableToStartApp);
                                 }
                             );
+                        } else {
+                            controllerReady.reject(i18n.messages.unableToStartApp);
                         }
                     });
                 }
