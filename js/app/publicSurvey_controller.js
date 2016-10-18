@@ -118,16 +118,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 controller._surveyInProgress = false;
             });
 
-            // Display help for app
-            require(["app/message"], function (message) {
-                $.subscribe("show-help", function () {
-                    message.showMessage(controller._config.appParams.helpText,
-                        controller._config.appParams.titleText);
-                });
-            });
-
-            require(["app/survey", "app/survey_controller", "app/scene_controller"],
-                function(survey, survey_controller, scene_controller) {
+            require(["app/survey", "app/survey_controller", "app/scene_controller", "app/message"],
+                function(survey, survey_controller, scene_controller, message) {
                 // Prepare the survey
                 controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
                     controller._config.featureSvcParams.popupDescription,
@@ -147,6 +139,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                         survey_controller.init(controller._config, "sidebarContent");
 
                         scene_controller.mapParamsReady.then(function () {
+
+                            message.showMessage(i18n.messages.loadingWebscene);
 
                             // Adapted from an idea how to monitor the active/idle state of the browser
                             // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
@@ -187,12 +181,19 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                 // Start the controllers
                                 survey_controller.launch();
                                 scene_controller.launch();
+
+                                message.dismiss();
                             });
                         });
 
                         controllerComponentsReady.resolve();
                     });
 
+                // Display help for app
+                $.subscribe("show-help", function () {
+                    message.showMessage(controller._config.appParams.helpText,
+                        controller._config.appParams.titleText);
+                });
 
                 // Combine survey form answers with camera position for submission
                 $.subscribe("submit-survey", function (ignore, answers) {

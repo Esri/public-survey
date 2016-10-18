@@ -16,7 +16,8 @@
 define({
     root: ({
         messages: {
-            noMoreSurveys: "There are no surveys available at this time; thank you for your participation."
+            noMoreSurveys: "There are no surveys available at this time; thank you for your participation.",
+            loadingWebscene: "Loading web scene..."
         },
         prompts: {
             goToResponses: "Go to response location",

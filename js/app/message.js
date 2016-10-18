@@ -37,6 +37,12 @@ define(["lib/i18n.min!nls/main_resources.js"],
             }
         },
 
+        dismiss: function () {
+            $("#messagePanel").modal("hide");
+            $("#messageTitle")[0].innerHTML = "";
+            $("#messageBody")[0].innerHTML = "";
+        },
+
         //------------------------------------------------------------------------------------------------------------//
 
         _showMessage: function (body, title) {

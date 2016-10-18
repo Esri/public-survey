@@ -15,7 +15,8 @@
  */
 define({
     messages: {
-        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation."
+        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
+        loadingWebscene: "Chargement de la scène web ..."
     },
     prompts: {
         goToResponses: "Aller à l'emplacement de réponse",
