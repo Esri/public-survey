@@ -259,7 +259,7 @@ define([
         _loadWebScene: function (webId, mapParamsReady) {
 
             requirejs.config({
-                baseUrl: "//js.arcgis.com/4.0/",
+                baseUrl: "//js.arcgis.com/4.1/",
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"
