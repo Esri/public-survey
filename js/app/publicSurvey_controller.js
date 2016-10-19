@@ -162,7 +162,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                     if (stack.length > 100) {
                                         // Remove oldest from sum and stack
                                         last100Sum -= stack[0];
-                                        stack = stack.slice(1);
+                                        stack.shift();
 
                                         // If we're averaging less than 12 milliseconds between calls,
                                         // we're probably done
