@@ -184,7 +184,7 @@ define([], function () {
                             } else {
                                 deferred.resolve(featureSvcData);
                             }
-                        });
+                        }).fail(deferred.reject);
                     } else {
                         deferred.resolve({});
                     }
