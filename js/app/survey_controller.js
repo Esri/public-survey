@@ -239,7 +239,11 @@ define([
 
                     survey_controller._turnOffResponsesBtn = activateButton("_turn_off_current_responses",
                         i18n.prompts.turnOffResponsesBtn);
-                    $.subscribe("_turn_off_current_responses", survey_controller._showPageOne);
+                    $.subscribe("_turn_off_current_responses", function () {
+                        survey_controller._current_responses = [];
+                        survey_controller._iCurrentResponse = 0;
+                        survey_controller._showPageOne();
+                    });
 
                     //----- UI and information updating --------------------------------------------------------------//
                     $.subscribe("signedIn-user", function (ignore, loginInfo) {
