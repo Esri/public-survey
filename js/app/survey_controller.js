@@ -342,6 +342,9 @@ define([
         launch: function () {
             if (survey_controller._config.appParams.numResponseSites === undefined) {
                 survey_controller._config.appParams.numResponseSites = 0;
+                survey_controller._iCurrentResponseSite = undefined;
+            } else {
+                survey_controller._iCurrentResponseSite = 0;
             }
             survey_controller._initialized = true;
 
@@ -364,7 +367,6 @@ define([
                 new Array(survey_controller._config.appParams.numResponseSites).fill(1);
 
             // Clear user-specific status
-            survey_controller._iCurrentResponseSite = undefined;
             survey_controller._current_responses = [];
             survey_controller._iCurrentResponse = 0;
             survey_controller._numSubmissions = 0;
