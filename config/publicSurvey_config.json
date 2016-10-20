@@ -28,7 +28,7 @@
 
     "surveyNotificationPolicy": "allImportant",
     "showSeeResponsesButton": true,
-    "useWebmapOrigImg": false,
+    "useWebmapOrigImg": true,
     "splashBackgroundUrl": "images/splash.jpg",
     "brandingIconUrl": "images/esri3.png",
 
