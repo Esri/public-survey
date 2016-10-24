@@ -23,6 +23,7 @@ define(["lib/i18n.min!nls/main_resources.js"],
         //------------------------------------------------------------------------------------------------------------//
 
         _initialized: false,
+        _messagePanelReady: $.Deferred(),
 
         //------------------------------------------------------------------------------------------------------------//
 
@@ -38,9 +39,7 @@ define(["lib/i18n.min!nls/main_resources.js"],
         },
 
         dismiss: function () {
-            $("#messagePanel").modal("hide");
-            $("#messageTitle")[0].innerHTML = "";
-            $("#messageBody")[0].innerHTML = "";
+            message._messagePanelReady.then(message._dismiss);
         },
 
         //------------------------------------------------------------------------------------------------------------//
@@ -51,9 +50,13 @@ define(["lib/i18n.min!nls/main_resources.js"],
             $("#messagePanel").modal("show");
         },
 
-        _init: function () {
-            var messagePanelReady = $.Deferred();
+        _dismiss: function () {
+            $("#messagePanel").modal("hide");
+            $("#messageTitle")[0].innerHTML = "";
+            $("#messageBody")[0].innerHTML = "";
+        },
 
+        _init: function () {
             // When the DOM is ready, we can start adjusting the UI
             $().ready(function () {
                 // Instantiate the message template
@@ -66,12 +69,12 @@ define(["lib/i18n.min!nls/main_resources.js"],
                         $("#modalCloseBtn2")[0].title = i18n.tooltips.closeBtn;
                         $("#modalCloseBtn2")[0].innerHTML = i18n.labels.closeBtn;
 
-                        messagePanelReady.resolve();
+                        message._messagePanelReady.resolve();
                     }
                 });
             });
 
-            return messagePanelReady;
+            return message._messagePanelReady;
         }
 
         //------------------------------------------------------------------------------------------------------------//
