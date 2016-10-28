@@ -146,27 +146,27 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
 
                             // Adapted from an idea how to monitor the active/idle state of the browser
                             // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
-                            // We'll use a 100-count averaging buffer to get past lull in Firefox around time that the
+                            // We'll use a 200-count averaging buffer to get past lull in Firefox around time that the
                             // 3D processors start up
                             var loadingProbablyDone = $.Deferred();
                             (function start(){
-                                var timer_start = (+new Date()), timer_end, stack = [], last100Sum = 0, timespan;
+                                var timer_start = (+new Date()), timer_end, stack = [], last200Sum = 0, timespan;
 
                                 (function collect() {
                                     timer_end = (+new Date());
                                     timespan = timer_end - timer_start;
                                     stack.push(timespan);
-                                    last100Sum += timespan;
+                                    last200Sum += timespan;
 
                                     timer_start = timer_end;
-                                    if (stack.length > 100) {
+                                    if (stack.length > 200) {
                                         // Remove oldest from sum and stack
-                                        last100Sum -= stack[0];
+                                        last200Sum -= stack[0];
                                         stack.shift();
 
                                         // If we're averaging less than 12 milliseconds between calls,
                                         // we're probably done
-                                        if (last100Sum < 1200) {
+                                        if (last200Sum < 2400) {
                                             loadingProbablyDone.resolve();
                                         } else {
                                             setTimeout(collect, 0);
