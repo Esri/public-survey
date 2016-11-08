@@ -1,4 +1,4 @@
-﻿{
+{
     "splashBackgroundUrl": "images/splash.jpg",
     "splashText": "Public survey is used to gather comments from various perspectives",
     "titleText": "Public Survey",
@@ -29,17 +29,29 @@
     "surveyorFieldName": "SRVNAME",
     "finishText": "Thank you for your participation",
     "clusterSymDisplay.averagingFieldName": "question2",
-    "clusterSymDisplay.averagingColorStops": [
-        {"value": 0, "color": "#00ff00"},
-        {"value": 1, "color": "#80ff00"},
-        {"value": 2, "color": "#ffff00"},
-        {"value": 3, "color": "#ff8000"},
-        {"value": 4, "color": "#ff0000"}
-    ],
-    "clusterSymDisplay.featureCountSizeStops": [
-        {"value": 1, "size": 20},
-        {"value": 10, "size": 60}
-    ],
+    "clusterSymDisplay.averagingColorStops": [{
+        "value": 0,
+        "color": "#00ff00"
+    }, {
+        "value": 1,
+        "color": "#80ff00"
+    }, {
+        "value": 2,
+        "color": "#ffff00"
+    }, {
+        "value": 3,
+        "color": "#ff8000"
+    }, {
+        "value": 4,
+        "color": "#ff0000"
+    }],
+    "clusterSymDisplay.featureCountSizeStops": [{
+        "value": 1,
+        "size": 20
+    }, {
+        "value": 10,
+        "size": 60
+    }],
     "surveyNotificationPolicy": ">=1",
 
     "urlParamsFilter": ["diag", "test", "webscene", "portalurl", "survey", "surveydesc", "readonly", "policy", "numresponsesites", "brandingicon", "showseeresponsesbutton"],

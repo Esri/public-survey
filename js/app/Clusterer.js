@@ -1,4 +1,4 @@
-﻿/** @license
+/** @license
  | Copyright 2016 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,11 +59,11 @@ define([
             this._tolerance = (options.hasOwnProperty("tolerance")) ? options.tolerance : 10;
             options.useZ = options.useZ || false;
 
-            this._queryTask  = new QueryTask({
+            this._queryTask = new QueryTask({
                 url: options.url
             });
 
-            this._query  = new Query({
+            this._query = new Query({
                 returnGeometry: true,
                 returnZ: options.useZ,
                 outFields: ["*"],
@@ -73,8 +73,8 @@ define([
 
             // Polyfill cube root function if needed
             // Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/cbrt
-            Math.cbrt = Math.cbrt || function(x) {
-                var y = Math.pow(Math.abs(x), 1/3);
+            Math.cbrt = Math.cbrt || function (x) {
+                var y = Math.pow(Math.abs(x), 1 / 3);
                 return x < 0 ? -y : y;
             };
         },
@@ -165,14 +165,15 @@ define([
 
             if (feature.geometry.hasZ) {
                 distance = Math.cbrt(
-                    Math.pow((cluster.geometry.x - feature.geometry.x), 2)
-                        + Math.pow((cluster.geometry.y - feature.geometry.y), 2)
-                        + Math.pow((cluster.geometry.z - feature.geometry.z), 2)
+                    Math.pow((cluster.geometry.x - feature.geometry.x), 2) +
+                    Math.pow((cluster.geometry.y - feature.geometry.y), 2) +
+                    Math.pow((cluster.geometry.z - feature.geometry.z), 2)
                 );
-            } else {
+            }
+            else {
                 distance = Math.sqrt(
-                    Math.pow((cluster.geometry.x - feature.geometry.x), 2)
-                        + Math.pow((cluster.geometry.y - feature.geometry.y), 2)
+                    Math.pow((cluster.geometry.x - feature.geometry.x), 2) +
+                    Math.pow((cluster.geometry.y - feature.geometry.y), 2)
                 );
             }
 

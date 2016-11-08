@@ -1,4 +1,4 @@
-﻿{
+{
     "webscene": "",
     "portalurl": "https://www.arcgis.com",
     "survey": "",
@@ -34,21 +34,33 @@
 
     "clusterSymDisplay": {
         "averagingFieldName": "question2",
-        "averagingColorStops": [
-            {"value": 0, "color": "#00ff00"},
-            {"value": 1, "color": "#80ff00"},
-            {"value": 2, "color": "#ffff00"},
-            {"value": 3, "color": "#ff8000"},
-            {"value": 4, "color": "#ff0000"}
-        ],
-        "featureCountSizeStops": [
-            {"value": 1, "size": 20},
-            {"value": 10, "size": 60}
-        ]
+        "averagingColorStops": [{
+            "value": 0,
+            "color": "#00ff00"
+        }, {
+            "value": 1,
+            "color": "#80ff00"
+        }, {
+            "value": 2,
+            "color": "#ffff00"
+        }, {
+            "value": 3,
+            "color": "#ff8000"
+        }, {
+            "value": 4,
+            "color": "#ff0000"
+        }],
+        "featureCountSizeStops": [{
+            "value": 1,
+            "size": 20
+        }, {
+            "value": 10,
+            "size": 60
+        }]
     },
     "pieChartColors": {
-        "question1": ["#00ff00","#ff0000","#ffff00"],
-        "question2": ["#00ff00","#80ff00","#ffff00","#ff8000","#ff0000"]
+        "question1": ["#00ff00", "#ff0000", "#ffff00"],
+        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"]
     },
 
     "urlParamsFilter": ["diag", "test", "a", "webscene", "locale", "portalurl", "webscene", "survey"],

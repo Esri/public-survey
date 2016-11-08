@@ -1,5 +1,6 @@
 /*global $ */
-/* jshint -W016 *//* "Unexpected use of '&='/'~'/'|=' */
+/* jshint -W016 */
+/* "Unexpected use of '&='/'~'/'|=' */
 /** @license
  | Copyright 2015 Esri
  |
@@ -49,17 +50,17 @@ define([], function () {
          * @event survey#survey-form-is-empty
          */
 
-         // Consumed
+        // Consumed
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
         _containerId: null,
         _questions: [],
         _questionLookup: [],
-        _notificationPolicy: ">=1",  // options: ">=1", "allImportant", "all"
-        _importantQuestionTooltip: "Please answer this question",  // backup for missing argument
-        _requiredFieldsMask: 0,     // N.B.: Form is restricted to a maximum of 31 required fields because of
-        _requiredFieldsStatus: 0,   // the way that required fields are tracked.
+        _notificationPolicy: ">=1", // options: ">=1", "allImportant", "all"
+        _importantQuestionTooltip: "Please answer this question", // backup for missing argument
+        _requiredFieldsMask: 0, // N.B.: Form is restricted to a maximum of 31 required fields because of
+        _requiredFieldsStatus: 0, // the way that required fields are tracked.
         _inProgress: false,
         _policySatisfied: false,
         _hasUneraseableValue: false,
@@ -76,8 +77,8 @@ define([], function () {
          */
         createSurveyDefinition: function (surveyDescription, featureSvcFields, notificationPolicy, importantQuestionTooltip) {
             // Adjust parameters as needed
-            if (notificationPolicy !== "allImportant"
-                && notificationPolicy !== "all") {
+            if (notificationPolicy !== "allImportant" &&
+                notificationPolicy !== "all") {
                 notificationPolicy = ">=1";
             }
             survey._notificationPolicy = notificationPolicy || survey._notificationPolicy;
@@ -100,7 +101,7 @@ define([], function () {
          * @param {boolean} isReadOnly Indicates if survey form elements are read-only
          */
         createSurveyForm: function (surveyContainer, surveyDefinition, isReadOnly) {
-            var nextReqFldStatusFlag = 1;  // first slot for required fields mask
+            var nextReqFldStatusFlag = 1; // first slot for required fields mask
 
             // Remove children and their events
             $(surveyContainer).children().remove();
@@ -147,18 +148,21 @@ define([], function () {
                         $("#" + question.surveyId + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
                     });
 
-                } else if (question.surveyFieldStyle === "list") {
+                }
+                else if (question.surveyFieldStyle === "list") {
                     $.each(question.surveyValues, function (i, uiValue) {
                         $("input[name=" + question.surveyId + "][value=" + i + "]").attr("disabled", isReadOnly);
                     });
 
-                } else {
+                }
+                else {
                     value = $("#" + question.surveyId).attr("disabled", isReadOnly);
 
                     // Emulate disabled appearance; bootstrap does this for buttons and lists
                     if (isReadOnly) {
                         value.addClass("disabled-appearance");
-                    } else {
+                    }
+                    else {
                         value.removeClass("disabled-appearance");
                     }
                 }
@@ -214,7 +218,8 @@ define([], function () {
                                 }
                             });
 
-                        } else if (question.surveyFieldStyle === "list") {
+                        }
+                        else if (question.surveyFieldStyle === "list") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
                                     $("input[name=" + question.surveyId + "][value=" + i + "]").prop("checked", true);
@@ -222,7 +227,8 @@ define([], function () {
                                 }
                             });
 
-                        } else if (question.surveyFieldStyle === "dropdown") {
+                        }
+                        else if (question.surveyFieldStyle === "dropdown") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
                                     $("#" + question.surveyId)[0].selectedIndex = i;
@@ -230,7 +236,8 @@ define([], function () {
                                 }
                             });
 
-                        } else {
+                        }
+                        else {
                             $("#" + question.surveyId).val(value);
                         }
 
@@ -255,12 +262,14 @@ define([], function () {
                             if (answer[0].selectedIndex >= 0) {
                                 answers[question.surveyField] = question.surveyValues[answer[0].selectedIndex];
                             }
-                        } else {
+                        }
+                        else {
                             answers[question.surveyField] = question.surveyValues[answer[0].value];
                         }
 
-                    // free-text item: text, number
-                    } else if (answer[0].value.length > 0) {
+                        // free-text item: text, number
+                    }
+                    else if (answer[0].value.length > 0) {
                         // Escape newlines because REST endpoint treats them as the end of the string
                         answers[question.surveyField] = answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim();
                     }
@@ -285,22 +294,28 @@ define([], function () {
                 // Extract the value from the item
                 if (questionInfo.style === "button") {
                     iQuestionResult = $("#q" + iQuestion + " .active", surveyContainer).val();
-                } else if (questionInfo.style === "list") {
+                }
+                else if (questionInfo.style === "list") {
                     iQuestionResult = $("input[name=q" + iQuestion + "]:checked", surveyContainer).val();
-                } else if (questionInfo.style === "dropdown") {
+                }
+                else if (questionInfo.style === "dropdown") {
                     iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
-                } else if (questionInfo.style === "number") {
+                }
+                else if (questionInfo.style === "number") {
                     iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
-                } else if (questionInfo.style === "text") {
+                }
+                else if (questionInfo.style === "text") {
                     iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
                 }
 
                 if (iQuestionResult) {
                     if (questionInfo.style === "number") {
                         objAttributes[questionInfo.field] = parseFloat(iQuestionResult);
-                    } else if (questionInfo.style === "text" || questionInfo.style === "dropdown") {
+                    }
+                    else if (questionInfo.style === "text" || questionInfo.style === "dropdown") {
                         objAttributes[questionInfo.field] = iQuestionResult;
-                    } else {  // "button" or "list"
+                    }
+                    else { // "button" or "list"
                         objAttributes[questionInfo.field] = questionInfo.values[iQuestionResult];
                     }
                 }
@@ -309,7 +324,8 @@ define([], function () {
                 if (questionInfo.important) {
                     if (iQuestionResult) {
                         $("#qg" + iQuestion).removeClass("flag-error");
-                    } else {
+                    }
+                    else {
                         $("#qg" + iQuestion).addClass("flag-error");
                         if (firstMissing === undefined) {
                             firstMissing = $("#qg" + iQuestion)[0];
@@ -351,7 +367,8 @@ define([], function () {
             var fieldDomains = {};
 
             $.each(featureSvcFields, function (ignore, field) {
-                var domain = null, value = null;
+                var domain = null,
+                    value = null;
                 if (field.domain && field.domain.codedValues) {
                     domain = $.map(field.domain.codedValues, function (item) {
                         return item.name;
@@ -359,7 +376,8 @@ define([], function () {
                     value = $.map(field.domain.codedValues, function (item) {
                         return item.code;
                     });
-                } else if (field.length) {
+                }
+                else if (field.length) {
                     domain = field.length;
                 }
 
@@ -393,7 +411,8 @@ define([], function () {
             //  there roof damage? <b>{RoofDamage} </b><b>{button}</b></p><p>Is the exterior damaged? <b>{ExteriorDamage}
             //  </b><b>{button}</b></p><p></p><ol><li>Is there graffiti? <b>{Graffiti} </b><b>{button}</b><br /></li><li>
             //  Are there boarded windows/doors? <b>{Boarded} </b><b>{button}</b><br /></li></ol>
-            var surveyQuestions = [], descriptionSplit1, descriptionSplit2, descriptionSplit3, taggedSurveyLines,
+            var surveyQuestions = [],
+                descriptionSplit1, descriptionSplit2, descriptionSplit3, taggedSurveyLines,
                 surveyLines;
 
             // 1. split on <div>, <p>, <br />, and <li>, all of which could be used to separate lines
@@ -455,7 +474,8 @@ define([], function () {
                             if (part3.startsWith("image=")) {
                                 surveyQuestion.startsWithImage = false;
                                 surveyQuestion.image = part3.substring(6);
-                            } else if (part2.startsWith("image=")) {
+                            }
+                            else if (part2.startsWith("image=")) {
                                 surveyQuestion.startsWithImage = true;
                                 surveyQuestion.style = part3;
                                 surveyQuestion.image = part2.substring(6);
@@ -465,8 +485,9 @@ define([], function () {
                         surveyQuestions.push(surveyQuestion);
                     }
 
-                // Otherwise, just echo line
-                } else {
+                    // Otherwise, just echo line
+                }
+                else {
                     surveyQuestion = {
                         question: line,
                         style: "heading"
@@ -491,19 +512,24 @@ define([], function () {
                 questionHTML = survey._createHeading(questionInfo);
                 $(surveyContainer).append(questionHTML);
 
-            } else {
+            }
+            else {
                 watchImportant = questionInfo.important && survey._notificationPolicy === "allImportant";
                 questionHTML = survey._startQuestion(iQuestion, questionInfo, watchImportant);
 
                 if (questionInfo.style === "button") {
                     questionHTML += survey._createButtonChoice(iQuestion, questionInfo);
-                } else if (questionInfo.style === "list") {
+                }
+                else if (questionInfo.style === "list") {
                     questionHTML += survey._createListChoice(iQuestion, questionInfo);
-                } else if (questionInfo.style === "dropdown") {
+                }
+                else if (questionInfo.style === "dropdown") {
                     questionHTML += survey._createDropdownChoice(iQuestion, questionInfo);
-                } else if (questionInfo.style === "number") {
+                }
+                else if (questionInfo.style === "number") {
                     questionHTML += survey._createNumberInput(iQuestion, questionInfo);
-                } else if (questionInfo.style === "text") {
+                }
+                else if (questionInfo.style === "text") {
                     questionHTML += survey._createTextLineInput(iQuestion, questionInfo);
                 }
                 questionHTML += survey._wrapupQuestion(iQuestion, questionInfo);
@@ -526,24 +552,28 @@ define([], function () {
                     });
                     question.surveyAnswerQuery = eventQuery + ".active";
 
-                } else if (questionInfo.style === "dropdown") {
+                }
+                else if (questionInfo.style === "dropdown") {
                     eventQuery = "#q" + iQuestion;
                     question.surveyAnswerQuery = eventQuery;
                     $(eventQuery)[0].selectedIndex = -1;
                     $(eventQuery).on("change", survey._handleDropdownClick);
 
-                } else if (questionInfo.style === "list") {
+                }
+                else if (questionInfo.style === "list") {
                     eventQuery = "[name=q" + iQuestion + "]";
                     $(eventQuery).on("click", survey._handleRadiobuttonClick);
                     question.surveyAnswerQuery = eventQuery + ":checked";
 
-                } else if (questionInfo.style === "number") {
+                }
+                else if (questionInfo.style === "number") {
                     eventQuery = "#q" + iQuestion;
                     $(eventQuery).on("keyup", survey._handleInputKeyup);
                     $(eventQuery).on("click", survey._handleInputKeyup);
                     question.surveyAnswerQuery = eventQuery;
 
-                } else {
+                }
+                else {
                     eventQuery = "#q" + iQuestion;
                     $(eventQuery).on("keyup", survey._handleInputKeyup);
                     question.surveyAnswerQuery = eventQuery;
@@ -569,12 +599,12 @@ define([], function () {
             // <div class='form-group'>
             //   <label for='q1'>Is there a structure on the property? <span class='glyphicon glyphicon-star'></span></label><br>
             var start =
-                "<div id='q" + "g" + iQuestion + "' class='form-group'>"
-                + "<label for='q" + iQuestion + "'>" + questionInfo.question
-                + (flagAsImportant ? "&nbsp;<div class='importantQuestion sprites star' title=\""
-                + survey._importantQuestionTooltip + "\"></div>"
-                : "")
-                    + "</label><br>";
+                "<div id='q" + "g" + iQuestion + "' class='form-group'>" +
+                "<label for='q" + iQuestion + "'>" + questionInfo.question +
+                (flagAsImportant ? "&nbsp;<div class='importantQuestion sprites star' title=\"" +
+                    survey._importantQuestionTooltip + "\"></div>" :
+                    "") +
+                "</label><br>";
             if (questionInfo.image && questionInfo.image.length > 0 && questionInfo.startsWithImage) {
                 start += "<img src='" + questionInfo.image + "' class='image-before'/><br>";
             }
@@ -597,8 +627,8 @@ define([], function () {
             var buttons = "<div id='q" + iQuestion + "' class='btn-group'>";
             var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {
-                buttons += "<button type='button' id='q" + iQuestion + "_" + i
-                    + "' class='btn' value='" + i + "'>" + choice + "</button>";
+                buttons += "<button type='button' id='q" + iQuestion + "_" + i +
+                    "' class='btn' value='" + i + "'>" + choice + "</button>";
             });
             buttons += "</div>";
             return buttons;
@@ -620,8 +650,8 @@ define([], function () {
             var list = "<div id='q" + iQuestion + "' class='radio-group'>";
             var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {
-                list += "<div class='radio'><label><input type='radio' name='q" + iQuestion + "' value='" + i
-                    + "'>" + choice + "</label></div>";
+                list += "<div class='radio'><label><input type='radio' name='q" + iQuestion + "' value='" + i +
+                    "'>" + choice + "</label></div>";
             });
             list += "</div>";
             return list;
@@ -674,7 +704,8 @@ define([], function () {
             if (questionInfo.domain < 32) {
                 // <input id='q1' type='text' class='text-input'>
                 list = "<input type='text'";
-            } else {
+            }
+            else {
                 // <textarea id='q1' rows='4' class='text-input'></textarea>
                 list = "<textarea rows='4'";
             }
@@ -733,7 +764,8 @@ define([], function () {
                 if (hasValue) {
                     // Clear flag for question
                     survey._requiredFieldsStatus &= ~(question.requiredFieldFlag);
-                } else {
+                }
+                else {
                     // Set flag for question
                     survey._requiredFieldsStatus |= (question.requiredFieldFlag);
                 }
@@ -741,13 +773,15 @@ define([], function () {
                 // Notify survey controller if all questions have been answered
                 survey._notifyAboutSurveyPolicy(survey._requiredFieldsStatus === 0);
 
-            // Some questions are required
-            } else if (survey._notificationPolicy === "allImportant") {
+                // Some questions are required
+            }
+            else if (survey._notificationPolicy === "allImportant") {
                 if (question.surveyImportant) {
                     if (hasValue) {
                         // Clear flag for question
                         survey._requiredFieldsStatus &= ~(question.requiredFieldFlag);
-                    } else {
+                    }
+                    else {
                         // Set flag for question
                         survey._requiredFieldsStatus |= (question.requiredFieldFlag);
                     }
@@ -756,10 +790,11 @@ define([], function () {
                 // Notify survey controller if all important questions have been answered
                 survey._notifyAboutSurveyPolicy(survey._requiredFieldsStatus === 0);
 
-            // At least one question is required
-            } else {
-                if (hasValue && (question.surveyFieldStyle === "button" || question.surveyFieldStyle === "dropdown"
-                    || question.surveyFieldStyle=== "list")) {
+                // At least one question is required
+            }
+            else {
+                if (hasValue && (question.surveyFieldStyle === "button" || question.surveyFieldStyle === "dropdown" ||
+                        question.surveyFieldStyle === "list")) {
                     survey._hasUneraseableValue = true;
                 }
 

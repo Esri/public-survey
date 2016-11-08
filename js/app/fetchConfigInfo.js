@@ -1,4 +1,4 @@
-﻿/*global $ */
+/*global $ */
 /** @license
  | Copyright 2015 Esri
  |
@@ -27,7 +27,8 @@ define([], function () {
          * in the URL
          */
         getParamsFromUrl: function () {
-            var params = {}, paramsString = window.location.search;
+            var params = {},
+                paramsString = window.location.search;
             if (paramsString.length > 0 && paramsString[0] === "?") {
                 paramsString = paramsString.substring(1).split("&");
                 $.map(paramsString, function (item) {
@@ -77,7 +78,8 @@ define([], function () {
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
                 $.getJSON(arcgisUrl + webmapId + "?f=json&callback=?", function (data) {
-                    var normalizedData = {}, imageUrl, iExt;
+                    var normalizedData = {},
+                        imageUrl, iExt;
                     if (!data || data.error) {
                         deferreds.params.reject(data && data.error);
                         deferreds.origImageUrl.resolve();
@@ -105,22 +107,25 @@ define([], function () {
                         iExt = imageUrl.lastIndexOf(".");
                         if (iExt >= 0) {
                             imageUrl = imageUrl.substring(0, iExt) + "_orig" + imageUrl.substr(iExt);
-                        } else {
+                        }
+                        else {
                             imageUrl = imageUrl + "_orig";
                         }
                         imageUrl = arcgisUrl + webmapId + "/info/" + imageUrl;
 
                         // Test that this URL is valid
                         fetchConfigInfo._testURL(imageUrl, function (isOK) {
-                            deferreds.origImageUrl.resolve(isOK
-                                ? imageUrl
-                                : null);
+                            deferreds.origImageUrl.resolve(isOK ?
+                                imageUrl :
+                                null);
                         });
-                    } else {
+                    }
+                    else {
                         deferreds.origImageUrl.resolve();
                     }
                 }).fail(deferreds.params.reject);
-            } else {
+            }
+            else {
                 deferreds.params.resolve({});
                 deferreds.origImageUrl.resolve();
             }
@@ -145,14 +150,15 @@ define([], function () {
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
                 $.getJSON(arcgisUrl + webmapId + "/data?f=json&callback=?", function (data) {
-                    var featureSvcData = {}, iOpLayer = 0;
+                    var featureSvcData = {},
+                        iOpLayer = 0;
 
                     if (data && data.operationalLayers && data.operationalLayers.length > 0) {
                         // If we have a feature layer title, find it in the operational layers; otherwise, use first
                         // operational layer
                         if (featureLayerTitle) {
                             iOpLayer = -1;
-                            $.each(data.operationalLayers, function(i, opLayer) {
+                            $.each(data.operationalLayers, function (i, opLayer) {
                                 if (opLayer.title === featureLayerTitle) {
                                     iOpLayer = i;
                                     return false;
@@ -164,7 +170,8 @@ define([], function () {
                             console.log("Operational layer \"" + featureLayerTitle + "\" not found");
                             deferred.reject();
                             return;
-                        } else {
+                        }
+                        else {
                             console.log("Survey responses into layer \"" + featureLayerTitle + "\"");
                         }
                         featureSvcData.opLayerParams = data.operationalLayers[iOpLayer];
@@ -182,15 +189,18 @@ define([], function () {
                                     featureSvcData.serviceData = serviceData;
                                     deferred.resolve(featureSvcData);
                                 });
-                            } else {
+                            }
+                            else {
                                 deferred.resolve(featureSvcData);
                             }
                         }).fail(deferred.reject);
-                    } else {
+                    }
+                    else {
                         deferred.resolve({});
                     }
                 }).fail(deferred.reject);
-            } else {
+            }
+            else {
                 deferred.resolve({});
             }
 
@@ -216,7 +226,8 @@ define([], function () {
                     data.canBeUpdated = data.capabilities && data.capabilities.indexOf("Update") >= 0;
                     deferred.resolve(data);
                 }).fail(deferred.reject);
-            } else {
+            }
+            else {
                 deferred.resolve({});
             }
 
@@ -255,7 +266,8 @@ define([], function () {
                         callback(false);
                     }
                 });
-            } catch (ignore) {
+            }
+            catch (ignore) {
                 callback(false);
             }
         }

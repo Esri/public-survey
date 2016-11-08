@@ -1,4 +1,4 @@
-﻿/*global $ */
+/*global $ */
 /** @license
  | Copyright 2015 Esri
  |
@@ -23,56 +23,56 @@
  */
 define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
     function (i18n, diag) {
-    "use strict";
-    var user = {
-        //----- Events -----------------------------------------------------------------------------------------------//
+        "use strict";
+        var user = {
+            //----- Events -----------------------------------------------------------------------------------------------//
 
-        // Published
-        /**
-         * @typedef {object} UserInfoHash
-         * @property {string} name - User name reported by provider
-         * @property {string} id - User id reported by provider
-         * @property {boolean} canSubmit - Indicates if user has submit privileges
-         * @memberof user
-         */
-        /**
-         * Provides information about the currently-signed-in user.
-         * @event user#signedIn-user
-         * @property {UserInfoHash} - User info
-         */
+            // Published
+            /**
+             * @typedef {object} UserInfoHash
+             * @property {string} name - User name reported by provider
+             * @property {string} id - User id reported by provider
+             * @property {boolean} canSubmit - Indicates if user has submit privileges
+             * @memberof user
+             */
+            /**
+             * Provides information about the currently-signed-in user.
+             * @event user#signedIn-user
+             * @property {UserInfoHash} - User info
+             */
 
-        /**
-         * Informs that a user has signed out.
-         * @event user#signedOut-user
-         */
+            /**
+             * Informs that a user has signed out.
+             * @event user#signedOut-user
+             */
 
-         // Consumed
+            // Consumed
 
-        //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables -------------------------------------------------------------------------------------//
 
-        //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access -------------------------------------------------------------//
 
-        launch: function (config, splash) {
-            $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>"
-                + i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
-            $("#guestSignin").on("click", function () {
-                $.publish("signedIn-user", {
-                    name: i18n.labels.guestName,
-                    id: "",
-                    org: "",
-                    canSubmit: config.appParams.allowGuestSubmissions
+            launch: function (config, splash) {
+                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>" +
+                    i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
+                $("#guestSignin").on("click", function () {
+                    $.publish("signedIn-user", {
+                        name: i18n.labels.guestName,
+                        id: "",
+                        org: "",
+                        canSubmit: config.appParams.allowGuestSubmissions
+                    });
                 });
-            });
-            splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
-        },
+                splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
+            },
 
-        signout: function () {
-            $.publish("signedOut-user");
-        }
+            signout: function () {
+                $.publish("signedOut-user");
+            }
 
-        //----- Procedures meant for internal module use only --------------------------------------------------------//
+            //----- Procedures meant for internal module use only --------------------------------------------------------//
 
-        //------------------------------------------------------------------------------------------------------------//
-    };
-    return user;
-});
+            //------------------------------------------------------------------------------------------------------------//
+        };
+        return user;
+    });
