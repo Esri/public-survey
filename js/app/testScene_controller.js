@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $ */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -526,7 +527,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 //----------------------------------------------------------------------------------------------------//
 
                 function _createSymbol (geometry, attributes, clusterSurveys) {
-                    var size, backgroundColor, symComponent, numQuestions = controller._multipleChoiceQuestions.length,
+                    var symComponent, numQuestions = controller._multipleChoiceQuestions.length,
                         i, j, numChoices, numScores = 0, scoreSum = 0, averageScore = Number.NaN;
 
                     for (i = 0; i < numQuestions; ++i) {

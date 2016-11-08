@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $ */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -116,6 +117,23 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 // ----- Testing -------------------------------------------------------------------------------------//
                 var num, testButtonsContainer = $("#test_buttons");
 
+                function assembleAtSiteButton(num) {
+                    var siteNum = num < 0 ? undefined : num;
+                    controller._createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
+                    $.subscribe("_at_site_" + siteNum, function () {
+                        $.publish("update-current-response-site", {
+                            slide: siteNum,
+                            title: "",
+                            fromCamera: false
+                        });
+                        $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                        controller._iCurrentResponseSite = siteNum;
+                    });
+                    if (siteNum === controller._iCurrentResponseSite) {
+                        $("#_at_site_" + siteNum).addClass("highlight-btn");
+                    }
+                }
+
                 // Supplement config
                 controller._config.appParams.headingFieldName = "heading";
                 controller._config.appParams.tiltFieldName = "tilt";
@@ -144,22 +162,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 });
 
                 if (controller._config.appParams.numResponseSites > 0) {
-                    function assembleAtSiteButton(num) {
-                        var siteNum = num < 0 ? undefined : num;
-                        controller._createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
-                        $.subscribe("_at_site_" + siteNum, function () {
-                            $.publish("update-current-response-site", {
-                                slide: siteNum,
-                                title: "",
-                                fromCamera: false
-                            });
-                            $("#_at_site_" + siteNum).addClass("highlight-btn").siblings().removeClass("highlight-btn");
-                            controller._iCurrentResponseSite = siteNum;
-                        });
-                        if (siteNum === controller._iCurrentResponseSite) {
-                            $("#_at_site_" + siteNum).addClass("highlight-btn");
-                        }
-                    }
                     for (num = -1; num < controller._config.appParams.numResponseSites; ++num) {
                         assembleAtSiteButton(num);
                     }

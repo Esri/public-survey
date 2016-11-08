@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $ */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -220,7 +221,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 });
 
                 $.subscribe("update-current-response-site", function (ignore, responseSite) {
-                    if (responseSite && (responseSite.title != undefined)) {
+                    if (responseSite && (responseSite.title !== undefined)) {
                         controller._currentSlideTitle = responseSite.title;
                     } else {
                         controller._currentSlideTitle = "";
@@ -300,20 +301,20 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
             var isFirst = true, result = "";
 
             if (value === null) {
-                result += 'null';
+                result += "null";
             } else if (typeof value === "string") {
-                result += '%22' + value + '%22';
+                result += "%22" + value + "%22";
             } else if (typeof value === "object") {
-                result += '%7B';
+                result += "%7B";
                 $.each(value, function (part) {
                     if (value.hasOwnProperty(part)) {
                         result += (isFirst
-                            ? ''
-                            : '%2C') + part + '%3A' + controller._stringifyForApplyEdits(value[part]);
+                            ? ""
+                            : "%2C") + part + "%3A" + controller._stringifyForApplyEdits(value[part]);
                         isFirst = false;
                     }
                 });
-                result += '%7D';
+                result += "%7D";
             } else {
                 result += value;
             }
@@ -576,7 +577,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                 //----------------------------------------------------------------------------------------------------//
 
                 function _createSymbol (geometry, attributes, clusterSurveys) {
-                    var size, backgroundColor, symComponent, numQuestions = controller._multipleChoiceQuestions.length,
+                    var symComponent, numQuestions = controller._multipleChoiceQuestions.length,
                         i, j, numChoices, numScores = 0, scoreSum = 0, averageScore = Number.NaN;
 
                     for (i = 0; i < numQuestions; ++i) {

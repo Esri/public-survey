@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $ */
+/** @license
  | Copyright 2016 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,7 +92,7 @@ define([
             this._view.on("click", lang.hitch(this, function(evt) {
                 if (evt.screenPoint != null) {
                     // Try a hit-test with the screen; the test will return 0 or 1 graphics
-                    var hitScreenPt = this._view.hitTest(evt.screenPoint).then(lang.hitch(this, function (hit) {
+                    this._view.hitTest(evt.screenPoint).then(lang.hitch(this, function (hit) {
                         if (hit.results.length > 0 && hit.results[0].graphic != null) {
 
                             // Is the returned graphic in the desired layer?

@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $ */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +53,7 @@ define(["app/fetchConfigInfo"],
             config.appParams.appName = config._toVariableName(paramsFromUrl.a);
             fetchConfigInfo.getParamsFromConfigFile("config/" + config.appParams.appName + "_config.json").then(
                 function (paramsFromFile) {
-                    var arcgisUrl, webmapParamsFetch = $.Deferred(), webmapDataFetch = $.Deferred();
+                    var webmapParamsFetch = $.Deferred(), webmapDataFetch = $.Deferred();
 
                     // Mix in params from configuration file
                     config.appParams = $.extend(true,

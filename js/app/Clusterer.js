@@ -56,7 +56,7 @@ define([
             }
 
             this._spatialReference = options.spatialReference;
-            this._tolerance = (options.hasOwnProperty('tolerance')) ? options.tolerance : 10;
+            this._tolerance = (options.hasOwnProperty("tolerance")) ? options.tolerance : 10;
             options.useZ = options.useZ || false;
 
             this._queryTask  = new QueryTask({

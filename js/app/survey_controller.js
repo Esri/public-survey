@@ -1,3 +1,5 @@
+/*global $ */
+/* jshint -W098 *//* 'ENABLED'/'DISABLED'/'INVISIBLE'/'DISEMBODIED' is defined but never used */
 /** @license
  | Copyright 2016 Esri
  |
@@ -193,7 +195,7 @@ define([
                             for (iToDo = survey_controller._iCurrentResponseSite + 1;
                                 iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
                                 if(survey_controller._responseSitesToDo[iToDo] === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                                    $.publish("goto-response-site", iToDo);
                                     return;
                                 }
                             }
@@ -202,7 +204,7 @@ define([
                             // and start from the beginning
                             for (iToDo = 0; iToDo < survey_controller._iCurrentResponseSite; ++iToDo) {
                                 if(survey_controller._responseSitesToDo[iToDo] === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                                    $.publish("goto-response-site", iToDo);
                                     return;
                                 }
                             }
@@ -210,10 +212,10 @@ define([
                             // Use first uncompleted site starting from beginning of todo list
                             $.each(survey_controller._responseSitesToDo, function (iToDo, status) {
                                 if (status === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                                    $.publish("goto-response-site", iToDo);
                                     return false;
                                 }
-                            })
+                            });
                         }
                     });
 
@@ -284,7 +286,7 @@ define([
                     // Update what we know about the current response site (for submitting surveys),
                     // current responses set (for viewing survey results)
                     $.subscribe("update-current-response-site", function (ignore, responseSite) {
-                        if (responseSite && (responseSite.slide != undefined)) {
+                        if (responseSite && (responseSite.slide !== undefined)) {
                             survey_controller._iCurrentResponseSite = responseSite.slide;
                         } else {
                             survey_controller._iCurrentResponseSite = undefined;

@@ -1,4 +1,5 @@
-﻿/** @license
+﻿/*global $,requirejs */
+/** @license
  | Copyright 2016 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,6 +78,7 @@ define([
         _currentSlideNum: 0,
         _featureLayerOptions: null,
         _featureServiceUrl: null,
+        _gallery: null,
         _multipleChoiceQuestions: null,
         _okToNavigate: true,
         _pieChartTheme: "GreySkies",
@@ -145,7 +147,7 @@ define([
 
         launch: function () {
             // Display gallery now that we're closer to it being usable
-            scene_controller._showItem($(gallery), true);
+            scene_controller._showItem($(scene_controller._gallery), true);
             //$(gallery).css("visibility", "visible");
         },
 
@@ -169,7 +171,7 @@ define([
                 heading: camera.heading,
                 tilt: camera.tilt,
                 roll: 0
-            }
+            };
             positionReady = $.Deferred();
 
             if (position.spatialReference.wkid !== scene_controller._config.featureSvcParams.spatialReference.wkid) {
@@ -257,6 +259,7 @@ define([
          * @private
          */
         _loadWebScene: function (webId, mapParamsReady) {
+            var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
                 baseUrl: "//js.arcgis.com/4.0/",
@@ -367,14 +370,14 @@ define([
                     // Create the slide gallery
                     if (scene_controller._config.appParams.numResponseSites > 0) {
                         // Create gallery frame, its label tab, and its slides container
-                        var gallery = $("<div id='gallery' class='gallery absent'></div>");
-                        $("#viewDiv").append(gallery);
-                        scene_controller.view.ui.add(gallery[0], "manual");
+                        scene_controller._gallery = $("<div id='gallery' class='gallery absent'></div>");
+                        $("#viewDiv").append(scene_controller._gallery);
+                        scene_controller.view.ui.add(scene_controller._gallery[0], "manual");
 
-                        $(gallery).append("<div class='galleryTab'>Take a tour</div>");
+                        $(scene_controller._gallery).append("<div class='galleryTab'>Take a tour</div>");
 
                         var slidesHolder = $("<div id='slidesHolder'></div>");
-                        $(gallery).append(slidesHolder);
+                        $(scene_controller._gallery).append(slidesHolder);
 
                         // Fill the slides container with the map's slides
                         var slides = scene_controller.map.presentation.slides;
@@ -492,6 +495,8 @@ define([
         },
 
         _fixLayerVisibility: function (slide) {
+            var clusterViewLayerId;
+
             // Is the survey layer visible in this slide?  If so, hide it because we'll replace it with a clustered form
             if (slide !== undefined) {
                 slide.visibleLayers.items.some(function (visibleLayer, iVisibleLayer) {
@@ -502,7 +507,7 @@ define([
                 });
 
                 // Similarly, if the cluster view's graphics layer is not visible, add it to the visible layers
-                var clusterViewLayerId = scene_controller._clustererView.layerId();
+                clusterViewLayerId = scene_controller._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
                     var clusterLayerVisible = slide.visibleLayers.some(function (visibleLayer, iVisibleLayer) {
                         if (clusterViewLayerId === visibleLayer.id) {
@@ -516,7 +521,7 @@ define([
             } else {
                 scene_controller.map.findLayerById(
                     scene_controller._config.featureSvcParams.id).visible = false;
-                var clusterViewLayerId = scene_controller._clustererView.layerId();
+                clusterViewLayerId = scene_controller._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
                     scene_controller.map.findLayerById(clusterViewLayerId).visible = true;
                 }

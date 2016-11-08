@@ -1,3 +1,4 @@
+/*global $ */
 /** @license
  | Copyright 2015 Esri
  |

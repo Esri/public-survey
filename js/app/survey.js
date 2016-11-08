@@ -1,3 +1,5 @@
+/*global $ */
+/* jshint -W016 *//* "Unexpected use of '&='/'~'/'|=' */
 /** @license
  | Copyright 2015 Esri
  |
@@ -21,7 +23,7 @@
  * @version 0.1
  */
 define([], function () {
-    'use strict';
+    "use strict";
     var survey;
     survey = {
         //----- Events -----------------------------------------------------------------------------------------------//
@@ -134,7 +136,7 @@ define([], function () {
 
             // Render any radiobutton groups
             survey._containerId = surveyContainer.id;
-            $("#" + survey._containerId + " .btn-group").trigger('create');
+            $("#" + survey._containerId + " .btn-group").trigger("create");
         },
 
         setFormReadOnly: function (isReadOnly) {
@@ -194,7 +196,6 @@ define([], function () {
         },
 
         fillInForm: function (values, monitorNotificationPolicy) {
-            var _this = this;
             survey.clearForm();
 
             if (values) {
@@ -216,7 +217,7 @@ define([], function () {
                         } else if (question.surveyFieldStyle === "list") {
                             $.each(question.surveyValues, function (i, uiValue) {
                                 if (value === uiValue) {
-                                    $("input[name=" + question.surveyId + "][value=" + i + "]").prop('checked', true);
+                                    $("input[name=" + question.surveyId + "][value=" + i + "]").prop("checked", true);
                                     return false;
                                 }
                             });
@@ -261,7 +262,7 @@ define([], function () {
                     // free-text item: text, number
                     } else if (answer[0].value.length > 0) {
                         // Escape newlines because REST endpoint treats them as the end of the string
-                        answers[question.surveyField] = answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim()
+                        answers[question.surveyField] = answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim();
                     }
                 }
             });
@@ -283,15 +284,15 @@ define([], function () {
             $.each(surveyDefinition, function (iQuestion, questionInfo) {
                 // Extract the value from the item
                 if (questionInfo.style === "button") {
-                    iQuestionResult = $('#q' + iQuestion + ' .active', surveyContainer).val();
+                    iQuestionResult = $("#q" + iQuestion + " .active", surveyContainer).val();
                 } else if (questionInfo.style === "list") {
-                    iQuestionResult = $('input[name=q' + iQuestion + ']:checked', surveyContainer).val();
+                    iQuestionResult = $("input[name=q" + iQuestion + "]:checked", surveyContainer).val();
                 } else if (questionInfo.style === "dropdown") {
-                    iQuestionResult = $('#q' + iQuestion, surveyContainer).val();
+                    iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
                 } else if (questionInfo.style === "number") {
-                    iQuestionResult = $('#q' + iQuestion, surveyContainer).val();
+                    iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
                 } else if (questionInfo.style === "text") {
-                    iQuestionResult = $('#q' + iQuestion, surveyContainer).val();
+                    iQuestionResult = $("#q" + iQuestion, surveyContainer).val();
                 }
 
                 if (iQuestionResult) {
@@ -594,7 +595,7 @@ define([], function () {
             //   <button type='button' class='btn'>Not sure</button>
             // </div>
             var buttons = "<div id='q" + iQuestion + "' class='btn-group'>";
-            var domain = questionInfo.domain.split('|');
+            var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {
                 buttons += "<button type='button' id='q" + iQuestion + "_" + i
                     + "' class='btn' value='" + i + "'>" + choice + "</button>";
@@ -617,7 +618,7 @@ define([], function () {
             // <div class='radio'><label><input type='radio' name='q1' id='optionFound4' value='3'>Slab on grade</label></div>
             // <div class='radio'><label><input type='radio' name='q1' id='optionFound0' value='4'>Not sure</label></div>
             var list = "<div id='q" + iQuestion + "' class='radio-group'>";
-            var domain = questionInfo.domain.split('|');
+            var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {
                 list += "<div class='radio'><label><input type='radio' name='q" + iQuestion + "' value='" + i
                     + "'>" + choice + "</label></div>";
@@ -640,7 +641,7 @@ define([], function () {
             //   <option value='Notsure'>Not sure</option>
             // </select>
             var list = "<select id='q" + iQuestion + "' class='dropdown-group'>";
-            var domain = questionInfo.domain.split('|');
+            var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {
                 list += "<option value='" + choice + "'>" + choice + "</option>";
             });
