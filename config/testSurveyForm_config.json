@@ -25,7 +25,6 @@
     "rollFieldName": "roll",
     "slidenameFieldName": "slidename",
     "surveyorFieldName": "SRVNAME",
-    "helpText": "3D survey is used to gather comments from various 3D perspectives",
     "finishText": "Thank you for your participation",
     "clusterSymDisplay.averagingFieldName": "question2",
     "clusterSymDisplay.averagingColorStops": [
