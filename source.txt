@@ -1,0 +1,7 @@
+git repository public-survey, branch 
+develop
+commit 8f79c735d3ef3631afc23c977b05e07ab206a774
+Author: MikeTschudi <mtschudi@esri.com>
+Date:   Wed Nov 9 14:30:10 2016 -0800
+
+    Replaced loading dialog box with busy GIF atop a scrim
