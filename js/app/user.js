@@ -1,4 +1,5 @@
-﻿/** @license
+/*global $ */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,82 +22,82 @@
  * @version 0.1
  */
 define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"],
-    function (i18n,handleUserSignin, diag) {
-    "use strict";
-    var user = {
-        //----- Events -----------------------------------------------------------------------------------------------//
+    function (i18n, handleUserSignin, diag) {
+        "use strict";
+        var user = {
+            //----- Events -----------------------------------------------------------------------------------------------//
 
-        // Published
-        /**
-         * @typedef {object} UserInfoHash
-         * @property {string} name - User name reported by provider
-         * @property {string} id - User id reported by provider
-         * @property {string} org - Social media name
-         * @property {boolean} canSubmit - Indicates if user has submit privileges
-         * @memberof user
-         */
-        /**
-         * Provides information about the currently-signed-in user.
-         * @event user#signedIn-user
-         * @property {UserInfoHash} - User info
-         */
+            // Published
+            /**
+             * @typedef {object} UserInfoHash
+             * @property {string} name - User name reported by provider
+             * @property {string} id - User id reported by provider
+             * @property {string} org - Social media name
+             * @property {boolean} canSubmit - Indicates if user has submit privileges
+             * @memberof user
+             */
+            /**
+             * Provides information about the currently-signed-in user.
+             * @event user#signedIn-user
+             * @property {UserInfoHash} - User info
+             */
 
-        /**
-         * Informs that a user has signed out.
-         * @event user#signedOut-user
-         */
+            /**
+             * Informs that a user has signed out.
+             * @event user#signedOut-user
+             */
 
-        /**
-         * Informs about the availability of an avatar image.
-         * @event user#avatar-update
-         */
+            /**
+             * Informs about the availability of an avatar image.
+             * @event user#avatar-update
+             */
 
-         // Consumed
+            // Consumed
 
-        //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables -------------------------------------------------------------------------------------//
 
-        //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access -------------------------------------------------------------//
 
-        launch: function (config, splash) {
-            splash.replacePrompt(i18n.messages.signinFetching);
+            launch: function (config, splash) {
+                splash.replacePrompt(i18n.messages.signinFetching);
 
-            // Start up the social media connections
-            var userSigninReady = handleUserSignin.init(config.appParams, function (notificationType) {
-                // Callback from current social medium
-                switch (notificationType) {
-                case handleUserSignin.notificationSignIn:
-                    $.publish("signedIn-user", handleUserSignin.getUser());
-                    break;
-                case handleUserSignin.notificationSignOut:
-                    $.publish("signedOut-user");
-                    break;
-                case handleUserSignin.notificationAvatarUpdate:
-                    $.publish("avatar-update", handleUserSignin.getUser().avatar);
-                    break;
-                }
-            });
+                // Start up the social media connections
+                var userSigninReady = handleUserSignin.init(config.appParams, function (notificationType) {
+                    // Callback from current social medium
+                    switch (notificationType) {
+                        case handleUserSignin.notificationSignIn:
+                            $.publish("signedIn-user", handleUserSignin.getUser());
+                            break;
+                        case handleUserSignin.notificationSignOut:
+                            $.publish("signedOut-user");
+                            break;
+                        case handleUserSignin.notificationAvatarUpdate:
+                            $.publish("avatar-update", handleUserSignin.getUser().avatar);
+                            break;
+                    }
+                });
 
-            // When the social media connections are ready, we can enable the social-media sign-in buttons
-            userSigninReady.then(function () {
-                // Add the sign-in buttons
-                handleUserSignin.initUI(splash.getActionsContainer());
+                // When the social media connections are ready, we can enable the social-media sign-in buttons
+                userSigninReady.then(function () {
+                    // Add the sign-in buttons
+                    handleUserSignin.initUI(splash.getActionsContainer());
 
-                // Switch to the sign-in prompt
-                splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
+                    // Switch to the sign-in prompt
+                    splash.replacePrompt(i18n.prompts.signIn, splash.showActions);
 
-            }, function () {
-                // Switch to the no-logins message
-                splash.replacePrompt(i18n.messages.noSigninsAvailable);
-            });
-        },
+                }, function () {
+                    // Switch to the no-logins message
+                    splash.replacePrompt(i18n.messages.noSigninsAvailable);
+                });
+            },
 
-        signout: function () {
-            handleUserSignin.signOut();
-        }
+            signout: function () {
+                handleUserSignin.signOut();
+            }
 
-        //----- Procedures meant for internal module use only --------------------------------------------------------//
+            //----- Procedures meant for internal module use only --------------------------------------------------------//
 
-        //------------------------------------------------------------------------------------------------------------//
-    };
-    return user;
-});
+            //------------------------------------------------------------------------------------------------------------//
+        };
+        return user;
+    });

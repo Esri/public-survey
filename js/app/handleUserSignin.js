@@ -1,4 +1,5 @@
-﻿/** @license
+/*global $,Modernizr,FB,gapi */
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,9 +75,9 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
 
                         FB.init({
                             appId: handleUserSignin.appParams.facebookAppId,
-                            cookie: true,  // enable cookies to allow the server to access the session
-                            xfbml: false,   // parse social plugins on this page such as Login
-                            status: true,  // check login status on every page load
+                            cookie: true, // enable cookies to allow the server to access the session
+                            xfbml: false, // parse social plugins on this page such as Login
+                            status: true, // check login status on every page load
                             version: "v2.3"
                         });
 
@@ -98,7 +99,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
 
                     handleUserSignin.availabilities.facebook = true;
                     facebookDeferred.resolve(true);
-                } else {
+                }
+                else {
                     facebookDeferred.resolve(false);
                 }
             });
@@ -112,7 +114,9 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     // Load the SDK asynchronously; it calls window.ggAsyncInit when done
                     (function () {
                         // Don't have Google+ API scan page for button
-                        window.___gcfg = {parsetags: "explicit"};
+                        window.___gcfg = {
+                            parsetags: "explicit"
+                        };
 
                         // Modernizr/yepnope for load to get onload event cross-browser
                         Modernizr.load([{
@@ -127,7 +131,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                             }
                         }]);
                     }());
-                } else {
+                }
+                else {
                     googlePlusDeferred.resolve(false);
                 }
             });
@@ -140,7 +145,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                 if (!isIE8 && appParams.showTwitter) {
                     handleUserSignin.availabilities.twitter = true;
                     twitterDeferred.resolve(true);
-                } else {
+                }
+                else {
                     twitterDeferred.resolve(false);
                 }
             });
@@ -152,7 +158,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                 .done(function (facebookAvail, googlePlusAvail, twitterAvail) {
                     if (handleUserSignin.availabilities.guest || facebookAvail || googlePlusAvail || twitterAvail) {
                         deferred.resolve();
-                    } else {
+                    }
+                    else {
                         deferred.reject();
                     }
                 });
@@ -163,8 +170,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
         initUI: function (actionButtonContainer) {
 
             if (handleUserSignin.availabilities.guest) {
-                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>"
-                    + i18n.labels.guestName + "</div>").appendTo(actionButtonContainer);
+                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>" +
+                    i18n.labels.guestName + "</div>").appendTo(actionButtonContainer);
                 $("#guestSignin").on("click", function () {
                     handleUserSignin.loggedIn = true;
                     handleUserSignin.currentProvider = "guest";
@@ -251,36 +258,36 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
             if (handleUserSignin.isSignedIn()) {
                 switch (handleUserSignin.currentProvider) {
 
-                case "guest":
-                    handleUserSignin.user = {};
+                    case "guest":
+                        handleUserSignin.user = {};
 
-                    // Update the calling app
-                    handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
-                    break;
+                        // Update the calling app
+                        handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
+                        break;
 
-                case "facebook":
-                    // Log the user out of the app; known FB issue is that cookies are not cleared as promised if
-                    // browser set to block third-party cookies (https://developers.facebook.com/bugs/406554842852890/)
-                    FB.logout();
-                    break;
+                    case "facebook":
+                        // Log the user out of the app; known FB issue is that cookies are not cleared as promised if
+                        // browser set to block third-party cookies (https://developers.facebook.com/bugs/406554842852890/)
+                        FB.logout();
+                        break;
 
-                case "googlePlus":
-                    // Log the user out of the app
-                    try {
-                        handleUserSignin.disconnectUser(handleUserSignin.user.access_token);
-                        gapi.auth.signOut();
-                        handleUserSignin.showGooglePlusLogoutWin();
-                    } catch (ignore) {
-                    }
-                    break;
+                    case "googlePlus":
+                        // Log the user out of the app
+                        try {
+                            handleUserSignin.disconnectUser(handleUserSignin.user.access_token);
+                            gapi.auth.signOut();
+                            handleUserSignin.showGooglePlusLogoutWin();
+                        }
+                        catch (ignore) {}
+                        break;
 
-                case "twitter":
-                    // Update the calling app
-                    handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
+                    case "twitter":
+                        // Update the calling app
+                        handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
 
-                    // Log the user out of the app
-                    handleUserSignin.showTwitterLoginWin(true);
-                    break;
+                        // Log the user out of the app
+                        handleUserSignin.showTwitterLoginWin(true);
+                        break;
                 }
             }
             handleUserSignin.currentProvider = "none";
@@ -307,14 +314,16 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
 
             // that response may not be true; we'll find out for sure when we call FB.api
             handleUserSignin.loggedIn = response && response.status === "connected";
-            handleUserSignin.currentProvider = handleUserSignin.loggedIn
-                ? "facebook"
-                : "";
+            handleUserSignin.currentProvider = handleUserSignin.loggedIn ?
+                "facebook" :
+                "";
 
             // If logged in, update info from the account
             handleUserSignin.user = {};
             if (handleUserSignin.loggedIn) {
-                FB.api("/me", {fields: "name,id"}, function (apiResponse) {
+                FB.api("/me", {
+                    fields: "name,id"
+                }, function (apiResponse) {
                     handleUserSignin.loggedIn = apiResponse.name !== undefined;
                     if (handleUserSignin.loggedIn) {
                         handleUserSignin.user = {
@@ -328,8 +337,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
 
                         // Update the avatar
                         FB.api("/" + handleUserSignin.user.id + "/picture", function (picResponse) {
-                            if (picResponse && !picResponse.error && picResponse.data
-                                && !picResponse.data.is_silhouette && picResponse.data.url) {
+                            if (picResponse && !picResponse.error && picResponse.data &&
+                                !picResponse.data.is_silhouette && picResponse.data.url) {
                                 handleUserSignin.user.avatar = picResponse.data.url;
                             }
                             // Update the calling app
@@ -339,7 +348,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.statusCallback(handleUserSignin.notificationAvatarUpdate);
                 });
 
-            } else {
+            }
+            else {
                 // Update the calling app
                 handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
             }
@@ -354,9 +364,9 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
          */
         updateGooglePlusUser: function (response) {
             handleUserSignin.loggedIn = response && response.status && response.status.signed_in;
-            handleUserSignin.currentProvider = handleUserSignin.loggedIn
-                ? "googlePlus"
-                : "";
+            handleUserSignin.currentProvider = handleUserSignin.loggedIn ?
+                "googlePlus" :
+                "";
 
             // If logged in, update info from the account
             handleUserSignin.user = {};
@@ -376,8 +386,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.statusCallback(handleUserSignin.notificationSignIn);
 
                     // Update the avatar
-                    if (apiResponse.result.image && !apiResponse.result.image.isDefault
-                        && apiResponse.result.image.url) {
+                    if (apiResponse.result.image && !apiResponse.result.image.isDefault &&
+                        apiResponse.result.image.url) {
                         handleUserSignin.user.avatar = apiResponse.result.image.url;
                         handleUserSignin.statusCallback(handleUserSignin.notificationAvatarUpdate);
                     }
@@ -386,8 +396,9 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
                 });
 
-            // Report not-logged-in state
-            } else {
+                // Report not-logged-in state
+            }
+            else {
                 handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
             }
         },
@@ -430,8 +441,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
             w = screen.width / 2;
             h = screen.height / 1.5;
 
-            window.open(baseUrl, "GooglePlus", "scrollbars=yes, resizable=yes, left=" + left
-                + ", top=" + top + ", width=" + w + ", height=" + h, true);
+            window.open(baseUrl, "GooglePlus", "scrollbars=yes, resizable=yes, left=" + left +
+                ", top=" + top + ", width=" + w + ", height=" + h, true);
         },
 
         //------------------------------------------------------------------------------------------------------------//
@@ -446,8 +457,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
 
             baseUrl = handleUserSignin.appParams.twitterSigninUrl;
             package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
-            redirect_uri = encodeURIComponent(location.protocol + "//" + location.host
-                + package_path + handleUserSignin.appParams.twitterCallbackUrl);
+            redirect_uri = encodeURIComponent(location.protocol + "//" + location.host +
+                package_path + handleUserSignin.appParams.twitterCallbackUrl);
             left = (screen.width / 2) - (w / 2);
             top = (screen.height / 2) - (h / 2);
             w = screen.width / 2;
@@ -464,8 +475,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                 baseUrl += "redirect_uri=" + redirect_uri;
             }
 
-            window.open(baseUrl, "twoAuth", "scrollbars=yes, resizable=yes, left=" + left
-                + ", top=" + top + ", width=" + w + ", height=" + h, true);
+            window.open(baseUrl, "twoAuth", "scrollbars=yes, resizable=yes, left=" + left +
+                ", top=" + top + ", width=" + w + ", height=" + h, true);
             window.oAuthCallback = function () {
                 handleUserSignin.updateTwitterUser();
             };
@@ -489,9 +500,9 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                 success: function (data) {
 
                     handleUserSignin.loggedIn = data && !data.hasOwnProperty("signedIn") && !data.signedIn;
-                    handleUserSignin.currentProvider = handleUserSignin.loggedIn
-                        ? "twitter"
-                        : "";
+                    handleUserSignin.currentProvider = handleUserSignin.loggedIn ?
+                        "twitter" :
+                        "";
 
                     if (handleUserSignin.loggedIn) {
                         handleUserSignin.user = {
@@ -509,7 +520,8 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                             handleUserSignin.user.avatar = data.profile_image_url_https;
                             handleUserSignin.statusCallback(handleUserSignin.notificationAvatarUpdate);
                         }
-                    } else {
+                    }
+                    else {
                         handleUserSignin.user = {};
 
                         // Update the calling app
