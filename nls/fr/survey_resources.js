@@ -29,7 +29,8 @@ define({
         goToResponses: "Aller à l'emplacement de réponse"
     },
     labels: {
-        signOut: "Déconnexion"
+        signOut: "Se déconnecter",
+        exit: "Sortir"
     },
     tooltips: {
         helpTip: "Plus d'information"

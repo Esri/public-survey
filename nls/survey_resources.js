@@ -30,7 +30,8 @@ define({
             goToResponses: "Go to response location"
         },
         labels: {
-            signOut: "Sign out"
+            signOut: "Sign out",
+            exit: "Exit"
         },
         tooltips: {
             helpTip: "More information"

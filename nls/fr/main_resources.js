@@ -23,7 +23,7 @@ define({
         noSigninsAvailable: "Il n'y a pas les connexions disponibles"
     },
     prompts: {
-        signIn: "S'il vous plaît vous connecter pour commencer"
+        signIn: "S'il vous plaît vous connecter pour commencer",
     },
     labels: {
         closeBtn: "Fermez",

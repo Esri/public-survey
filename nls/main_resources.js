@@ -24,7 +24,7 @@ define({
             noSigninsAvailable: "There are no logins available"
         },
         prompts: {
-            signIn: "Please sign in to get started"
+            signIn: "Please sign in to get started",
         },
         labels: {
             closeBtn: "Close",

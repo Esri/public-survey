@@ -144,7 +144,7 @@ define([
 
                     //----- UI setup: page title, help, branding -----------------------------------------------------//
                     $("#page-title")[0].innerHTML = survey_controller._config.appParams.titleText;
-                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.signOut;
+                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.exit;
                     $("#action-bar-message")[0].innerHTML = i18n.messages.surveySubmitted;
 
                     if (survey_controller._config.appParams.helpText) {
@@ -416,8 +416,10 @@ define([
         _updateUser: function (loginInfo) {
             survey_controller._currentUser = loginInfo;
 
-            // Heading on survey/profile page
+            // Heading and how to label signout on survey/profile page
             $("#name")[0].innerHTML = loginInfo.name;
+            $("#userSignoutSelection")[0].innerHTML = survey_controller._currentUser.org === "_guest_" ?
+                i18n.labels.exit : i18n.labels.signOut;
         },
 
         _showPageOne: function () {

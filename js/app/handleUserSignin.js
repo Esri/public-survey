@@ -179,7 +179,7 @@ define(["lib/i18n.min!nls/main_resources.js"], function (i18n) {
                     handleUserSignin.user = {
                         name: i18n.labels.guestName,
                         id: "",
-                        org: "",
+                        org: "_guest_",
                         canSubmit: handleUserSignin.appParams.allowGuestSubmissions
                     };
 
