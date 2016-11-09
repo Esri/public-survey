@@ -132,8 +132,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                         );
 
                         // Prepare and start the scene controller
-                        controller._loadCSS("//js.arcgis.com/4.1/esri/css/main.css");
-                        controller._loadCSS("//js.arcgis.com/4.1/dijit/themes/claro/claro.css");
+                        controller._loadCSS("//jsdev.arcgis.com/4.2/esri/css/main.css");
+                        controller._loadCSS("//jsdev.arcgis.com/4.2/dijit/themes/claro/claro.css");
                         controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                         scene_controller.init(controller._config, "mainContent",
@@ -353,7 +353,7 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                     "esri/PopupTemplate",
                     "esri/renderers/SimpleRenderer",
                     "esri/symbols/TextSymbol3DLayer",
-                    "lib/popupLabelsThemes_4.1_min"
+                    "lib/popupLabelsThemes_4.2_min"
                 ], function (
                     array,
                     lang,
