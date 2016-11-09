@@ -1,3 +1,4 @@
+/*global $ */
 /** @license
  | Copyright 2015 Esri
  |
@@ -16,103 +17,105 @@
 //====================================================================================================================//
 define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/diag"],
     function (i18n, config, splash, diag) {
-    "use strict";
-    var main = {
-        //------------------------------------------------------------------------------------------------------------//
+        "use strict";
+        var main = {
+            //------------------------------------------------------------------------------------------------------------//
 
-        init: function () {
-            // Config tells us app specifics in addition to app's parameters
-            config.init().then(
-                function () {
-                    document.title = config.appParams.titleText;
-                    if (config.appParams.diag !== undefined) {
-                        diag.init();
-                    }
-
-                    // Show the splash and check if we meet proxy and minimum browser requirements; if OK, launch app
-                    splash.init(config).then(
-                        main._launch,
-                        function (error) {
-                            // If unsupported browser or proxy problem, tell the user and proceed no further
-                            if (error === "Unsupported browser") {
-                                splash.replacePrompt(i18n.messages.unsupportedBrowser);
-                            } else {
-                                splash.replacePrompt(i18n.messages.needProxy);
-                            }
+            init: function () {
+                // Config tells us app specifics in addition to app's parameters
+                config.init().then(
+                    function () {
+                        document.title = config.appParams.titleText;
+                        if (config.appParams.diag !== undefined) {
+                            diag.init();
                         }
-                    );
-                },
-                function (error) {
-                    require(["app/message"], function (message) {
-                        var details = (error && error.statusText) || (error && error.message) || "";
-                        message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
-                    });
-                }
-            );
-        },
 
-        //------------------------------------------------------------------------------------------------------------//
-
-        _launch: function () {
-            // Load the app specifics
-            splash.replacePrompt(i18n.messages.loadingApp);
-            config.loadController().then(
-                function (appController) {
-                    if (appController) {
-                        var appReady, signinReady = $.Deferred();
-
-                        // Prepare app components
-                        require(["app/user"], function (user) {
-                            signinReady.resolve(user);
-                        });
-
-                        appReady = appController.init(config, $("body"));
-
-                        // Wire up coordination between splash/signin and rest of app
-                        $.subscribe("signedIn-user", function (ignore, loginInfo) {
-                            diag.appendWithLF("signed in user: " + JSON.stringify(loginInfo));  //???
-                            splash.show(false, appController.show, true);
-                        });
-
-                        $.subscribe("signedOut-user", function () {
-                            diag.appendWithLF("signed out");  //???
-                            appController.show(false, splash.show, true);
-                        });
-
-                        // Run app components
-                        $.when(signinReady, appReady).then(
-                            function (user) {
-                                $.subscribe("request-signOut", function (ignore, isFinished) {
-                                    user.signout();
-                                    if (isFinished) {
-                                        splash.replacePrompt(config.appParams.finishText);
-                                    }
-                                });
-
-                                appController.launch().then(
-                                    function () {
-                                        // Show sign-in
-                                        user.launch(config, splash);
-                                    },
-                                    function (info) {
-                                        splash.replacePrompt(info);
-                                    }
-                                );
-                            },
-                            function () {
-                                splash.replacePrompt(i18n.messages.unableToStartApp);
+                        // Show the splash and check if we meet proxy and minimum browser requirements; if OK, launch app
+                        splash.init(config).then(
+                            main._launch,
+                            function (error) {
+                                // If unsupported browser or proxy problem, tell the user and proceed no further
+                                if (error === "Unsupported browser") {
+                                    splash.replacePrompt(i18n.messages.unsupportedBrowser);
+                                }
+                                else {
+                                    splash.replacePrompt(i18n.messages.needProxy);
+                                }
                             }
                         );
-                    } else {
-                        splash.replacePrompt(i18n.messages.unableToStartApp);
+                    },
+                    function (error) {
+                        require(["app/message"], function (message) {
+                            var details = (error && error.statusText) || (error && error.message) || "";
+                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
+                        });
                     }
-                }
-            ).fail(function (error) {
-                splash.replacePrompt(i18n.messages.unableToStartApp);
-            });
-        }
+                );
+            },
 
-        //------------------------------------------------------------------------------------------------------------//
-    };
-    main.init();
-});
+            //------------------------------------------------------------------------------------------------------------//
+
+            _launch: function () {
+                // Load the app specifics
+                splash.replacePrompt(i18n.messages.loadingApp);
+                config.loadController().then(
+                    function (appController) {
+                        if (appController) {
+                            var appReady, signinReady = $.Deferred();
+
+                            // Prepare app components
+                            require(["app/user"], function (user) {
+                                signinReady.resolve(user);
+                            });
+
+                            appReady = appController.init(config, $("body"));
+
+                            // Wire up coordination between splash/signin and rest of app
+                            $.subscribe("signedIn-user", function (ignore, loginInfo) {
+                                diag.appendWithLF("signed in user: " + JSON.stringify(loginInfo)); //???
+                                splash.show(false, appController.show, true);
+                            });
+
+                            $.subscribe("signedOut-user", function () {
+                                diag.appendWithLF("signed out"); //???
+                                appController.show(false, splash.show, true);
+                            });
+
+                            // Run app components
+                            $.when(signinReady, appReady).then(
+                                function (user) {
+                                    $.subscribe("request-signOut", function (ignore, isFinished) {
+                                        user.signout();
+                                        if (isFinished) {
+                                            splash.replacePrompt(config.appParams.finishText);
+                                        }
+                                    });
+
+                                    appController.launch().then(
+                                        function () {
+                                            // Show sign-in
+                                            user.launch(config, splash);
+                                        },
+                                        function (info) {
+                                            splash.replacePrompt(info);
+                                        }
+                                    );
+                                },
+                                function () {
+                                    splash.replacePrompt(i18n.messages.unableToStartApp);
+                                }
+                            );
+                        }
+                        else {
+                            splash.replacePrompt(i18n.messages.unableToStartApp);
+                        }
+                    }
+                ).fail(function (error) {
+                    splash.replacePrompt(i18n.messages.unableToStartApp);
+                });
+            }
+
+            //------------------------------------------------------------------------------------------------------------//
+        };
+        main.init();
+    });

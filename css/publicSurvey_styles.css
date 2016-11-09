@@ -110,6 +110,10 @@
 }
 .modal-header {
     font-weight: bolder;
+    border-bottom: none;
+}
+.modal-footer {
+    border-top: none;
 }
 
 .image-before {
