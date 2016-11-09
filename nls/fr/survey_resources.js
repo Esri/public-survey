@@ -15,7 +15,8 @@
  */
 define({
     messages: {
-        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation."
+        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
+        surveySubmitted: "Sondage soumis"
     },
     prompts: {
         clearBtn: "Effacer",

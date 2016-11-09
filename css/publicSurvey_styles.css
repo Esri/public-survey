@@ -357,6 +357,10 @@ label+.radio {
     margin: 12px 0px;
     font-size: 14px;
 }
+#action-bar-message {
+    text-align: center;
+    font-size: 16px;
+}
 .brandingIcon {
     max-width: 100%;
     display: block;
