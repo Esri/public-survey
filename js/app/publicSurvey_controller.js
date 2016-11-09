@@ -113,6 +113,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
             launch: function () {
                 var controllerComponentsReady = $.Deferred();
 
+                $("#scrim").fadeIn("fast");
+
                 // Monitor survey messages for coordination between visuals and survey
                 $.subscribe("survey-form-in-progress", function () {
                     controller._surveyInProgress = true;
@@ -143,9 +145,6 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                 survey_controller.init(controller._config, "sidebarContent");
 
                                 scene_controller.mapParamsReady.then(function () {
-
-                                    message.showMessage(i18n.messages.loadingWebscene);
-
                                     // Adapted from an idea how to monitor the active/idle state of the browser
                                     // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
                                     // We'll use a 200-count averaging buffer to get past lull in Firefox around time that the
@@ -191,7 +190,8 @@ define(["lib/i18n.min!nls/publicSurvey_resources.js"],
                                         survey_controller.launch();
                                         scene_controller.launch();
 
-                                        message.dismiss();
+                                        $("#scrim").fadeOut("fast");
+                                        console.log("webscene ready");
                                     });
                                 });
 
