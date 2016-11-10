@@ -59,7 +59,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                     $.publish("signedIn-user", {
                         name: i18n.labels.guestName,
                         id: "",
-                        org: "",
+                        org: "_guest_",
                         canSubmit: config.appParams.allowGuestSubmissions
                     });
                 });

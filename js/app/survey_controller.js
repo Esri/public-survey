@@ -144,7 +144,8 @@ define([
 
                     //----- UI setup: page title, help, branding -----------------------------------------------------//
                     $("#page-title")[0].innerHTML = survey_controller._config.appParams.titleText;
-                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.signOut;
+                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.exit;
+                    $("#action-bar-message")[0].innerHTML = i18n.messages.surveySubmitted;
 
                     if (survey_controller._config.appParams.helpText) {
                         $("#helpButton")[0].title = i18n.tooltips.helpTip;
@@ -178,6 +179,15 @@ define([
                         }
 
                         survey.clearForm();
+
+                        // Provide a message that the survey has been submitted
+                        survey_controller._showItem($("#action-group-1"), false, function () {
+                            survey_controller._showItem($("#action-bar-message"), true);
+                            setTimeout(function () {
+                                survey_controller._showItem($("#action-bar-message"), false,
+                                    survey_controller._showItem, [$("#action-group-1"), true]);
+                            }, 2000);
+                        });
                     });
 
                     survey_controller._clearBtn = activateButton("_clear_survey_form", i18n.prompts.clearBtn);
@@ -189,6 +199,9 @@ define([
                         activateButton("_goto_next_todo_response_site", i18n.prompts.nextBtn);
                     $.subscribe("_goto_next_todo_response_site", function () {
                         var iToDo;
+
+                        // Provide some feedback for the switch
+                        survey_controller.clearSurveyForm();
 
                         if (survey_controller._iCurrentResponseSite !== undefined) {
                             // Check sites after the current one
@@ -403,8 +416,10 @@ define([
         _updateUser: function (loginInfo) {
             survey_controller._currentUser = loginInfo;
 
-            // Heading on survey/profile page
+            // Heading and how to label signout on survey/profile page
             $("#name")[0].innerHTML = loginInfo.name;
+            $("#userSignoutSelection")[0].innerHTML = survey_controller._currentUser.org === "_guest_" ?
+                i18n.labels.exit : i18n.labels.signOut;
         },
 
         _showPageOne: function () {

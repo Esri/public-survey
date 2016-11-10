@@ -24,7 +24,6 @@ define({
             currentResponsesWillBeCleared: "Current response will be cleared. Do you wish to proceed?"
         },
         labels: {
-            signOut: "Sign out",
             multipleResponsesHere: "{count} responses here"
         },
         tooltips: {

@@ -16,7 +16,8 @@
 define({
     root: ({
         messages: {
-            noMoreSurveys: "There are no surveys available at this time; thank you for your participation."
+            noMoreSurveys: "There are no surveys available at this time; thank you for your participation.",
+            surveySubmitted: "Survey submitted"
         },
         prompts: {
             clearBtn: "Clear",
@@ -29,7 +30,8 @@ define({
             goToResponses: "Go to response location"
         },
         labels: {
-            signOut: "Sign out"
+            signOut: "Sign out",
+            exit: "Exit"
         },
         tooltips: {
             helpTip: "More information"
