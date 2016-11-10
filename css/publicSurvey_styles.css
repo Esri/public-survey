@@ -71,6 +71,7 @@
     border-radius: 0px;
     max-width: 100%;
     white-space: normal;
+    word-wrap: break-word;
 }
 .btn:hover, .btn:focus {
     color: #007ac2;
