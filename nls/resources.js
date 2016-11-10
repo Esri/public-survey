@@ -18,13 +18,12 @@ define({
         messages: {
             loadingApp: "Loading application...",
             loadingWebscene: "Loading web scene...",
-            needProxy: "This version of Internet Explorer is not supported by our server. Please use Internet Explorer 10 or newer.",
             noMoreSurveys: "There are no surveys available at this time; thank you for your participation.",
             noSigninsAvailable: "There are no logins available",
             signinFetching: "Checking availability of login possibilities...",
             surveySubmitted: "Survey submitted",
             unableToStartApp: "Unable to start application due to incomplete configuration.",
-            unsupportedBrowser: "This version of Internet Explorer is not supported. Please use Internet Explorer 10 or newer."
+            unsupportedBrowser: "Internet Explorer is not supported."
         },
         prompts: {
             clearBtn: "Clear",

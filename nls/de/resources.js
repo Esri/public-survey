@@ -17,8 +17,7 @@ define(
     ({
         messages: {
             loadingApp: "Laden Anwendung...",
-            unsupportedBrowser: "Diese Version von Internet Explorer wird nicht unterstützt. Bitte verwenden Sie Internet Explorer 10 oder neuer.",
-            needProxy: "Diese Version von Internet Explorer wird nicht von unserem Server unterstützt. Bitte verwenden Sie Internet Explorer 10 oder neuer.",
+            unsupportedBrowser: "Internet Explorer wird nicht unterstützt.",
             unableToStartApp: "Anwendung kann nicht aufgrund einer unvollständigen Konfiguration zu starten."
         },
         prompts: {

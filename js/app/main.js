@@ -33,14 +33,8 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                         // Show the splash and check if we meet proxy and minimum browser requirements; if OK, launch app
                         splash.init(config).then(
                             main._launch,
-                            function (error) {
-                                // If unsupported browser or proxy problem, tell the user and proceed no further
-                                if (error === "Unsupported browser") {
-                                    splash.replacePrompt(i18n.messages.unsupportedBrowser);
-                                }
-                                else {
-                                    splash.replacePrompt(i18n.messages.needProxy);
-                                }
+                            function () {
+                                splash.replacePrompt(i18n.messages.unsupportedBrowser);
                             }
                         );
                     },

@@ -49,13 +49,13 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
                                 });
                             }
 
-                            // Test browser level and proxy availability for older IE
-                            splash._testProxy(config).then(
-                                splashInfoPanelReady.resolve,
-                                function (error) {
-                                    splashInfoPanelReady.reject(error);
-                                }
-                            );
+                            // Test for supported browser
+                            if (splash._testBrowser()) {
+                                splashInfoPanelReady.resolve();
+                            }
+                            else {
+                                splashInfoPanelReady.reject();
+                            }
                         }
                     });
                 });
@@ -116,32 +116,9 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
                 });
             },
 
-            _testProxy: function (config) {
-                var proxyReady = $.Deferred(),
-                    unsupported = false,
-                    needProxy = false;
-
-                // Check for obsolete IE
-                if ($("body").hasClass("unsupportedIE")) {
-                    unsupported = true;
-                }
-                else if ($("body").hasClass("IE9")) {
-                    needProxy = true;
-                }
-
-                // If a proxy is needed, launch the test for a usable proxy
-                if (unsupported) {
-                    proxyReady.reject("Unsupported browser");
-                }
-                else if (needProxy) {
-                    $.getJSON(config.appParams.proxyProgram + "?ping", proxyReady.resolve).fail(proxyReady.reject);
-                }
-                else {
-                    config.appParams.proxyProgram = null;
-                    proxyReady.resolve();
-                }
-
-                return proxyReady;
+            _testBrowser: function () {
+                var ok = navigator.userAgent.indexOf("MSIE ") < 0 && navigator.userAgent.indexOf("Trident") < 0;
+                return ok;
             }
 
             //------------------------------------------------------------------------------------------------------------//

@@ -17,13 +17,12 @@ define({
     messages: {
         loadingApp: "Chargement de l'application...",
         loadingWebscene: "Chargement de la scène web ...",
-        needProxy: "Cette version d'Internet Explorer ne sont pas pris en charge par notre serveur. S'il vous plaît utiliser Internet Explorer 10 ou plus récent.",
         noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
         noSigninsAvailable: "Il n'y a pas les connexions disponibles",
         signinFetching: "Vérification de la disponibilité des possibilités de connexion...",
         surveySubmitted: "Sondage soumis",
         unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
-        unsupportedBrowser: "Cette version d'Internet Explorer ne sont pas pris en charge. S'il vous plaît utiliser Internet Explorer 10 ou plus récent."
+        unsupportedBrowser: "Internet Explorer ne sont pas pris en charge."
     },
     prompts: {
         clearBtn: "Effacer",
