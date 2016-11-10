@@ -53,7 +53,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
             //----- Procedures available for external access -------------------------------------------------------------//
 
             launch: function (config, splash) {
-                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon main_sprites guest-user_29'></span>" +
+                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon sprites guest-user_29'></span>" +
                     i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
                 $("#guestSignin").on("click", function () {
                     $.publish("signedIn-user", {

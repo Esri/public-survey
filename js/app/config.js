@@ -24,7 +24,7 @@ define(["app/fetchConfigInfo"],
 
             appParams: {
                 // Parameters not in *_config.json
-                appName: "",
+                app: "",
                 arcgisUrl: null,
                 webId: null,
                 webIdIsWebscene: null,
@@ -50,8 +50,7 @@ define(["app/fetchConfigInfo"],
                 paramsFromUrl = fetchConfigInfo.getParamsFromUrl();
 
                 // Get the config file parameters
-                config.appParams.appName = config._toVariableName(paramsFromUrl.a);
-                fetchConfigInfo.getParamsFromConfigFile("config/" + config.appParams.appName + "_config.json").then(
+                fetchConfigInfo.getParamsFromConfigFile("js/configuration.json").then(
                     function (paramsFromFile) {
                         var webmapParamsFetch = $.Deferred(),
                             webmapDataFetch = $.Deferred();
@@ -161,7 +160,7 @@ define(["app/fetchConfigInfo"],
             loadController: function () {
                 var controllerReady = $.Deferred();
 
-                var appControllerName = "app/" + config.appParams.appName + "_controller";
+                var appControllerName = "app/" + config.appParams.app + "_controller";
                 require([appControllerName], function (appController) {
                     controllerReady.resolve(appController);
                 }, controllerReady.reject);

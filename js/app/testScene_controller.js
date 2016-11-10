@@ -60,7 +60,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                 controller._config = config;
 
                 // Instantiate the splash template
-                container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+                container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
                     // Template options
@@ -164,7 +164,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     // Prepare and start the scene controller
                     controller._loadCSS("//js.arcgis.com/4.1/esri/css/main.css");
                     controller._loadCSS("//js.arcgis.com/4.1/dijit/themes/claro/claro.css");
-                    controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
+                    controller._loadCSS("css/" + controller._config.appParams.app + "_styles.css");
 
                     scene_controller.init(controller._config, "mainContent",
                             controller._clusterViewBuilder, controller._okToNavigate)

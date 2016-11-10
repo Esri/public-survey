@@ -45,7 +45,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
                 controller._config = config;
 
                 // Instantiate the splash template
-                container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+                container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
                     // Template options
@@ -77,7 +77,7 @@ define(["lib/i18n.min!nls/testSignin_resources.js"],
                 $.subscribe("signedIn-user", controller._logSubscribedEvent);
                 $.subscribe("signedOut-user", controller._logSubscribedEvent);
 
-                controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
+                controller._loadCSS("css/" + controller._config.appParams.app + "_styles.css");
 
                 controllerComponentsReady.resolve();
 
