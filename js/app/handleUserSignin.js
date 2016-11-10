@@ -1,4 +1,4 @@
-/*global $,Modernizr,FB,gapi */
+/*global $,FB,gapi */
 /** @license
  | Copyright 2015 Esri
  |
@@ -118,18 +118,18 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                             parsetags: "explicit"
                         };
 
-                        // Modernizr/yepnope for load to get onload event cross-browser
-                        Modernizr.load([{
-                            load: "https://apis.google.com/js/client:platform.js",
-                            complete: function () {
+                        $.getScript("https://apis.google.com/js/client:platform.js")
+                            .done(function () {
                                 gapi.load("auth2", function () {
                                     gapi.client.load("plus", "v1").then(function () {
                                         handleUserSignin.availabilities.googleplus = true;
                                         googlePlusDeferred.resolve(true);
                                     });
                                 });
-                            }
-                        }]);
+                            })
+                            .fail(function () {
+                                googlePlusDeferred.resolve(false);
+                            });
                     }());
                 }
                 else {
