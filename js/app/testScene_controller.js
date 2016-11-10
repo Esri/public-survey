@@ -21,7 +21,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testScene_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;
@@ -164,7 +164,7 @@ define(["lib/i18n.min!nls/testScene_resources.js"],
                     // Prepare and start the scene controller
                     controller._loadCSS("//js.arcgis.com/4.1/esri/css/main.css");
                     controller._loadCSS("//js.arcgis.com/4.1/dijit/themes/claro/claro.css");
-                    controller._loadCSS("css/" + controller._config.appParams.app + "_styles.css");
+                    controller._loadCSS("css/override_styles.css");
 
                     scene_controller.init(controller._config, "mainContent",
                             controller._clusterViewBuilder, controller._okToNavigate)

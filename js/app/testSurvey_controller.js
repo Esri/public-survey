@@ -21,7 +21,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testSurvey_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;
@@ -215,8 +215,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     controller._prependToLog("Survey definition created");
 
                     // Prepare and start the survey controller
-                    controller._loadCSS("css/" + controller._config.appParams.app + "_styles.css");
-
                     survey_controller.init(controller._config, "sidebarContent")
                         .then(function () {
                             survey_controller.launch();
@@ -248,14 +246,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             },
 
             //----- Procedures meant for internal module use only --------------------------------------------------------//
-
-            _loadCSS: function (url) {
-                var stylesheet = document.createElement("link");
-                stylesheet.href = url;
-                stylesheet.rel = "stylesheet";
-                stylesheet.type = "text/css";
-                document.getElementsByTagName("head")[0].appendChild(stylesheet);
-            },
 
             /** Normalizes a boolean value to true or false.
              * @param {boolean|string} boolValue A true or false value that is returned directly or a string

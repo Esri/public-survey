@@ -21,7 +21,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;
@@ -155,8 +155,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                     controller._logSubscribedEvent("Survey question policy:",
                         controller._config.appParams.surveyNotificationPolicy);
 
-                    controller._loadCSS("css/" + controller._config.appParams.app + "_styles.css");
-
                     // Start with a fresh survey form for newly-signed-in user
                     $.subscribe("signedIn-user", function () {
                         controller._echoReadOnlyState();
@@ -200,14 +198,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 else {
                     $("#_set-form-readOnly").removeClass("highlight-btn");
                 }
-            },
-
-            _loadCSS: function (url) {
-                var stylesheet = document.createElement("link");
-                stylesheet.href = url;
-                stylesheet.rel = "stylesheet";
-                stylesheet.type = "text/css";
-                document.getElementsByTagName("head")[0].appendChild(stylesheet);
             },
 
             /** Normalizes a boolean value to true or false.
