@@ -23,7 +23,6 @@ define({
         currentResponsesWillBeCleared: "La réponse actuelle sera effacée. Voulez-vous continuer?"
     },
     labels: {
-        signOut: "Se déconnecter",
         multipleResponsesHere: "{count} réponses au sondage ici"
     },
     tooltips: {

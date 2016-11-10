@@ -170,6 +170,8 @@ define([], function () {
         },
 
         clearForm: function () {
+            $("#surveyContainer").fadeOut();
+
             // Clear button-style radio buttons, which are flagged as selected by having the "active" class
             $("#" + survey._containerId + " .active").removeClass("active").blur();
 
@@ -197,6 +199,8 @@ define([], function () {
 
             survey._notifyAboutSurveyStatus(false);
             survey._notifyAboutSurveyPolicy(false);
+
+            $("#surveyContainer").fadeIn();
         },
 
         fillInForm: function (values, monitorNotificationPolicy) {

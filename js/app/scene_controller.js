@@ -117,9 +117,6 @@ define([
 
                     scene_controller.mapParamsReady.then(function (response) {
                         // Loads once visuals panel becomes visible
-                        $("#viewDiv").removeClass("loading-indicator");
-                        console.log("webscene ready");
-
                         clusterViewBuilder(scene_controller.view).then(function (clustering) {
                             scene_controller._clusterer = clustering.clusterer;
                             scene_controller._clustererView = clustering.clustererView;
