@@ -21,7 +21,7 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/publicSurvey_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;

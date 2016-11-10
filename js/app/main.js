@@ -15,7 +15,7 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/diag"],
+define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"],
     function (i18n, config, splash, diag) {
         "use strict";
         var main = {

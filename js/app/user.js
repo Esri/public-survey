@@ -21,7 +21,7 @@
  * @namespace user
  * @version 0.1
  */
-define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"],
+define(["lib/i18n.min!nls/resources.js", "app/handleUserSignin", "app/diag"],
     function (i18n, handleUserSignin, diag) {
         "use strict";
         var user = {

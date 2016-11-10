@@ -24,7 +24,7 @@
  * @property {number} numResponseSites - Number of slides in slide gallery
  */
 define([
-    "lib/i18n.min!nls/scene_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/diag"
 ], function (
     i18n,
