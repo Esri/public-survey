@@ -26,19 +26,19 @@ define(["lib/i18n.min!nls/resources.js"],
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
 
             // Consumed
             // signedIn-user
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _config: {},
             _logNum: 0,
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -100,7 +100,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                 require(["app/survey"], function (survey) {
 
-                    // ----- Testing -------------------------------------------------------------------------------------//
+                    // ----- Testing ---------------------------------------------------------------------------------//
                     // Adjust config parameters as needed
                     controller._config.appParams.readonly =
                         controller._toBoolean(controller._config.appParams.readonly, false);
@@ -143,7 +143,7 @@ define(["lib/i18n.min!nls/resources.js"],
                     $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
                     $.subscribe("signedIn-user", controller._logSubscribedEvent);
                     $.subscribe("signedOut-user", controller._logSubscribedEvent);
-                    // ---------------------------------------------------------------------------------------------------//
+                    // -----------------------------------------------------------------------------------------------//
 
                     // Prepare the survey
                     controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
@@ -189,7 +189,16 @@ define(["lib/i18n.min!nls/resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return ["policy", "readonly", "surveydesc"];
+            },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             _echoReadOnlyState: function () {
                 if (controller._config.appParams.readonly) {
@@ -307,7 +316,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });

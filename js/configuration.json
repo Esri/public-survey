@@ -63,7 +63,7 @@
         "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"]
     },
 
-    "urlParamsFilter": ["webscene", "portalurl", "survey", "locale", "app", "diag", "test"],
+    "urlParamsFilter": ["webscene", "portalurl", "survey", "locale", "app", "diag"],
     "app": "publicSurvey",
     "googleplusLogoutUrl": "https://accounts.google.com/logout",
     "twitterSigninUrl": "https://utility.arcgis.com/tproxy/signin",

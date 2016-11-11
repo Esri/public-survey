@@ -26,7 +26,7 @@ define(["lib/i18n.min!nls/resources.js"],
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
 
@@ -35,7 +35,7 @@ define(["lib/i18n.min!nls/resources.js"],
             // survey-form-is-empty
             // show-help
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _logNum: 0,
             _config: {},
@@ -48,7 +48,7 @@ define(["lib/i18n.min!nls/resources.js"],
             _surveyInProgress: false,
 
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -116,7 +116,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                 require(["app/survey", "app/scene_controller"], function (survey, scene_controller) {
 
-                    // ----- Testing -------------------------------------------------------------------------------------//
+                    // ----- Testing ---------------------------------------------------------------------------------//
 
                     // Supplement config
 
@@ -194,7 +194,16 @@ define(["lib/i18n.min!nls/resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return [];
+            },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             _loadCSS: function (url) {
                 var stylesheet = document.createElement("link");
@@ -338,7 +347,8 @@ define(["lib/i18n.min!nls/resources.js"],
                                     domainIndexLookup[answer] = i;
                                 });
 
-                                if (questionInfo.field === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
+                                if (questionInfo.field ===
+                                    controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                     controller._averagingFieldValues = {};
                                     array.forEach(answerDomain, function (answer, i) {
                                         controller._averagingFieldValues[answer] = i;
@@ -450,7 +460,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         var pieChartFields = [];
 
                         $.each(mcQuestionInfo.domain, function (iChoice, choiceText) {
-                            // Create a fieldname for the field to hold the count for this answer choice for the question
+                            // Create a fieldname for the field to hold the count for this answer choice
+                            // for the question
                             var questionChoiceCountField = "q" + iQuestion + "c" + iChoice;
 
                             // Define the feature layer field for the question/choice count and add it to the
@@ -530,7 +541,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                     $.subscribe("refresh-clusters", controller._clustererView.refresh);
 
-                    //----------------------------------------------------------------------------------------------------//
+                    //------------------------------------------------------------------------------------------------//
 
                     function _createSymbol(geometry, attributes, clusterSurveys) {
                         var symComponent, numQuestions = controller._multipleChoiceQuestions.length,
@@ -541,7 +552,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         for (i = 0; i < numQuestions; ++i) {
                             numChoices = controller._multipleChoiceQuestions[i].domain.length;
                             for (j = 0; j < numChoices; ++j) {
-                                // Create a fieldname for the field that holds the count for this answer choice for the question
+                                // Create a fieldname for the field that holds the count for this answer choice
+                                // for the question
                                 var questionChoiceCountField = "q" + i + "c" + j;
 
                                 // Initialize the field for this question/choice
@@ -557,8 +569,8 @@ define(["lib/i18n.min!nls/resources.js"],
                                         if (questionField === mcQuestionInfo.field) {
                                             var iChoice = mcQuestionInfo.domainIndexLookup[questionAnswer];
 
-                                            // Create a fieldname for the field that holds the count for this answer choice
-                                            // for the question
+                                            // Create a fieldname for the field that holds the count
+                                            // for this answer choice for the question
                                             var questionChoiceCountField = "q" + iQuestion + "c" + iChoice;
 
                                             // Update the cluster count field
@@ -572,8 +584,10 @@ define(["lib/i18n.min!nls/resources.js"],
                                                 mcQuestionInfo.responses[questionAnswer] = 1;
                                             }
 
-                                            // Accumulate the average score of the clusterSurveys if this is the averaging field
-                                            if (questionField === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
+                                            // Accumulate the average score of the clusterSurveys
+                                            // if this is the averaging field
+                                            if (questionField ===
+                                                controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                                 numScores += 1;
                                                 scoreSum += iChoice;
                                             }
@@ -605,7 +619,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 return clusterViewReady;
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });

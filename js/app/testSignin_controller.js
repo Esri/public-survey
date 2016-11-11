@@ -26,14 +26,14 @@ define(["lib/i18n.min!nls/resources.js"],
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _config: {},
             _logNum: 0,
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -102,7 +102,16 @@ define(["lib/i18n.min!nls/resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return ["cansubmit"];
+            },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             /** Normalizes a boolean value to true or false.
              * @param {boolean|string} boolValue A true or false value that is returned directly or a string
@@ -211,7 +220,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });

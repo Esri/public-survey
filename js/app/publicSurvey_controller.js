@@ -26,7 +26,7 @@ define(["lib/i18n.min!nls/resources.js"],
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
             /**
@@ -39,7 +39,7 @@ define(["lib/i18n.min!nls/resources.js"],
             // survey-form-is-empty
             // show-help
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _config: {},
             _averagingFieldValues: null,
@@ -52,7 +52,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
             _logNum: 0,
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -147,8 +147,8 @@ define(["lib/i18n.min!nls/resources.js"],
                                 scene_controller.mapParamsReady.then(function () {
                                     // Adapted from an idea how to monitor the active/idle state of the browser
                                     // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
-                                    // We'll use a 200-count averaging buffer to get past lull in Firefox around time that the
-                                    // 3D processors start up
+                                    // We'll use a 200-count averaging buffer to get past lull in Firefox around
+                                    // time that the 3D processors start up
                                     var loadingProbablyDone = $.Deferred();
                                     (function start() {
                                         var timer_start = (+new Date()),
@@ -211,14 +211,19 @@ define(["lib/i18n.min!nls/resources.js"],
                             // Combine the current camera position with the survey answers, must
                             // transform camera position from scene coordinates to answer feature
                             // layer coordinates if they're different
-                            scene_controller.getCurrentCameraPos(controller._config.featureSvcParams.spatialReference.wkid)
+                            scene_controller.getCurrentCameraPos(
+                                    controller._config.featureSvcParams.spatialReference.wkid)
                                 .then(function (surveyPoint) {
                                     // Mix in camera orientation and current webscene slide name
                                     var viewpointDesc = {};
-                                    viewpointDesc[controller._config.appParams.headingFieldName] = surveyPoint.attributes.heading;
-                                    viewpointDesc[controller._config.appParams.tiltFieldName] = surveyPoint.attributes.tilt;
-                                    viewpointDesc[controller._config.appParams.rollFieldName] = surveyPoint.attributes.roll;
-                                    viewpointDesc[controller._config.appParams.slidenameFieldName] = scene_controller._currentSlideTitle;
+                                    viewpointDesc[controller._config.appParams.headingFieldName] =
+                                        surveyPoint.attributes.heading;
+                                    viewpointDesc[controller._config.appParams.tiltFieldName] =
+                                        surveyPoint.attributes.tilt;
+                                    viewpointDesc[controller._config.appParams.rollFieldName] =
+                                        surveyPoint.attributes.roll;
+                                    viewpointDesc[controller._config.appParams.slidenameFieldName] =
+                                        scene_controller._currentSlideTitle;
                                     $.extend(answers, viewpointDesc);
 
                                     surveyPoint.attributes = answers;
@@ -259,7 +264,16 @@ define(["lib/i18n.min!nls/resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return [];
+            },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             _loadCSS: function (url) {
                 var stylesheet = document.createElement("link");
@@ -386,7 +400,8 @@ define(["lib/i18n.min!nls/resources.js"],
                                     domainIndexLookup[answer] = i;
                                 });
 
-                                if (questionInfo.field === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
+                                if (questionInfo.field ===
+                                    controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                     controller._averagingFieldValues = {};
                                     array.forEach(answerDomain, function (answer, i) {
                                         controller._averagingFieldValues[answer] = i;
@@ -498,7 +513,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         var pieChartFields = [];
 
                         $.each(mcQuestionInfo.domain, function (iChoice, choiceText) {
-                            // Create a fieldname for the field to hold the count for this answer choice for the question
+                            // Create a fieldname for the field to hold the count for this answer choice
+                            // for the question
                             var questionChoiceCountField = "q" + iQuestion + "c" + iChoice;
 
                             // Define the feature layer field for the question/choice count and add it to the
@@ -593,7 +609,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                     $.subscribe("refresh-clusters", controller._clustererView.refresh);
 
-                    //----------------------------------------------------------------------------------------------------//
+                    //------------------------------------------------------------------------------------------------//
 
                     function _createSymbol(geometry, attributes, clusterSurveys) {
                         var symComponent, numQuestions = controller._multipleChoiceQuestions.length,
@@ -604,7 +620,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         for (i = 0; i < numQuestions; ++i) {
                             numChoices = controller._multipleChoiceQuestions[i].domain.length;
                             for (j = 0; j < numChoices; ++j) {
-                                // Create a fieldname for the field that holds the count for this answer choice for the question
+                                // Create a fieldname for the field that holds the count for this answer choice
+                                // for the question
                                 var questionChoiceCountField = "q" + i + "c" + j;
 
                                 // Initialize the field for this question/choice
@@ -620,8 +637,8 @@ define(["lib/i18n.min!nls/resources.js"],
                                         if (questionField === mcQuestionInfo.field) {
                                             var iChoice = mcQuestionInfo.domainIndexLookup[questionAnswer];
 
-                                            // Create a fieldname for the field that holds the count for this answer choice
-                                            // for the question
+                                            // Create a fieldname for the field that holds the count
+                                            // for this answer choice for the question
                                             var questionChoiceCountField = "q" + iQuestion + "c" + iChoice;
 
                                             // Update the cluster count field
@@ -635,8 +652,10 @@ define(["lib/i18n.min!nls/resources.js"],
                                                 mcQuestionInfo.responses[questionAnswer] = 1;
                                             }
 
-                                            // Accumulate the average score of the clusterSurveys if this is the averaging field
-                                            if (questionField === controller._config.appParams.clusterSymDisplay.averagingFieldName) {
+                                            // Accumulate the average score of the clusterSurveys
+                                            // if this is the averaging field
+                                            if (questionField ===
+                                                controller._config.appParams.clusterSymDisplay.averagingFieldName) {
                                                 numScores += 1;
                                                 scoreSum += iChoice;
                                             }
@@ -668,7 +687,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 return clusterViewReady;
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });
