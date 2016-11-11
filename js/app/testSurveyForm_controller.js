@@ -21,24 +21,24 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
 
             // Consumed
             // signedIn-user
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _config: {},
             _logNum: 0,
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -50,7 +50,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 controller._config = config;
 
                 // Instantiate the splash template
-                container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+                container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
                     // Template options
@@ -100,7 +100,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
 
                 require(["app/survey"], function (survey) {
 
-                    // ----- Testing -------------------------------------------------------------------------------------//
+                    // ----- Testing ---------------------------------------------------------------------------------//
                     // Adjust config parameters as needed
                     controller._config.appParams.readonly =
                         controller._toBoolean(controller._config.appParams.readonly, false);
@@ -143,7 +143,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                     $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
                     $.subscribe("signedIn-user", controller._logSubscribedEvent);
                     $.subscribe("signedOut-user", controller._logSubscribedEvent);
-                    // ---------------------------------------------------------------------------------------------------//
+                    // -----------------------------------------------------------------------------------------------//
 
                     // Prepare the survey
                     controller._config.appParams._surveyDefinition = survey.createSurveyDefinition(
@@ -154,8 +154,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                     controller._prependToLog("Survey definition created");
                     controller._logSubscribedEvent("Survey question policy:",
                         controller._config.appParams.surveyNotificationPolicy);
-
-                    controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
 
                     // Start with a fresh survey form for newly-signed-in user
                     $.subscribe("signedIn-user", function () {
@@ -191,7 +189,16 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return ["policy", "readonly", "surveydesc"];
+            },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             _echoReadOnlyState: function () {
                 if (controller._config.appParams.readonly) {
@@ -200,14 +207,6 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 else {
                     $("#_set-form-readOnly").removeClass("highlight-btn");
                 }
-            },
-
-            _loadCSS: function (url) {
-                var stylesheet = document.createElement("link");
-                stylesheet.href = url;
-                stylesheet.rel = "stylesheet";
-                stylesheet.type = "text/css";
-                document.getElementsByTagName("head")[0].appendChild(stylesheet);
             },
 
             /** Normalizes a boolean value to true or false.
@@ -317,7 +316,7 @@ define(["lib/i18n.min!nls/testSurveyForm_resources.js"],
                 $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });

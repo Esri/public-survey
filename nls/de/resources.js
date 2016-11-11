@@ -13,14 +13,22 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-define({
-    messages: {
-    },
-    prompts: {
-    },
-    labels: {
-        signOut: "Déconnexion"
-    },
-    tooltips: {
-    }
-});
+define(
+    ({
+        messages: {
+            loadingApp: "Laden Anwendung...",
+            unsupportedBrowser: "Internet Explorer wird nicht unterstützt.",
+            unableToStartApp: "Anwendung kann nicht aufgrund einer unvollständigen Konfiguration zu starten."
+        },
+        prompts: {
+            signIn: "Bitte melden Sie sich an, um zu beginnen"
+        },
+        labels: {
+            closeBtn: "Schließen",
+            guestName: "Guest"
+        },
+        tooltips: {
+            closeBtn: "Fertig mit dieser Anzeige"
+        }
+    })
+);

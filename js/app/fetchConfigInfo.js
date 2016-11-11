@@ -185,10 +185,11 @@ define([], function () {
                             featureSvcData.featureSvcParams = data;
 
                             if (data.serviceItemId) {
-                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json&callback=?", function (serviceData) {
-                                    featureSvcData.serviceData = serviceData;
-                                    deferred.resolve(featureSvcData);
-                                });
+                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json&callback=?",
+                                    function (serviceData) {
+                                        featureSvcData.serviceData = serviceData;
+                                        deferred.resolve(featureSvcData);
+                                    });
                             }
                             else {
                                 deferred.resolve(featureSvcData);

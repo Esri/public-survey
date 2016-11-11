@@ -21,11 +21,11 @@
  * @namespace user
  * @version 0.1
  */
-define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"],
+define(["lib/i18n.min!nls/resources.js", "app/handleUserSignin", "app/diag"],
     function (i18n, handleUserSignin, diag) {
         "use strict";
         var user = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
             /**
@@ -54,9 +54,9 @@ define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"
 
             // Consumed
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             launch: function (config, splash) {
                 splash.replacePrompt(i18n.messages.signinFetching);
@@ -95,9 +95,9 @@ define(["lib/i18n.min!nls/main_resources.js", "app/handleUserSignin", "app/diag"
                 handleUserSignin.signOut();
             }
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return user;
     });

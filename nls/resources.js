@@ -16,24 +16,36 @@
 define({
     root: ({
         messages: {
+            loadingApp: "Loading application...",
+            loadingWebscene: "Loading web scene...",
             noMoreSurveys: "There are no surveys available at this time; thank you for your participation.",
-            surveySubmitted: "Survey submitted"
+            noSigninsAvailable: "There are no logins available",
+            signinFetching: "Checking availability of login possibilities...",
+            surveySubmitted: "Survey submitted",
+            unableToStartApp: "Unable to start application due to incomplete configuration.",
+            unsupportedBrowser: "Internet Explorer is not supported."
         },
         prompts: {
             clearBtn: "Clear",
+            currentResponsesWillBeCleared: "Current response will be cleared. Do you wish to proceed?",
             finishBtn: "Finish",
+            goToResponses: "Go to response location",
             nextBtn: "Next",
             nextResponseBtn: "Next response",
             seeResponsesBtn: "See responses",
+            signIn: "Please sign in to get started",
             submitBtn: "Submit",
-            turnOffResponsesBtn: "Turn off responses",
-            goToResponses: "Go to response location"
+            turnOffResponsesBtn: "Turn off responses"
         },
         labels: {
-            signOut: "Sign out",
-            exit: "Exit"
+            closeBtn: "Close",
+            exit: "Exit",
+            guestName: "Guest",
+            multipleResponsesHere: "{count} responses here",
+            signOut: "Sign out"
         },
         tooltips: {
+            closeBtn: "Done with this display",
             helpTip: "More information"
         }
     }),

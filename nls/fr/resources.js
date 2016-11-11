@@ -15,24 +15,36 @@
  */
 define({
     messages: {
+        loadingApp: "Chargement de l'application...",
+        loadingWebscene: "Chargement de la scène web ...",
         noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
-        surveySubmitted: "Sondage soumis"
+        noSigninsAvailable: "Il n'y a pas les connexions disponibles",
+        signinFetching: "Vérification de la disponibilité des possibilités de connexion...",
+        surveySubmitted: "Sondage soumis",
+        unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
+        unsupportedBrowser: "Internet Explorer ne sont pas pris en charge."
     },
     prompts: {
         clearBtn: "Effacer",
+        currentResponsesWillBeCleared: "La réponse actuelle sera effacée. Voulez-vous continuer?",
         finishBtn: "Finir",
+        goToResponses: "Aller à l'emplacement de réponse",
         nextBtn: "Aller à l'emplacement suivant",
         nextResponseBtn: "Réponse suivante",
         seeResponsesBtn: "Voir les réponses",
+        signIn: "S'il vous plaît vous connecter pour commencer",
         submitBtn: "Soumettre",
-        turnOffResponsesBtn: "Cacher les réponses",
-        goToResponses: "Aller à l'emplacement de réponse"
+        turnOffResponsesBtn: "Cacher les réponses"
     },
     labels: {
-        signOut: "Se déconnecter",
-        exit: "Sortir"
+        closeBtn: "Fermez",
+        exit: "Sortir",
+        guestName: "Invité",
+        multipleResponsesHere: "{count} réponses au sondage ici",
+        signOut: "Se déconnecter"
     },
     tooltips: {
+        closeBtn: "Fait avec cet affichage",
         helpTip: "Plus d'information"
     }
 });

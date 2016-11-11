@@ -24,7 +24,7 @@
  * @property {number} numResponseSites - Number of slides in slide gallery
  */
 define([
-    "lib/i18n.min!nls/scene_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/diag"
 ], function (
     i18n,
@@ -436,7 +436,8 @@ define([
 
                             if (scene_controller.map.initialViewProperties) {
                                 console.log("// Scene initial view:");
-                                console.log("   scale = " + scene_controller.map.initialViewProperties.viewpoint.scale + ";");
+                                console.log("   scale = " +
+                                    scene_controller.map.initialViewProperties.viewpoint.scale + ";");
                                 console.log("   camera = " +
                                     JSON.stringify(scene_controller.map.initialViewProperties.viewpoint.camera) + ";");
                             }

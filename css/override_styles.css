@@ -1,4 +1,4 @@
-﻿/** @license
+/** @license
  | Copyright 2015 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +13,28 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-define({
-    messages: {
-        noMoreSurveys: "Il n'y a pas de sondages disponibles à ce moment. Merci pour votre participation.",
-        loadingWebscene: "Chargement de la scène web ..."
-    },
-    prompts: {
-        goToResponses: "Aller à l'emplacement de réponse",
-        currentResponsesWillBeCleared: "La réponse actuelle sera effacée. Voulez-vous continuer?"
-    },
-    labels: {
-        multipleResponsesHere: "{count} réponses au sondage ici"
-    },
-    tooltips: {
-        helpTip: "Plus d'information"
-    }
-});
+
+/* ---------- Dojo overrides ---------- */
+
+.dijitTooltip {
+    box-sizing: content-box;
+}
+
+/* ---------- JSAPI overrides ---------- */
+
+.esri-navigation-toggle__button:before {
+    z-index: auto;
+}
+
+.esri-ui-top-right {
+    bottom: 0;
+}
+
+.esri-popup-renderer__media-summary {
+    display: none!important;
+}
+
+.esri-popup-renderer-button:focus {
+    outline: none;
+}
+

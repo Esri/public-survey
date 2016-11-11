@@ -20,11 +20,11 @@ define(["app/fetchConfigInfo"],
         "use strict";
         var config;
         config = {
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             appParams: {
                 // Parameters not in *_config.json
-                appName: "",
+                app: "",
                 arcgisUrl: null,
                 webId: null,
                 webIdIsWebscene: null,
@@ -34,38 +34,31 @@ define(["app/fetchConfigInfo"],
                 surveyFeatureLayerReady: $.Deferred()
             },
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             /**
              * Initializes the module by fetching parameters from the URL, the configuration file, and the webmap.
              * @return {object} Object with object properties parametersReady, surveyFeatureLayerReady,
-             * webmapOrigImageUrlReady that contain Deferreds for when the app's configuration parameters are ready to use,
-             * when the survey's feature layer is ready to use, and when the original-size version of the webmap's
-             * thumbnail has been checked and is ready to use, respectively.
+             * webmapOrigImageUrlReady that contain Deferreds for when the app's configuration parameters are
+             * ready to use, when the survey's feature layer is ready to use, and when the original-size version
+             * of the webmap's thumbnail has been checked and is ready to use, respectively.
              */
             init: function () {
                 var paramsFromUrl, parametersReady = $.Deferred();
 
-                // Get the URL parameters
-                paramsFromUrl = fetchConfigInfo.getParamsFromUrl();
-
                 // Get the config file parameters
-                config.appParams.appName = config._toVariableName(paramsFromUrl.a);
-                fetchConfigInfo.getParamsFromConfigFile("config/" + config.appParams.appName + "_config.json").then(
+                fetchConfigInfo.getParamsFromConfigFile("js/configuration.json").then(
                     function (paramsFromFile) {
                         var webmapParamsFetch = $.Deferred(),
                             webmapDataFetch = $.Deferred();
 
-                        // Mix in params from configuration file
+                        // Mix in params from configuration file and from URL after filtering the latter
+                        // using filter from config file
+                        paramsFromUrl = config._filterProperties(paramsFromFile.urlParamsFilter || [],
+                            fetchConfigInfo.getParamsFromUrl());
                         config.appParams = $.extend(true,
                             config.appParams,
-                            paramsFromFile
-                        );
-
-                        // Mix in params from URL after filtering them using filter from config file
-                        paramsFromUrl = config._filterProperties(config.appParams.urlParamsFilter || [], paramsFromUrl);
-                        config.appParams = $.extend(true,
-                            config.appParams,
+                            paramsFromFile,
                             paramsFromUrl
                         );
 
@@ -161,15 +154,25 @@ define(["app/fetchConfigInfo"],
             loadController: function () {
                 var controllerReady = $.Deferred();
 
-                var appControllerName = "app/" + config.appParams.appName + "_controller";
+                var appControllerName = "app/" + config.appParams.app + "_controller";
                 require([appControllerName], function (appController) {
+                    var additionalUrlParamsFilter = appController.getAdditionalUrlParamsFilter();
+
+                    if (additionalUrlParamsFilter.length > 0) {
+                        // Mix in additional params from URL after filtering the latter using filter from controller
+                        config.appParams = $.extend(true,
+                            config.appParams,
+                            config._filterProperties(additionalUrlParamsFilter, fetchConfigInfo.getParamsFromUrl())
+                        );
+                    }
+
                     controllerReady.resolve(appController);
                 }, controllerReady.reject);
 
                 return controllerReady;
             },
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             _toVariableName: function (text) {
                 if (text) {
@@ -208,7 +211,7 @@ define(["app/fetchConfigInfo"],
                 return filteredObject;
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return config;
     });
