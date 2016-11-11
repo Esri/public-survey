@@ -16,7 +16,7 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-//============================================================================================================================//
+//====================================================================================================================//
 
 /**
  * Manages the display of a survey form.
@@ -72,10 +72,11 @@ define([], function () {
          * Parses HTML text such as appears in a webmap's feature layer's popup to generate a set of survey questions.
          * @param {string} source Text from source
          * @param {array} featureSvcFields List of fields such as the one supplied by a feature service
-         * @return {array} List of survey question objects, each of which contains question, field, style, domain, important
-         * properties
+         * @return {array} List of survey question objects, each of which contains question, field, style, domain,
+         * important properties
          */
-        createSurveyDefinition: function (surveyDescription, featureSvcFields, notificationPolicy, importantQuestionTooltip) {
+        createSurveyDefinition: function (surveyDescription, featureSvcFields, notificationPolicy,
+            importantQuestionTooltip) {
             // Adjust parameters as needed
             if (notificationPolicy !== "allImportant" &&
                 notificationPolicy !== "all") {
@@ -275,7 +276,8 @@ define([], function () {
                     }
                     else if (answer[0].value.length > 0) {
                         // Escape newlines because REST endpoint treats them as the end of the string
-                        answers[question.surveyField] = answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim();
+                        answers[question.surveyField] =
+                            answer[0].value.replace(/[\n]/g, "\\n").replace(/[\r]/g, "\\r").trim();
                     }
                 }
             });
@@ -400,21 +402,21 @@ define([], function () {
          * @param {string} source Text from source
          * @param {object} fieldDomains List of field domains and field required/optional state as created by function
          * createSurveyDictionary using the 'fields' property of a feature service
-         * @return {array} List of survey question objects, each of which contains question, field, style, domain, important
-         * properties
+         * @return {array} List of survey question objects, each of which contains question, field, style, domain,
+         * important properties
          * @private
          */
         _parseSurvey: function (source, fieldDomains) {
-            // Survey is written as a series of lines in the popup. Each line is expected to have arbitrary text followed by
-            // a feature layer field name in braces followed by a question style flag also in braces.
+            // Survey is written as a series of lines in the popup. Each line is expected to have arbitrary text
+            // followed by a feature layer field name in braces followed by a question style flag also in braces.
             // Here is a sample source:
             //  <p>Is there a Structure on the Property? <b>{<font color='#0000ff'>Structure</font>} </b><b>{<span
             //  style='background-color:rgb(255, 0, 0);'>button</span>}</b></p><p><ul><li>Is the lot overgrown? <b>{Lot}
             //  </b><b>{button}</b><br /></li><li>Foundation type: <b>{<font color='#ffff00' style='background-color:
             //  rgb(255, 69, 0);'>FoundationType</font>} </b><b>{radio}</b><br /></li></ul></p><p><b><br /></b></p><p>Is
-            //  there roof damage? <b>{RoofDamage} </b><b>{button}</b></p><p>Is the exterior damaged? <b>{ExteriorDamage}
-            //  </b><b>{button}</b></p><p></p><ol><li>Is there graffiti? <b>{Graffiti} </b><b>{button}</b><br /></li><li>
-            //  Are there boarded windows/doors? <b>{Boarded} </b><b>{button}</b><br /></li></ol>
+            //  there roof damage? <b>{RoofDamage} </b><b>{button}</b></p><p>Is the exterior damaged?<b>
+            //  {ExteriorDamage}</b><b>{button}</b></p><p></p><ol><li>Is there graffiti? <b>{Graffiti} </b><b>{button}
+            //  </b><br /></li><li>Are there boarded windows/doors? <b>{Boarded} </b><b>{button}</b><br /></li></ol>
             var surveyQuestions = [],
                 descriptionSplit1, descriptionSplit2, descriptionSplit3, taggedSurveyLines,
                 surveyLines;
@@ -601,7 +603,8 @@ define([], function () {
          */
         _startQuestion: function (iQuestion, questionInfo, flagAsImportant) {
             // <div class='form-group'>
-            //   <label for='q1'>Is there a structure on the property? <span class='glyphicon glyphicon-star'></span></label><br>
+            //   <label for='q1'>Is there a structure on the property? <span class='glyphicon glyphicon-star'>
+            //   </span></label><br>
             var start =
                 "<div id='q" + "g" + iQuestion + "' class='form-group'>" +
                 "<label for='q" + iQuestion + "'>" + questionInfo.question +
@@ -646,11 +649,16 @@ define([], function () {
          * @private
          */
         _createListChoice: function (iQuestion, questionInfo) {
-            // <div class='radio'><label><input type='radio' name='q1' id='optionFound1' value='0'>Crawlspace</label></div>
-            // <div class='radio'><label><input type='radio' name='q1' id='optionFound2' value='1'>Raised</label></div>
-            // <div class='radio'><label><input type='radio' name='q1' id='optionFound3' value='2'>Elevated</label></div>
-            // <div class='radio'><label><input type='radio' name='q1' id='optionFound4' value='3'>Slab on grade</label></div>
-            // <div class='radio'><label><input type='radio' name='q1' id='optionFound0' value='4'>Not sure</label></div>
+            // <div class='radio'><label><input type='radio' name='q1' id='optionFound1' value='0'>
+            //   Crawlspace</label></div>
+            // <div class='radio'><label><input type='radio' name='q1' id='optionFound2' value='1'>
+            //   Raised</label></div>
+            // <div class='radio'><label><input type='radio' name='q1' id='optionFound3' value='2'>
+            //   Elevated</label></div>
+            // <div class='radio'><label><input type='radio' name='q1' id='optionFound4' value='3'>
+            //   Slab on grade</label></div>
+            // <div class='radio'><label><input type='radio' name='q1' id='optionFound0' value='4'>
+            //   Not sure</label></div>
             var list = "<div id='q" + iQuestion + "' class='radio-group'>";
             var domain = questionInfo.domain.split("|");
             $.each(domain, function (i, choice) {

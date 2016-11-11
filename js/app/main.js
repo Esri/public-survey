@@ -19,7 +19,7 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
     function (i18n, config, splash, diag) {
         "use strict";
         var main = {
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             init: function () {
                 // Config tells us app specifics in addition to app's parameters
@@ -30,7 +30,8 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                             diag.init();
                         }
 
-                        // Show the splash and check if we meet proxy and minimum browser requirements; if OK, launch app
+                        // Show the splash and check if we meet proxy and minimum browser requirements;
+                        // if OK, launch app
                         splash.init(config).then(
                             main._launch,
                             function () {
@@ -47,7 +48,7 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                 );
             },
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             _launch: function () {
                 // Load the app specifics
@@ -109,7 +110,7 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                 });
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         main.init();
     });

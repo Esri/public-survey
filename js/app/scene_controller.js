@@ -436,7 +436,8 @@ define([
 
                             if (scene_controller.map.initialViewProperties) {
                                 console.log("// Scene initial view:");
-                                console.log("   scale = " + scene_controller.map.initialViewProperties.viewpoint.scale + ";");
+                                console.log("   scale = " +
+                                    scene_controller.map.initialViewProperties.viewpoint.scale + ";");
                                 console.log("   camera = " +
                                     JSON.stringify(scene_controller.map.initialViewProperties.viewpoint.camera) + ";");
                             }

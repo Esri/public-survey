@@ -25,7 +25,7 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
     function (i18n, diag) {
         "use strict";
         var user = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
             /**
@@ -48,12 +48,13 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
 
             // Consumed
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             launch: function (config, splash) {
-                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'><span class='socialMediaIcon sprites guest-user_29'></span>" +
+                $("<div id='guestSignin' class='splashInfoActionButton guestOfficialColor'>" +
+                    "<span class='socialMediaIcon sprites guest-user_29'></span>" +
                     i18n.labels.guestName + "</div>").appendTo(splash.getActionsContainer());
                 $("#guestSignin").on("click", function () {
                     $.publish("signedIn-user", {
@@ -70,9 +71,9 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
                 $.publish("signedOut-user");
             }
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return user;
     });
