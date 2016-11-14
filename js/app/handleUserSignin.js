@@ -66,8 +66,10 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             facebookDeferred = $.Deferred();
             setTimeout(function () {
                 if (appParams.showFacebook && appParams.facebookAppId) {
-                    // Provide a startup function for when the SDK finishes loading
-                    window.fbAsyncInit = function () {
+                    $.ajaxSetup({
+                        cache: true
+                    });
+                    $.getScript("//connect.facebook.net/en_US/sdk.js", function () {
                         FB.Event.subscribe("auth.login", handleUserSignin.updateFacebookUser);
                         FB.Event.subscribe("auth.statusChange", handleUserSignin.updateFacebookUser);
                         FB.Event.subscribe("auth.logout", handleUserSignin.updateFacebookUser);
@@ -77,24 +79,12 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                             cookie: true, // enable cookies to allow the server to access the session
                             xfbml: false, // parse social plugins on this page such as Login
                             status: true, // check login status on every page load
-                            version: "v2.3"
+                            version: "v2.7"
                         });
 
                         // Update UI based on whether or not the user is currently logged in to FB
                         FB.getLoginStatus(handleUserSignin.updateFacebookUser);
-                    };
-
-                    // Load the SDK asynchronously; it calls window.fbAsyncInit when done
-                    (function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) {
-                            return;
-                        }
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = "//connect.facebook.net/en_US/sdk.js";
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }(document, "script", "facebook-jssdk"));
+                    });
 
                     handleUserSignin.availabilities.facebook = true;
                     facebookDeferred.resolve(true);
