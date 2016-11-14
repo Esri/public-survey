@@ -37,13 +37,14 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             googleplus: false,
             twitter: false
         },
+        googleAuth: null,
 
         //------------------------------------------------------------------------------------------------------------//
 
         /**
          * Initializes the module by initializing each of the supported and selected social medium providers.
          * @param {object} appParams Application parameters to control and facilitate social-media setup; module uses
-         * the facebookAppId, googleplusClientId, googleplusLogoutUrl, showFacebook, showGooglePlus, showTwitter,
+         * the facebookAppId, googleplusClientId, showFacebook, showGooglePlus, showTwitter,
          * twitterCallbackUrl, twitterSigninUrl, and twitterUserUrl properties
          * @param {function} statusCallback Function to call with social-media status events; function receives one
          * of the constants notificationSignIn, notificationSignOut, notificationAvatarUpdate (above)
@@ -107,12 +108,20 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                             parsetags: "explicit"
                         };
 
-                        $.getScript("https://apis.google.com/js/client:platform.js")
+                        $.getScript("https://apis.google.com/js/platform.js")
                             .done(function () {
                                 gapi.load("auth2", function () {
-                                    gapi.client.load("plus", "v1").then(function () {
+                                    handleUserSignin.googleAuth = gapi.auth2.init({
+                                        "client_id": handleUserSignin.appParams.googleplusClientId,
+                                        "scope": "profile"
+                                    });
+                                    handleUserSignin.googleAuth.then(function () {
+                                        handleUserSignin.googleAuth.isSignedIn.listen(
+                                            handleUserSignin.updateGooglePlusUser);
                                         handleUserSignin.availabilities.googleplus = true;
                                         googlePlusDeferred.resolve(true);
+                                    }, function () {
+                                        googlePlusDeferred.resolve(false);
                                     });
                                 });
                             })
@@ -200,20 +209,12 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                 $("<div id='googlePlusSignin' class='splashInfoActionButton googlePlusOfficialColor'>" +
                     "<span class='socialMediaIcon sprites gp-29'></span>Google+</div>").appendTo(actionButtonContainer);
                 $("#googlePlusSignin").on("click", function () {
-                    // Google caveat for setting cookiepolicy to "none":
-                    // The none value does not set cookies or session storage for the sign-in button
-                    // and uses a less efficient fallback mechanism for determining user and session
-                    // information. Setting this value to none also prevents gapi.auth.signout from
-                    // working for the user and requires you to implement signout appropriately. This
-                    // value also can prevent a user who is signed in to multiple Google accounts
-                    // (say, work and personal) from being able to select which account to use with
-                    // your website.
-                    // -- https://developers.google.com/+/web/signin/reference/#button_attr_clientid
-                    gapi.auth.signIn({
-                        clientid: handleUserSignin.appParams.googleplusClientId,
-                        cookiepolicy: "http://" + document.location.hostname,
-                        callback: handleUserSignin.updateGooglePlusUser
-                    });
+                    if (handleUserSignin.googleAuth.isSignedIn.get()) {
+                        handleUserSignin.updateGooglePlusUser(true);
+                    }
+                    else {
+                        handleUserSignin.googleAuth.signIn();
+                    }
                 });
             }
 
@@ -269,12 +270,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
 
                     case "googlePlus":
                         // Log the user out of the app
-                        try {
-                            handleUserSignin.disconnectUser(handleUserSignin.user.access_token);
-                            gapi.auth.signOut();
-                            handleUserSignin.showGooglePlusLogoutWin();
-                        }
-                        catch (ignore) {}
+                        handleUserSignin.googleAuth.signOut();
                         break;
 
                     case "twitter":
@@ -359,7 +355,8 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
          * @private
          */
         updateGooglePlusUser: function (response) {
-            handleUserSignin.loggedIn = response && response.status && response.status.signed_in;
+            var GoogleUser, BasicProfile, avatarUrl;
+            handleUserSignin.loggedIn = response; //&& response.status && response.status.signed_in;
             handleUserSignin.currentProvider = handleUserSignin.loggedIn ?
                 "googlePlus" :
                 "";
@@ -367,78 +364,30 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             // If logged in, update info from the account
             handleUserSignin.user = {};
             if (handleUserSignin.loggedIn) {
-                gapi.client.request({
-                    path: "/plus/v1/people/me"
-                }).then(function (apiResponse) {
-                    handleUserSignin.user = {
-                        name: apiResponse.result.displayName,
-                        id: apiResponse.result.id,
-                        org: "Google+",
-                        access_token: response.access_token,
-                        canSubmit: true
-                    };
+                GoogleUser = handleUserSignin.googleAuth.currentUser.get();
+                BasicProfile = GoogleUser.getBasicProfile();
+                handleUserSignin.user = {
+                    name: BasicProfile.getName(),
+                    id: BasicProfile.getId(),
+                    org: "Google+",
+                    canSubmit: true
+                };
 
-                    // Update the calling app
-                    handleUserSignin.statusCallback(handleUserSignin.notificationSignIn);
+                // Update the calling app
+                handleUserSignin.statusCallback(handleUserSignin.notificationSignIn);
 
-                    // Update the avatar
-                    if (apiResponse.result.image && !apiResponse.result.image.isDefault &&
-                        apiResponse.result.image.url) {
-                        handleUserSignin.user.avatar = apiResponse.result.image.url;
-                        handleUserSignin.statusCallback(handleUserSignin.notificationAvatarUpdate);
-                    }
-                }, function () {
-                    // Update the calling app
-                    handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
-                });
+                // Update the avatar
+                avatarUrl = BasicProfile.getImageUrl();
+                if (avatarUrl) {
+                    handleUserSignin.user.avatar = avatarUrl;
+                    handleUserSignin.statusCallback(handleUserSignin.notificationAvatarUpdate);
+                }
 
                 // Report not-logged-in state
             }
             else {
                 handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
             }
-        },
-
-        /**
-         * Disconnects the signed-in Google+ user because the Google+ API doesn't actually sign the user out.
-         * @param {string}access_token Token provided by the Google+ API when the user signs in
-         * @private
-         */
-        disconnectUser: function (access_token) {
-            // From https://developers.google.com/+/web/signin/disconnect
-            var revokeUrl = "https://accounts.google.com/o/oauth2/revoke?token=" + access_token;
-
-            // Perform an asynchronous GET request.
-            $.ajax({
-                type: "GET",
-                url: revokeUrl,
-                async: false,
-                contentType: "application/json",
-                dataType: "jsonp",
-                success: function () {
-                    handleUserSignin.updateGooglePlusUser();
-                },
-                error: function () {
-                    handleUserSignin.updateGooglePlusUser();
-                }
-            });
-        },
-
-        /**
-         * Displays the Google+ logout window, which completes the logout of the current user.
-         * @private
-         */
-        showGooglePlusLogoutWin: function () {
-            var baseUrl, left, top, w, h;
-
-            baseUrl = handleUserSignin.appParams.googleplusLogoutUrl;
-            left = (screen.width / 2) - (w / 2);
-            top = (screen.height / 2) - (h / 2);
-            w = screen.width / 2;
-            h = screen.height / 1.5;
-
-            window.open(baseUrl, "GooglePlus", "scrollbars=yes, resizable=yes, left=" + left +
-                ", top=" + top + ", width=" + w + ", height=" + h, true);
         },
 
         //------------------------------------------------------------------------------------------------------------//
