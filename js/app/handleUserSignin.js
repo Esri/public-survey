@@ -49,10 +49,9 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
          * of the constants notificationSignIn, notificationSignOut, notificationAvatarUpdate (above)
          */
         init: function (appParams, statusCallback) {
-            var deferred, isIE8, facebookDeferred, googlePlusDeferred, twitterDeferred;
+            var deferred, facebookDeferred, googlePlusDeferred, twitterDeferred;
 
             deferred = $.Deferred();
-            isIE8 = handleUserSignin.createIE8Test();
             handleUserSignin.statusCallback = statusCallback;
             handleUserSignin.appParams = appParams;
 
@@ -66,7 +65,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             // Attempt to initialize Facebook if wanted
             facebookDeferred = $.Deferred();
             setTimeout(function () {
-                if (!isIE8 && appParams.showFacebook && appParams.facebookAppId) {
+                if (appParams.showFacebook && appParams.facebookAppId) {
                     // Provide a startup function for when the SDK finishes loading
                     window.fbAsyncInit = function () {
                         FB.Event.subscribe("auth.login", handleUserSignin.updateFacebookUser);
@@ -110,7 +109,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             // Attempt to initialize Google+ if wanted
             googlePlusDeferred = $.Deferred();
             setTimeout(function () {
-                if (!isIE8 && appParams.showGooglePlus && appParams.googleplusClientId) {
+                if (appParams.showGooglePlus && appParams.googleplusClientId) {
                     // Load the SDK asynchronously; it calls window.ggAsyncInit when done
                     (function () {
                         // Don't have Google+ API scan page for button
@@ -142,7 +141,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             // Attempt to initialize Twitter if wanted
             twitterDeferred = $.Deferred();
             setTimeout(function () {
-                if (!isIE8 && appParams.showTwitter) {
+                if (appParams.showTwitter) {
                     handleUserSignin.availabilities.twitter = true;
                     twitterDeferred.resolve(true);
                 }
@@ -543,50 +542,6 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                     handleUserSignin.statusCallback(handleUserSignin.notificationSignOut);
                 }
             }, "json");
-        },
-
-        //------------------------------------------------------------------------------------------------------------//
-
-        /**
-         * Tests if the browser is IE 8 or lower.
-         * @return {boolean} True if the browser is IE 8 or lower
-         * @private
-         */
-        createIE8Test: function () {
-            return handleUserSignin.isIE(8, "lte");
-        },
-
-        /**
-         * Detects IE and version number through injected conditional comments (no UA detect, no need for conditional
-         * compilation / jscript check).
-         * @param {string} [version] IE version
-         * @param {string} [comparison] Operator testing multiple versions based on "version"
-         * parameter, e.g., 'lte', 'gte', etc.
-         * @return {boolean} Result of conditional test; note that since IE stopped supporting conditional comments
-         * with IE 10, this routine only works for IE 9 and below; for IE 10 and above, it always returns "false"
-         * @author Scott Jehl
-         * @see <a href="https://gist.github.com/scottjehl/357727">detect IE and version number through injected
-         * conditional comments.js</a>.
-         * @private
-         */
-        isIE: function (version, comparison) {
-            var cc = "IE",
-                b = document.createElement("B"),
-                docElem = document.documentElement,
-                isIE;
-
-            if (version) {
-                cc += " " + version;
-                if (comparison) {
-                    cc = comparison + " " + cc;
-                }
-            }
-
-            b.innerHTML = "<!--[if " + cc + "]><b id='iecctest'></b><![endif]-->";
-            docElem.appendChild(b);
-            isIE = !!document.getElementById("iecctest");
-            docElem.removeChild(b);
-            return isIE;
         }
 
     };
