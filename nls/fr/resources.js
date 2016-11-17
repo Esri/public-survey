@@ -22,7 +22,7 @@ define({
         signinFetching: "Vérification de la disponibilité des possibilités de connexion...",
         surveySubmitted: "Sondage soumis",
         unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
-        unsupportedBrowser: "Internet Explorer ne sont pas pris en charge."
+        unsupportedBrowser: "Ce navigateur n'est pas pris en charge."
     },
     prompts: {
         clearBtn: "Effacer",

@@ -56,6 +56,10 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             handleUserSignin.statusCallback = statusCallback;
             handleUserSignin.appParams = appParams;
 
+            if (/Edge/i.test(navigator.userAgent)) {
+                appParams.showFacebook = appParams.showGooglePlus = appParams.showTwitter = false;
+            }
+
             //........................................................................................................//
 
             // Do we offer guest access?

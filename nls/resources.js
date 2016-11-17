@@ -23,7 +23,7 @@ define({
             signinFetching: "Checking availability of login possibilities...",
             surveySubmitted: "Survey submitted",
             unableToStartApp: "Unable to start application due to incomplete configuration.",
-            unsupportedBrowser: "Internet Explorer is not supported."
+            unsupportedBrowser: "This browser is not supported."
         },
         prompts: {
             clearBtn: "Clear",
