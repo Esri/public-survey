@@ -117,7 +117,8 @@ define(["lib/i18n.min!nls/resources.js", "app/diag"],
             },
 
             _testBrowser: function () {
-                var ok = navigator.userAgent.indexOf("MSIE ") < 0 && navigator.userAgent.indexOf("Trident") < 0;
+                var ok = !(/MSIE|Trident|Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile/i
+                    .test(navigator.userAgent));
                 return ok;
             }
 
