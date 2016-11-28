@@ -22,8 +22,11 @@ define({
             noSigninsAvailable: "There are no logins available",
             signinFetching: "Checking availability of login possibilities...",
             surveySubmitted: "Survey submitted",
+            unableToFindSurvey: "Unable to find survey.",
+            unableToFindSurveyInPopup: "Unable to find survey in popup.",
             unableToStartApp: "Unable to start application due to incomplete configuration.",
-            unsupportedBrowser: "This browser is not supported."
+            unsupportedBrowser: "This browser is not supported.",
+            notFound: "{item} not found"
         },
         prompts: {
             clearBtn: "Clear",

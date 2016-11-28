@@ -15,8 +15,8 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define(["app/fetchConfigInfo"],
-    function (fetchConfigInfo) {
+define(["lib/i18n.min!nls/resources.js", "app/fetchConfigInfo"],
+    function (i18n, fetchConfigInfo) {
         "use strict";
         var config;
         config = {
@@ -137,13 +137,14 @@ define(["app/fetchConfigInfo"],
                                 config.featureSvcParams.surveyFeatureLayerReady.resolve();
                             }
                             else {
-                                config.featureSvcParams.surveyFeatureLayerReady.reject();
+                                config.featureSvcParams.surveyFeatureLayerReady.reject(i18n.messages.unableToFindSurveyInPopup);
                             }
-                        }).fail(function () {
-                            config.featureSvcParams.surveyFeatureLayerReady.reject();
+                        }).fail(function (error) {
+                            config.featureSvcParams.surveyFeatureLayerReady.reject(error);
                         });
                     },
                     function (error) {
+                        error.statusText = "js/configuration.json<br>" + error.statusText;
                         parametersReady.reject(error);
                     }
                 );
@@ -152,9 +153,9 @@ define(["app/fetchConfigInfo"],
             },
 
             loadController: function () {
-                var controllerReady = $.Deferred();
+                var appControllerName, controllerReady = $.Deferred();
 
-                var appControllerName = "app/" + config.appParams.app + "_controller";
+                appControllerName = "app/" + config.appParams.app + "_controller";
                 require([appControllerName], function (appController) {
                     var additionalUrlParamsFilter = appController.getAdditionalUrlParamsFilter();
 
