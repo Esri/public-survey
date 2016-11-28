@@ -77,7 +77,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             deferreds.origImageUrl = origImageUrlDeferred || $.Deferred();
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
-                $.getJSON(arcgisUrl + webmapId + "?f=json&callback=?", function (data) {
+                $.getJSON(arcgisUrl + webmapId + "?f=json", function (data) {
                     var normalizedData = {},
                         imageUrl, iExt, details;
 
@@ -159,7 +159,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             }
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
-                $.getJSON(arcgisUrl + webmapId + "/data?f=json&callback=?", function (data) {
+                $.getJSON(arcgisUrl + webmapId + "/data?f=json", function (data) {
                     var featureSvcData = {},
                         iOpLayer = 0,
                         details;
@@ -183,7 +183,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                             return;
                         }
                         else {
-                            console.log("Survey responses into layer \"" + featureLayerTitle + "\"");
+                            console.log("Survey responses will be written into layer \"" + featureLayerTitle + "\"");
                         }
                         featureSvcData.opLayerParams = data.operationalLayers[iOpLayer];
 
@@ -196,11 +196,11 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
                             featureSvcData.featureSvcParams = data;
 
                             if (data.serviceItemId) {
-                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json&callback=?",
+                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json",
                                     function (serviceData) {
                                         featureSvcData.serviceData = serviceData;
                                         deferred.resolve(featureSvcData);
-                                    });
+                                    }).fail(deferred.reject);
                             }
                             else {
                                 deferred.resolve(featureSvcData);
@@ -240,7 +240,7 @@ define(["lib/i18n.min!nls/resources.js"], function (i18n) {
             }
 
             if (fetchConfigInfo._isUsableString(featureSvcUrl)) {
-                $.getJSON(featureSvcUrl + "?f=json&callback=?", function (data) {
+                $.getJSON(featureSvcUrl + "?f=json", function (data) {
                     data.canBeUpdated = data.capabilities && data.capabilities.indexOf("Update") >= 0;
                     deferred.resolve(data);
                 }).fail(deferred.reject);
