@@ -15,8 +15,8 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define(["app/fetchConfigInfo"],
-    function (fetchConfigInfo) {
+define(["lib/i18n.min!nls/resources.js", "app/fetchConfigInfo"],
+    function (i18n, fetchConfigInfo) {
         "use strict";
         var config;
         config = {
@@ -137,7 +137,7 @@ define(["app/fetchConfigInfo"],
                                 config.featureSvcParams.surveyFeatureLayerReady.resolve();
                             }
                             else {
-                                config.featureSvcParams.surveyFeatureLayerReady.reject();
+                                config.featureSvcParams.surveyFeatureLayerReady.reject(i18n.messages.unableToFindSurveyInPopup);
                             }
                         }).fail(function (error) {
                             config.featureSvcParams.surveyFeatureLayerReady.reject(error);

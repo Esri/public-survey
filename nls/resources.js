@@ -23,6 +23,7 @@ define({
             signinFetching: "Checking availability of login possibilities...",
             surveySubmitted: "Survey submitted",
             unableToFindSurvey: "Unable to find survey.",
+            unableToFindSurveyInPopup: "Unable to find survey in popup.",
             unableToStartApp: "Unable to start application due to incomplete configuration.",
             unsupportedBrowser: "This browser is not supported.",
             notFound: "{item} not found"

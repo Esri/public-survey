@@ -23,6 +23,7 @@ define({
         signinFetching: "Verfügbarkeit der Anmeldemöglichkeiten prüfen...",
         surveySubmitted: "Umfrage eingereicht",
         unableToFindSurvey: "Die Umfrage konnte nicht gefunden werden.",
+        unableToFindSurveyInPopup: "Die Umfrage konnte nicht im Popup-Fenster gefunden werden.",
         unableToStartApp: "Anwendung kann nicht aufgrund einer unvollständigen Konfiguration zu starten."
         unsupportedBrowser: "Internet Explorer wird nicht unterstützt.",
     },

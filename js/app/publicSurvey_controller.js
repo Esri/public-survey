@@ -63,7 +63,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 var controllerReady = $.Deferred();
                 controller._config = config;
 
-                // Instantiate the splash template
+                // Instantiate the controller template
                 container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
@@ -74,7 +74,7 @@ define(["lib/i18n.min!nls/resources.js"],
                         // writes to the service
                         controller._config.featureSvcParams.surveyFeatureLayerReady.then(
                             controllerReady.resolve,
-                            function () {
+                            function (error) {
                                 // Attempt to load the survey form description
                                 if (controller._config.appParams.surveydesc) {
                                     $.getJSON(controller._config.appParams.surveydesc + ".json",
@@ -91,7 +91,7 @@ define(["lib/i18n.min!nls/resources.js"],
                                     );
                                 }
                                 else {
-                                    controllerReady.reject(i18n.messages.unableToFindSurvey);
+                                    controllerReady.reject(error);
                                 }
                             }
                         );
