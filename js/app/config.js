@@ -153,9 +153,9 @@ define(["app/fetchConfigInfo"],
             },
 
             loadController: function () {
-                var controllerReady = $.Deferred();
+                var appControllerName, controllerReady = $.Deferred();
 
-                var appControllerName = "app/" + config.appParams.app + "_controller";
+                appControllerName = "app/" + config.appParams.app + "_controller";
                 require([appControllerName], function (appController) {
                     var additionalUrlParamsFilter = appController.getAdditionalUrlParamsFilter();
 
