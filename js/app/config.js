@@ -139,11 +139,12 @@ define(["app/fetchConfigInfo"],
                             else {
                                 config.featureSvcParams.surveyFeatureLayerReady.reject();
                             }
-                        }).fail(function () {
-                            config.featureSvcParams.surveyFeatureLayerReady.reject();
+                        }).fail(function (error) {
+                            config.featureSvcParams.surveyFeatureLayerReady.reject(error);
                         });
                     },
                     function (error) {
+                        error.statusText = "js/configuration.json<br>" + error.statusText;
                         parametersReady.reject(error);
                     }
                 );

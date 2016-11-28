@@ -21,8 +21,10 @@ define({
         noSigninsAvailable: "Il n'y a pas les connexions disponibles",
         signinFetching: "Vérification de la disponibilité des possibilités de connexion...",
         surveySubmitted: "Sondage soumis",
+        unableToFindSurvey: "Impossible de trouver l'enquête.",
         unableToStartApp: "Impossible de démarrer l'application en raison de la configuration incomplète.",
-        unsupportedBrowser: "Ce navigateur n'est pas pris en charge."
+        unsupportedBrowser: "Ce navigateur n'est pas pris en charge.",
+        notFound: "{item} non-trouvé"
     },
     prompts: {
         clearBtn: "Effacer",

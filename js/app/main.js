@@ -39,12 +39,7 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                             }
                         );
                     },
-                    function (error) {
-                        require(["app/message"], function (message) {
-                            var details = (error && error.statusText) || (error && error.message) || "";
-                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
-                        });
-                    }
+                    main._showMessageError
                 );
             },
 
@@ -55,8 +50,10 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                 splash.replacePrompt(i18n.messages.loadingApp);
                 config.loadController().then(
                     function (appController) {
+                        var details, appReady, signinReady, appControllerName;
+
                         if (appController) {
-                            var appReady, signinReady = $.Deferred();
+                            signinReady = $.Deferred();
 
                             // Prepare app components
                             require(["app/user"], function (user) {
@@ -96,18 +93,36 @@ define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"]
                                         }
                                     );
                                 },
-                                function () {
-                                    splash.replacePrompt(i18n.messages.unableToStartApp);
-                                }
+                                main._showSplashError
                             );
                         }
                         else {
-                            splash.replacePrompt(i18n.messages.unableToStartApp);
+                            appControllerName = "app/" + config.appParams.app + "_controller";
+                            details = i18n.messages.notFound.replace("{item}", appControllerName);
+                            main._showSplashError(details);
                         }
-                    }
-                ).fail(function (error) {
-                    splash.replacePrompt(i18n.messages.unableToStartApp);
+                    },
+                    main._showSplashError
+                );
+            },
+
+            _showMessageError: function (error) {
+                require(["app/message"], function (message) {
+                    message.showMessage(i18n.messages.unableToStartApp + "<br>" + main._getErrorDetails(error));
                 });
+            },
+
+            _showSplashError: function (error) {
+                splash.replacePrompt(i18n.messages.unableToStartApp + "<br>" + main._getErrorDetails(error));
+            },
+
+            _getErrorDetails: function (error) {
+                var details = "";
+                if (error) {
+                    details = (error && error.statusText) || (error && error.message) ||
+                        (typeof error === "string" && error) || "";
+                }
+                return details;
             }
 
             //--------------------------------------------------------------------------------------------------------//

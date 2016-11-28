@@ -72,31 +72,29 @@ define(["lib/i18n.min!nls/resources.js"],
                     complete: function () {
                         // When the feature service and survey are ready, we can set up the module that reads from and
                         // writes to the service
-                        controller._config.featureSvcParams.surveyFeatureLayerReady.then(function () {
-                            controllerReady.resolve();
-                        }, function () {
-                            // Attempt to load the survey form description
-                            if (controller._config.appParams.surveydesc) {
-                                $.getJSON(controller._config.appParams.surveydesc + ".json",
-                                    function (surveyDesc) {
-                                        controller._config.featureSvcParams.popupDescription = surveyDesc.description;
-                                        controller._config.featureSvcParams.fields = surveyDesc.fields;
-                                        controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
-                                        controllerReady.resolve();
-                                    }
-                                ).fail(
-                                    function (error) {
-                                        if (error) {
-                                            console.log(JSON.stringify(error));
+                        controller._config.featureSvcParams.surveyFeatureLayerReady.then(
+                            controllerReady.resolve,
+                            function () {
+                                // Attempt to load the survey form description
+                                if (controller._config.appParams.surveydesc) {
+                                    $.getJSON(controller._config.appParams.surveydesc + ".json",
+                                        function (surveyDesc) {
+                                            controller._config.featureSvcParams.popupDescription = surveyDesc.description;
+                                            controller._config.featureSvcParams.fields = surveyDesc.fields;
+                                            controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
+                                            controllerReady.resolve();
                                         }
-                                        controllerReady.reject(i18n.messages.unableToStartApp);
-                                    }
-                                );
+                                    ).fail(
+                                        function () {
+                                            controllerReady.reject(i18n.messages.unableToFindSurvey);
+                                        }
+                                    );
+                                }
+                                else {
+                                    controllerReady.reject(i18n.messages.unableToFindSurvey);
+                                }
                             }
-                            else {
-                                controllerReady.reject(i18n.messages.unableToStartApp);
-                            }
-                        });
+                        );
                     }
                 });
 
