@@ -21,12 +21,12 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/testSurvey_resources.js"],
+define(["lib/i18n.min!nls/resources.js"],
     function (i18n) {
         "use strict";
         var controller;
         controller = {
-            //----- Events -----------------------------------------------------------------------------------------------//
+            //----- Events -------------------------------------------------------------------------------------------//
 
             // Published
 
@@ -35,7 +35,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             // survey-form-is-empty
             // show-help
 
-            //----- Module variables -------------------------------------------------------------------------------------//
+            //----- Module variables ---------------------------------------------------------------------------------//
 
             _logNum: 0,
             _config: {},
@@ -46,7 +46,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
             },
             _iCurrentResponseSite: undefined,
 
-            //----- Procedures available for external access -------------------------------------------------------------//
+            //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
              * Initializes the controller.
@@ -58,7 +58,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 controller._config = config;
 
                 // Instantiate the splash template
-                container.loadTemplate("js/app/" + controller._config.appParams.appName + "_controller.html", {
+                container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
                     // Template options
@@ -114,7 +114,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
 
                 require(["app/survey", "app/survey_controller"], function (survey, survey_controller) {
 
-                    // ----- Testing -------------------------------------------------------------------------------------//
+                    // ----- Testing ---------------------------------------------------------------------------------//
                     var num, testButtonsContainer = $("#test_buttons");
 
                     function assembleAtSiteButton(num) {
@@ -143,7 +143,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     controller._config.appParams.readonly =
                         controller._toBoolean(controller._config.appParams.readonly, false);
                     if (controller._config.appParams.showseeresponsesbutton) {
-                        controller._config.appParams.showSeeResponsesButton = controller._config.appParams.showseeresponsesbutton;
+                        controller._config.appParams.showSeeResponsesButton =
+                            controller._config.appParams.showseeresponsesbutton;
                     }
                     if (controller._config.appParams.brandingicon) {
                         controller._config.appParams.brandingIconUrl = controller._config.appParams.brandingicon;
@@ -191,7 +192,8 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     });
                     $.subscribe("update-current-response-site", function (evt, responseSite) {
                         controller._logSubscribedEvent(evt, responseSite.slide);
-                        $("#_at_site_" + responseSite.slide).addClass("highlight-btn").siblings().removeClass("highlight-btn");
+                        $("#_at_site_" + responseSite.slide).addClass("highlight-btn").siblings()
+                            .removeClass("highlight-btn");
                     });
                     $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
                     $.subscribe("request-signOut", controller._logSubscribedEvent);
@@ -215,8 +217,6 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                     controller._prependToLog("Survey definition created");
 
                     // Prepare and start the survey controller
-                    controller._loadCSS("css/" + controller._config.appParams.appName + "_styles.css");
-
                     survey_controller.init(controller._config, "sidebarContent")
                         .then(function () {
                             survey_controller.launch();
@@ -247,15 +247,18 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 }
             },
 
-            //----- Procedures meant for internal module use only --------------------------------------------------------//
-
-            _loadCSS: function (url) {
-                var stylesheet = document.createElement("link");
-                stylesheet.href = url;
-                stylesheet.rel = "stylesheet";
-                stylesheet.type = "text/css";
-                document.getElementsByTagName("head")[0].appendChild(stylesheet);
+            /**
+             * Returns a list of additional supported URL parameters.
+             * @return {array} List of additional URL parameter names or an empty list
+             * @memberof controller
+             */
+            getAdditionalUrlParamsFilter: function () {
+                return ["brandingicon", "numresponsesites", "policy", "readonly", "showseeresponsesbutton",
+                    "surveydesc"
+                ];
             },
+
+            //----- Procedures meant for internal module use only ----------------------------------------------------//
 
             /** Normalizes a boolean value to true or false.
              * @param {boolean|string} boolValue A true or false value that is returned directly or a string
@@ -399,7 +402,7 @@ define(["lib/i18n.min!nls/testSurvey_resources.js"],
                 $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return controller;
     });

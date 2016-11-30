@@ -15,11 +15,11 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/diag"],
+define(["lib/i18n.min!nls/resources.js", "app/config", "app/splash", "app/diag"],
     function (i18n, config, splash, diag) {
         "use strict";
         var main = {
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             init: function () {
                 // Config tells us app specifics in addition to app's parameters
@@ -30,38 +30,30 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                             diag.init();
                         }
 
-                        // Show the splash and check if we meet proxy and minimum browser requirements; if OK, launch app
+                        // Show the splash and check if we meet proxy and minimum browser requirements;
+                        // if OK, launch app
                         splash.init(config).then(
                             main._launch,
-                            function (error) {
-                                // If unsupported browser or proxy problem, tell the user and proceed no further
-                                if (error === "Unsupported browser") {
-                                    splash.replacePrompt(i18n.messages.unsupportedBrowser);
-                                }
-                                else {
-                                    splash.replacePrompt(i18n.messages.needProxy);
-                                }
+                            function () {
+                                splash.replacePrompt(i18n.messages.unsupportedBrowser);
                             }
                         );
                     },
-                    function (error) {
-                        require(["app/message"], function (message) {
-                            var details = (error && error.statusText) || (error && error.message) || "";
-                            message.showMessage(i18n.messages.unableToStartApp + "<br>" + details);
-                        });
-                    }
+                    main._showMessageError
                 );
             },
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             _launch: function () {
                 // Load the app specifics
                 splash.replacePrompt(i18n.messages.loadingApp);
                 config.loadController().then(
                     function (appController) {
+                        var details, appReady, signinReady, appControllerName;
+
                         if (appController) {
-                            var appReady, signinReady = $.Deferred();
+                            signinReady = $.Deferred();
 
                             // Prepare app components
                             require(["app/user"], function (user) {
@@ -101,21 +93,39 @@ define(["lib/i18n.min!nls/main_resources.js", "app/config", "app/splash", "app/d
                                         }
                                     );
                                 },
-                                function () {
-                                    splash.replacePrompt(i18n.messages.unableToStartApp);
-                                }
+                                main._showSplashError
                             );
                         }
                         else {
-                            splash.replacePrompt(i18n.messages.unableToStartApp);
+                            appControllerName = "app/" + config.appParams.app + "_controller";
+                            details = i18n.messages.notFound.replace("{item}", appControllerName);
+                            main._showSplashError(details);
                         }
-                    }
-                ).fail(function (error) {
-                    splash.replacePrompt(i18n.messages.unableToStartApp);
+                    },
+                    main._showSplashError
+                );
+            },
+
+            _showMessageError: function (error) {
+                require(["app/message"], function (message) {
+                    message.showMessage(i18n.messages.unableToStartApp + "<br>" + main._getErrorDetails(error));
                 });
+            },
+
+            _showSplashError: function (error) {
+                splash.replacePrompt(i18n.messages.unableToStartApp + "<br>" + main._getErrorDetails(error));
+            },
+
+            _getErrorDetails: function (error) {
+                var details = "";
+                if (error) {
+                    details = (error && error.statusText) || (error && error.message) ||
+                        (typeof error === "string" && error) || "";
+                }
+                return details;
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         main.init();
     });
