@@ -261,7 +261,7 @@ define([
             var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
-                baseUrl: "//jsdev.arcgis.com/4.2/",
+                baseUrl: "//js.arcgis.com/4.2/",
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"

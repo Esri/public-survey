@@ -162,8 +162,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.appParams.surveyNotificationPolicy);
 
                     // Prepare and start the scene controller
-                    controller._loadCSS("//jsdev.arcgis.com/4.2/esri/css/main.css");
-                    controller._loadCSS("//jsdev.arcgis.com/4.2/dijit/themes/claro/claro.css");
+                    controller._loadCSS("//js.arcgis.com/4.2/esri/css/main.css");
+                    controller._loadCSS("//js.arcgis.com/4.2/dijit/themes/claro/claro.css");
                     controller._loadCSS("css/override_styles.css");
 
                     scene_controller.init(controller._config, "mainContent",
