@@ -143,47 +143,7 @@ define(["lib/i18n.min!nls/resources.js"],
                                 survey_controller.init(controller._config, "sidebarContent");
 
                                 scene_controller.mapParamsReady.then(function () {
-                                    // Adapted from an idea how to monitor the active/idle state of the browser
-                                    // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
-                                    // We'll use a 200-count averaging buffer to get past lull in Firefox around
-                                    // time that the 3D processors start up
-                                    var loadingProbablyDone = $.Deferred();
-                                    (function start() {
-                                        var timer_start = (+new Date()),
-                                            timer_end, stack = [],
-                                            last200Sum = 0,
-                                            timespan;
-
-                                        (function collect() {
-                                            timer_end = (+new Date());
-                                            timespan = timer_end - timer_start;
-                                            stack.push(timespan);
-                                            last200Sum += timespan;
-
-                                            timer_start = timer_end;
-                                            if (stack.length > 200) {
-                                                // Remove oldest from sum and stack
-                                                last200Sum -= stack[0];
-                                                stack.shift();
-
-                                                // If we're averaging less than 12 milliseconds between calls,
-                                                // we're probably done
-                                                if (last200Sum < 2400) {
-                                                    loadingProbablyDone.resolve();
-                                                }
-                                                else {
-                                                    setTimeout(collect, 0);
-                                                }
-                                            }
-                                            else {
-                                                setTimeout(collect, 0);
-                                            }
-                                        })();
-
-                                        return stack;
-                                    })();
-
-                                    loadingProbablyDone.then(function () {
+                                    controller._waitForBrowserQuiescence(12, 200).then(function () {
                                         // Start the controllers
                                         survey_controller.launch();
                                         scene_controller.launch();
@@ -272,6 +232,52 @@ define(["lib/i18n.min!nls/resources.js"],
             },
 
             //----- Procedures meant for internal module use only ----------------------------------------------------//
+
+            _waitForBrowserQuiescence: function (pulseMillisecondGapForQuiescence, averagingBufferSize) {
+                // Adapted from an idea how to monitor the active/idle state of the browser
+                // by Maks Nemisj, https://nemisj.com/activity-monitor-in-js/
+                // A 200-count averaging buffer helps to get past lull in Firefox around
+                // time that the 3D processors start up
+                var browserProbablyQuiescent = $.Deferred(),
+                    millisecondsAllSamples = pulseMillisecondGapForQuiescence * averagingBufferSize;
+
+                (function start() {
+                    var timer_start = (+new Date()),
+                        timer_end, stack = [],
+                        averagingSampleSum = 0,
+                        timespan;
+
+                    (function collect() {
+                        timer_end = (+new Date());
+                        timespan = timer_end - timer_start;
+                        stack.push(timespan);
+                        averagingSampleSum += timespan;
+
+                        timer_start = timer_end;
+                        if (stack.length > averagingBufferSize) {
+                            // Remove oldest from sum and stack
+                            averagingSampleSum -= stack[0];
+                            stack.shift();
+
+                            // If we're averaging less than pulseMillisecondGapForQuiescence
+                            // milliseconds between calls, we're probably quiescent
+                            if (averagingSampleSum < millisecondsAllSamples) {
+                                browserProbablyQuiescent.resolve();
+                            }
+                            else {
+                                setTimeout(collect, 0);
+                            }
+                        }
+                        else {
+                            setTimeout(collect, 0);
+                        }
+                    })();
+
+                    return stack;
+                })();
+
+                return browserProbablyQuiescent;
+            },
 
             _loadCSS: function (url) {
                 var stylesheet = document.createElement("link");
