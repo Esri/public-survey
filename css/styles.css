@@ -62,6 +62,10 @@ header, section, footer, aside, nav, main, article, figure {
     outline-style: none;
 }
 
+.disabled-appearance {
+    opacity: 0.65;
+}
+
 /* ---------- splash ---------- */
 
 .fullBackground {
