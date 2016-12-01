@@ -50,8 +50,6 @@ define(["lib/i18n.min!nls/resources.js"],
             _multipleChoiceQuestions: null,
             _surveyInProgress: false,
 
-            _logNum: 0,
-
             //----- Procedures available for external access ---------------------------------------------------------//
 
             /**
