@@ -21,8 +21,8 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/resources.js"],
-    function (i18n) {
+define(["lib/i18n.min!nls/resources.js", "lib/testing_functions"],
+    function (i18n, testing) {
         "use strict";
         var controller;
         controller = {
@@ -37,7 +37,6 @@ define(["lib/i18n.min!nls/resources.js"],
 
             //----- Module variables ---------------------------------------------------------------------------------//
 
-            _logNum: 0,
             _config: {},
             _averagingFieldValues: null,
             _clusterer: null,
@@ -59,7 +58,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 var controllerReady = $.Deferred();
                 controller._config = config;
 
-                // Instantiate the splash template
+                // Instantiate the controller template
                 container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
@@ -125,29 +124,29 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.appParams.policy || controller._config.appParams.surveyNotificationPolicy;
 
                     // Controls
-                    controller._activateButton("_survey_form_in_progress", "Fill in survey");
+                    testing.activateButton("_survey_form_in_progress", "Fill in survey");
                     $.subscribe("_survey_form_in_progress", function () {
                         controller._surveyInProgress = true;
                         console.log("survey in progress: " + controller._surveyInProgress);
                     });
 
-                    controller._activateButton("_survey_form_is_empty", "Clear survey");
+                    testing.activateButton("_survey_form_is_empty", "Clear survey");
                     $.subscribe("_survey_form_is_empty", function () {
                         controller._surveyInProgress = false;
                         console.log("survey in progress: " + controller._surveyInProgress);
                     });
 
-                    controller._activateButton("request-signOut", i18n.labels.signOut);
-                    controller._activateButton("show-help", "Show help", i18n.tooltips.helpTip);
+                    testing.activateButton("request-signOut", i18n.labels.signOut);
+                    testing.activateButton("show-help", "Show help", i18n.tooltips.helpTip);
 
                     // Monitoring pub/subs
-                    $.subscribe("signedIn-user", controller._logSubscribedEvent);
-                    $.subscribe("request-signOut", controller._logSubscribedEvent);
-                    $.subscribe("signedOut-user", controller._logSubscribedEvent);
-                    $.subscribe("goto-response-site", controller._logSubscribedEvent);
-                    $.subscribe("update-current-response-site", controller._logSubscribedEvent);
-                    $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
-                    $.subscribe("clear-survey-form", controller._logSubscribedEvent);
+                    $.subscribe("signedIn-user", testing.logSubscribedEvent);
+                    $.subscribe("request-signOut", testing.logSubscribedEvent);
+                    $.subscribe("signedOut-user", testing.logSubscribedEvent);
+                    $.subscribe("goto-response-site", testing.logSubscribedEvent);
+                    $.subscribe("update-current-response-site", testing.logSubscribedEvent);
+                    $.subscribe("update-current-responses-set", testing.logSubscribedEvent);
+                    $.subscribe("clear-survey-form", testing.logSubscribedEvent);
 
                     // -----------------------------------------------------------------------------------------------//
 
@@ -157,8 +156,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.featureSvcParams.fields,
                         controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                     );
-                    controller._prependToLog("Survey definition created");
-                    controller._logSubscribedEvent("Survey question policy:",
+                    testing.prependToLog("Survey definition created");
+                    testing.logSubscribedEvent("Survey question policy:",
                         controller._config.appParams.surveyNotificationPolicy);
 
                     // Prepare and start the scene controller
@@ -231,71 +230,6 @@ define(["lib/i18n.min!nls/resources.js"],
                     }
                 }
                 return ok;
-            },
-
-            /**
-             * Completes text setup of a button and sets its click event to publish the id of the button.
-             * @param {string} id - Id of button to modify
-             * @param {?string} label - Text to display in button display
-             * @param {?string} tooltip - Text to display in button tooltip
-             * @param {?object} data - Data to pass to event handler
-             * @memberof controller
-             * @private
-             */
-            _activateButton: function (id, label, tooltip, data) {
-                var btn = $("#" + id);
-                btn.on("click", data, controller._buttonPublish);
-
-                btn = btn[0];
-                if (label) {
-                    btn.innerHTML = label;
-                }
-                if (tooltip) {
-                    btn.title = tooltip;
-                }
-
-                return btn;
-            },
-
-            /**
-             * Click event function to publish the id of the target.
-             * @param {object} evt - Click event
-             * @memberof controller
-             * @private
-             */
-            _buttonPublish: function (evt) {
-                var btn = evt.currentTarget;
-                btn.blur(); // Allow button to be defocused without clicking elsewhere
-                $.publish(btn.id, evt.data);
-            },
-
-            /**
-             * Initializes the controller.
-             * @param {object} config - App config info
-             * @memberof controller
-             * @private
-             */
-            _logSubscribedEvent: function (evt, data) {
-                var logEntry, dataAsString = data !== undefined ? JSON.stringify(data) : "";
-                logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
-                console.log(logEntry);
-
-                if (logEntry.length > 256) {
-                    logEntry = logEntry.substr(0, 253) + "...";
-                }
-                controller._prependToLog(logEntry);
-            },
-
-            /**
-             * Prepends sequence number and supplied text to #logText item.
-             * <br>
-             * Note: does not work while controller page is not displayed
-             * @param {string} text - Text to prepend
-             * @memberof controller
-             * @private
-             */
-            _prependToLog: function (text) {
-                $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             },
 
             _clusterViewBuilder: function (view) {

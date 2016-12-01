@@ -21,8 +21,8 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/resources.js"],
-    function (i18n) {
+define(["lib/i18n.min!nls/resources.js", "lib/testing_functions"],
+    function (i18n, testing) {
         "use strict";
         var controller;
         controller = {
@@ -36,7 +36,6 @@ define(["lib/i18n.min!nls/resources.js"],
             //----- Module variables ---------------------------------------------------------------------------------//
 
             _config: {},
-            _logNum: 0,
 
             //----- Procedures available for external access ---------------------------------------------------------//
 
@@ -49,7 +48,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 var controllerReady = $.Deferred();
                 controller._config = config;
 
-                // Instantiate the splash template
+                // Instantiate the controller template
                 container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
@@ -103,33 +102,33 @@ define(["lib/i18n.min!nls/resources.js"],
                     // ----- Testing ---------------------------------------------------------------------------------//
                     // Adjust config parameters as needed
                     controller._config.appParams.readonly =
-                        controller._toBoolean(controller._config.appParams.readonly, false);
+                        testing.toBoolean(controller._config.appParams.readonly, false);
                     controller._config.appParams.surveyNotificationPolicy =
                         controller._config.appParams.policy || controller._config.appParams.surveyNotificationPolicy;
 
                     // Controls
-                    controller._activateButton("request-signOut");
+                    testing.activateButton("request-signOut");
 
-                    controller._activateButton("_clear-form");
+                    testing.activateButton("_clear-form");
                     $.subscribe("_clear-form", function () {
                         survey.clearForm();
                     });
 
                     if (controller._config.featureSvcParams.test) {
                         $("#_fill-form").removeClass("absent");
-                        controller._activateButton("_fill-form");
+                        testing.activateButton("_fill-form");
                         $.subscribe("_fill-form", function () {
                             survey.fillInForm(controller._config.featureSvcParams.test);
                         });
 
                         $("#_get-form-answers").removeClass("absent");
-                        controller._activateButton("_get-form-answers");
+                        testing.activateButton("_get-form-answers");
                         $.subscribe("_get-form-answers", function (evt) {
-                            controller._logSubscribedEvent(evt, survey.getFormAnswers());
+                            testing.logSubscribedEvent(evt, survey.getFormAnswers());
                         });
                     }
 
-                    controller._activateButton("_set-form-readOnly");
+                    testing.activateButton("_set-form-readOnly");
                     $.subscribe("_set-form-readOnly", function () {
                         controller._config.appParams.readonly = !controller._config.appParams.readonly;
                         controller._echoReadOnlyState();
@@ -137,12 +136,12 @@ define(["lib/i18n.min!nls/resources.js"],
                     });
 
                     // Monitoring pub/subs
-                    $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
-                    $.subscribe("signedIn-user", controller._logSubscribedEvent);
-                    $.subscribe("signedOut-user", controller._logSubscribedEvent);
+                    $.subscribe("survey-form-in-progress", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-policy-not-satisfied", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-policy-satisfied", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-is-empty", testing.logSubscribedEvent);
+                    $.subscribe("signedIn-user", testing.logSubscribedEvent);
+                    $.subscribe("signedOut-user", testing.logSubscribedEvent);
                     // -----------------------------------------------------------------------------------------------//
 
                     // Prepare the survey
@@ -151,8 +150,8 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.featureSvcParams.fields,
                         controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                     );
-                    controller._prependToLog("Survey definition created");
-                    controller._logSubscribedEvent("Survey question policy:",
+                    testing.prependToLog("Survey definition created");
+                    testing.logSubscribedEvent("Survey question policy:",
                         controller._config.appParams.surveyNotificationPolicy);
 
                     // Start with a fresh survey form for newly-signed-in user
@@ -207,113 +206,6 @@ define(["lib/i18n.min!nls/resources.js"],
                 else {
                     $("#_set-form-readOnly").removeClass("highlight-btn");
                 }
-            },
-
-            /** Normalizes a boolean value to true or false.
-             * @param {boolean|string} boolValue A true or false value that is returned directly or a string
-             * "true", "t", "yes", "y", "false", "f", "no", "n" (case-insensitive) or a number (0 for false; non-zero
-             * for true) that is interpreted and returned; if neither a boolean nor a usable string nor a number, falls
-             * back to defaultValue
-             * @param {boolean} [defaultValue] A true or false that is returned if boolValue can't be used; if not
-             * defined, true is returned
-             * @private
-             */
-            _toBoolean: function (boolValue, defaultValue) {
-                var lowercaseValue;
-
-                // Shortcut true|false
-                if (boolValue === true) {
-                    return true;
-                }
-                if (boolValue === false) {
-                    return false;
-                }
-
-                // Handle a true|false string
-                if (typeof boolValue === "string") {
-                    lowercaseValue = boolValue.toLowerCase();
-                    if (lowercaseValue === "true" || lowercaseValue === "t" || lowercaseValue === "yes" ||
-                        lowercaseValue === "y" || lowercaseValue === "1") {
-                        return true;
-                    }
-                    if (lowercaseValue === "false" || lowercaseValue === "f" || lowercaseValue === "no" ||
-                        lowercaseValue === "n" || lowercaseValue === "0") {
-                        return false;
-                    }
-                }
-                else if (typeof boolValue === "number") {
-                    return boolValue !== 0;
-                }
-                // Fall back to default
-                if (defaultValue === undefined) {
-                    return true;
-                }
-                return defaultValue;
-            },
-
-            /**
-             * Completes text setup of a button and sets its click event to publish the id of the button.
-             * @param {string} id - Id of button to modify
-             * @param {?string} label - Text to display in button display
-             * @param {?string} tooltip - Text to display in button tooltip
-             * @param {?object} data - Data to pass to event handler
-             * @memberof controller
-             * @private
-             */
-            _activateButton: function (id, label, tooltip, data) {
-                var btn = $("#" + id);
-                btn.on("click", data, controller._buttonPublish);
-
-                btn = btn[0];
-                if (label) {
-                    btn.innerHTML = label;
-                }
-                if (tooltip) {
-                    btn.title = tooltip;
-                }
-
-                return btn;
-            },
-
-            /**
-             * Click event function to publish the id of the target.
-             * @param {object} evt - Click event
-             * @memberof controller
-             * @private
-             */
-            _buttonPublish: function (evt) {
-                var btn = evt.currentTarget;
-                btn.blur(); // Allow button to be defocused without clicking elsewhere
-                $.publish(btn.id, evt.data);
-            },
-
-            /**
-             * Initializes the controller.
-             * @param {object} config - App config info
-             * @memberof controller
-             * @private
-             */
-            _logSubscribedEvent: function (evt, data) {
-                var logEntry, dataAsString = data !== undefined ? JSON.stringify(data) : "";
-                logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
-                console.log(logEntry);
-
-                if (logEntry.length > 256) {
-                    logEntry = logEntry.substr(0, 253) + "...";
-                }
-                controller._prependToLog(logEntry);
-            },
-
-            /**
-             * Prepends sequence number and supplied text to #logText item.
-             * <br>
-             * Note: does not work while controller page is not displayed
-             * @param {string} text - Text to prepend
-             * @memberof controller
-             * @private
-             */
-            _prependToLog: function (text) {
-                $("#logText").prepend(++controller._logNum + ": " + text + "\n");
             }
 
             //--------------------------------------------------------------------------------------------------------//

@@ -21,8 +21,8 @@
  * @namespace controller
  * @version 0.1
  */
-define(["lib/i18n.min!nls/resources.js"],
-    function (i18n) {
+define(["lib/i18n.min!nls/resources.js", "lib/testing_functions"],
+    function (i18n, testing) {
         "use strict";
         var controller;
         controller = {
@@ -37,7 +37,6 @@ define(["lib/i18n.min!nls/resources.js"],
 
             //----- Module variables ---------------------------------------------------------------------------------//
 
-            _logNum: 0,
             _config: {},
             _currentUser: {
                 name: "",
@@ -57,7 +56,7 @@ define(["lib/i18n.min!nls/resources.js"],
                 var controllerReady = $.Deferred();
                 controller._config = config;
 
-                // Instantiate the splash template
+                // Instantiate the controller template
                 container.loadTemplate("js/app/" + controller._config.appParams.app + "_controller.html", {
                     // Template parameters
                 }, {
@@ -119,7 +118,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                     function assembleAtSiteButton(num) {
                         var siteNum = num < 0 ? undefined : num;
-                        controller._createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
+                        testing.createButton(testButtonsContainer, "_at_site_" + siteNum, "At site " + siteNum);
                         $.subscribe("_at_site_" + siteNum, function () {
                             $.publish("update-current-response-site", {
                                 slide: siteNum,
@@ -141,7 +140,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                     // Adjust config parameters as needed
                     controller._config.appParams.readonly =
-                        controller._toBoolean(controller._config.appParams.readonly, false);
+                        testing.toBoolean(controller._config.appParams.readonly, false);
                     if (controller._config.appParams.showseeresponsesbutton) {
                         controller._config.appParams.showSeeResponsesButton =
                             controller._config.appParams.showseeresponsesbutton;
@@ -150,14 +149,14 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.appParams.brandingIconUrl = controller._config.appParams.brandingicon;
                     }
                     controller._config.appParams.numResponseSites =
-                        controller._toNumber(controller._config.appParams.numresponsesites, 2);
+                        testing.toNumber(controller._config.appParams.numresponsesites, 2);
 
                     // Controls
-                    controller._activateButton("_nav_reset");
+                    testing.activateButton("_nav_reset");
                     $.subscribe("_nav_reset", function () {
                         $.publish("clear-survey-form");
                     });
-                    controller._activateButton("_clear_curr_resp");
+                    testing.activateButton("_clear_curr_resp");
                     $.subscribe("_clear_curr_resp", function () {
                         $.publish("update-current-responses-set", {
                             "responses": []
@@ -173,7 +172,7 @@ define(["lib/i18n.min!nls/resources.js"],
                     if (controller._config.featureSvcParams.test) {
                         $.each(controller._config.featureSvcParams.test, function (indexInArray, testCase) {
                             num = testCase.responses[0].num;
-                            controller._createButton(testButtonsContainer,
+                            testing.createButton(testButtonsContainer,
                                 "_current_responses_set_" + num, "Set " + num + " curr resp.");
                             $.subscribe("_current_responses_set_" + num, function () {
                                 $.publish("update-current-responses-set", testCase);
@@ -183,7 +182,7 @@ define(["lib/i18n.min!nls/resources.js"],
 
                     // Monitoring pub/subs
                     $.subscribe("goto-response-site", function (evt, siteNum) {
-                        controller._logSubscribedEvent(evt, siteNum);
+                        testing.logSubscribedEvent(evt, siteNum);
                         $.publish("update-current-response-site", {
                             slide: siteNum,
                             title: "",
@@ -191,21 +190,21 @@ define(["lib/i18n.min!nls/resources.js"],
                         });
                     });
                     $.subscribe("update-current-response-site", function (evt, responseSite) {
-                        controller._logSubscribedEvent(evt, responseSite.slide);
+                        testing.logSubscribedEvent(evt, responseSite.slide);
                         $("#_at_site_" + responseSite.slide).addClass("highlight-btn").siblings()
                             .removeClass("highlight-btn");
                     });
-                    $.subscribe("update-current-responses-set", controller._logSubscribedEvent);
-                    $.subscribe("request-signOut", controller._logSubscribedEvent);
-                    $.subscribe("submit-survey", controller._logSubscribedEvent);
-                    $.subscribe("completed-response-site", controller._logSubscribedEvent);
-                    $.subscribe("goto-camera-pos", controller._logSubscribedEvent);
-                    $.subscribe("signedIn-user", controller._logSubscribedEvent);
-                    $.subscribe("signedOut-user", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-in-progress", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-is-empty", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-policy-not-satisfied", controller._logSubscribedEvent);
-                    $.subscribe("survey-form-policy-satisfied", controller._logSubscribedEvent);
+                    $.subscribe("update-current-responses-set", testing.logSubscribedEvent);
+                    $.subscribe("request-signOut", testing.logSubscribedEvent);
+                    $.subscribe("submit-survey", testing.logSubscribedEvent);
+                    $.subscribe("completed-response-site", testing.logSubscribedEvent);
+                    $.subscribe("goto-camera-pos", testing.logSubscribedEvent);
+                    $.subscribe("signedIn-user", testing.logSubscribedEvent);
+                    $.subscribe("signedOut-user", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-in-progress", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-is-empty", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-policy-not-satisfied", testing.logSubscribedEvent);
+                    $.subscribe("survey-form-policy-satisfied", testing.logSubscribedEvent);
                     // -----------------------------------------------------------------------------------------------//
 
                     // Prepare the survey
@@ -214,7 +213,7 @@ define(["lib/i18n.min!nls/resources.js"],
                         controller._config.featureSvcParams.fields,
                         controller._config.appParams.surveyNotificationPolicy, i18n.tooltips.importantQuestion
                     );
-                    controller._prependToLog("Survey definition created");
+                    testing.prependToLog("Survey definition created");
 
                     // Prepare and start the survey controller
                     survey_controller.init(controller._config, "sidebarContent")
@@ -256,151 +255,9 @@ define(["lib/i18n.min!nls/resources.js"],
                 return ["brandingicon", "numresponsesites", "policy", "readonly", "showseeresponsesbutton",
                     "surveydesc"
                 ];
-            },
+            }
 
             //----- Procedures meant for internal module use only ----------------------------------------------------//
-
-            /** Normalizes a boolean value to true or false.
-             * @param {boolean|string} boolValue A true or false value that is returned directly or a string
-             * "true", "t", "yes", "y", "false", "f", "no", "n" (case-insensitive) or a number (0 for false; non-zero
-             * for true) that is interpreted and returned; if neither a boolean nor a usable string nor a number, falls
-             * back to defaultValue
-             * @param {boolean} [defaultValue] A true or false that is returned if boolValue can't be used; if not
-             * defined, true is returned
-             * @private
-             */
-            _toBoolean: function (boolValue, defaultValue) {
-                var lowercaseValue;
-
-                // Shortcut true|false
-                if (boolValue === true) {
-                    return true;
-                }
-                if (boolValue === false) {
-                    return false;
-                }
-
-                // Handle a true|false string
-                if (typeof boolValue === "string") {
-                    lowercaseValue = boolValue.toLowerCase();
-                    if (lowercaseValue === "true" || lowercaseValue === "t" || lowercaseValue === "yes" ||
-                        lowercaseValue === "y" || lowercaseValue === "1") {
-                        return true;
-                    }
-                    if (lowercaseValue === "false" || lowercaseValue === "f" || lowercaseValue === "no" ||
-                        lowercaseValue === "n" || lowercaseValue === "0") {
-                        return false;
-                    }
-                }
-                else if (typeof boolValue === "number") {
-                    return boolValue !== 0;
-                }
-                // Fall back to default
-                if (defaultValue === undefined) {
-                    return true;
-                }
-                return defaultValue;
-            },
-
-            /** Normalizes a number value.
-             * @param {number|string} numValue A number that is
-             *        returned directly or a string that is
-             *        attempted as a number; if neither a
-             *        a number or a usable string, falls back to
-             *        defaultValue
-             * @param {boolean} [defaultValue] A number
-             *        that is returned if numValue can't be
-             *        used; if not defined, 0 is returned
-             * @memberOf js.LGObject#
-             */
-            _toNumber: function (numValue, defaultValue) {
-                // Shortcut number
-                if (typeof numValue === "number") {
-                    return numValue;
-                }
-
-                // Handle a non-number
-                numValue = parseFloat(numValue);
-                if (!isNaN(numValue)) {
-                    return numValue;
-                }
-
-                // Fall back to default
-                if (defaultValue === undefined) {
-                    return 0;
-                }
-                return defaultValue;
-            },
-
-            _createButton: function (container, id, label, tooltip, data) {
-                $(container).append("<button id='" + id + "' type='button' class='btn'></button>");
-                controller._activateButton(id, label, tooltip, data);
-            },
-
-            /**
-             * Completes text setup of a button and sets its click event to publish the id of the button.
-             * @param {string} id - Id of button to modify
-             * @param {?string} label - Text to display in button display
-             * @param {?string} tooltip - Text to display in button tooltip
-             * @param {?object} data - Data to pass to event handler
-             * @memberof controller
-             * @private
-             */
-            _activateButton: function (id, label, tooltip, data) {
-                var btn = $("#" + id);
-                btn.on("click", data, controller._buttonPublish);
-
-                btn = btn[0];
-                if (label) {
-                    btn.innerHTML = label;
-                }
-                if (tooltip) {
-                    btn.title = tooltip;
-                }
-
-                return btn;
-            },
-
-            /**
-             * Click event function to publish the id of the target.
-             * @param {object} evt - Click event
-             * @memberof controller
-             * @private
-             */
-            _buttonPublish: function (evt) {
-                var btn = evt.currentTarget;
-                btn.blur(); // Allow button to be defocused without clicking elsewhere
-                $.publish(btn.id, evt.data);
-            },
-
-            /**
-             * Initializes the controller.
-             * @param {object} config - App config info
-             * @memberof controller
-             * @private
-             */
-            _logSubscribedEvent: function (evt, data) {
-                var logEntry, dataAsString = data !== undefined ? JSON.stringify(data) : "";
-                logEntry = ((evt && evt.type) || evt || "") + " " + dataAsString;
-                console.log(logEntry);
-
-                if (logEntry.length > 256) {
-                    logEntry = logEntry.substr(0, 253) + "...";
-                }
-                controller._prependToLog(logEntry);
-            },
-
-            /**
-             * Prepends sequence number and supplied text to #logText item.
-             * <br>
-             * Note: does not work while controller page is not displayed
-             * @param {string} text - Text to prepend
-             * @memberof controller
-             * @private
-             */
-            _prependToLog: function (text) {
-                $("#logText").prepend(++controller._logNum + ": " + text + "\n");
-            }
 
             //--------------------------------------------------------------------------------------------------------//
         };
