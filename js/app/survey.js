@@ -142,6 +142,8 @@ define([], function () {
         },
 
         setFormReadOnly: function (isReadOnly) {
+            var item;
+
             $.each(survey._questions, function (iQuestion, question) {
                 var value;
                 if (question.surveyFieldStyle === "button") {
@@ -152,7 +154,9 @@ define([], function () {
                 }
                 else if (question.surveyFieldStyle === "list") {
                     $.each(question.surveyValues, function (i, uiValue) {
-                        $("input[name=" + question.surveyId + "][value=" + i + "]").attr("disabled", isReadOnly);
+                        item = $("input[name=" + question.surveyId + "][value=" + i + "]");
+                        item.attr("disabled", isReadOnly);
+                        $(item[0].parentNode).css("cursor", isReadOnly ? "default" : "pointer");
                     });
 
                 }
