@@ -117,7 +117,7 @@ define([
 
                     scene_controller.mapParamsReady.then(function (response) {
                         // Loads once visuals panel becomes visible
-                        clusterViewBuilder(scene_controller.view).then(function (clustering) {
+                        clusterViewBuilder(scene_controller.view, scene_controller._config).then(function (clustering) {
                             scene_controller._clusterer = clustering.clusterer;
                             scene_controller._clustererView = clustering.clustererView;
 
