@@ -66,28 +66,7 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder"],
                         // When the feature service and survey are ready, we can set up the module that reads from and
                         // writes to the service
                         controller._config.featureSvcParams.surveyFeatureLayerReady.then(
-                            controllerReady.resolve,
-                            function (error) {
-                                // Attempt to load the survey form description
-                                if (controller._config.appParams.surveydesc) {
-                                    $.getJSON(controller._config.appParams.surveydesc + ".json",
-                                        function (surveyDesc) {
-                                            controller._config.featureSvcParams.popupDescription = surveyDesc.description;
-                                            controller._config.featureSvcParams.fields = surveyDesc.fields;
-                                            controller._config.featureSvcParams.canBeUpdated = surveyDesc.canBeUpdated;
-                                            controllerReady.resolve();
-                                        }
-                                    ).fail(
-                                        function () {
-                                            controllerReady.reject(i18n.messages.unableToFindSurvey);
-                                        }
-                                    );
-                                }
-                                else {
-                                    controllerReady.reject(error);
-                                }
-                            }
-                        );
+                            controllerReady.resolve, controllerReady.reject);
                     }
                 });
 
