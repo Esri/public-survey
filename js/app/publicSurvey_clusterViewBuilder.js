@@ -122,15 +122,6 @@ define(["lib/i18n.min!nls/resources.js"],
                         labelExpressionInfo: {
                             value: "{count}" // Text for labels comes from 'count' field
                         },
-                        sizeInfo: {
-                            field: "count",
-                            minDataValue: clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops[0].value,
-                            minSize: clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops[0].size,
-                            maxDataValue: clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops[
-                                clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].value,
-                            maxSize: clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops[
-                                clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops.length - 1].size
-                        },
                         labelPlacement: "center-center",
                         symbol: new LabelSymbol3D({
                             symbolLayers: [new TextSymbol3DLayer({
@@ -142,12 +133,7 @@ define(["lib/i18n.min!nls/resources.js"],
                                     weight: "bolder"
                                 }
                             })]
-                        }),
-                        visualVariables: [{
-                            type: "size",
-                            field: "count", // number of features in cluster
-                            stops: clusterViewBuilder._config.appParams.clusterSymDisplay.featureCountSizeStops
-                        }]
+                        })
                     });
 
                     clusterRenderer = new SimpleRenderer({
