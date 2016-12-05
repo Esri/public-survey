@@ -374,6 +374,11 @@ define([
                                 });
                                 compassWidget.startup();
                                 scene_controller.view.ui.add(compassWidget, "top-left");
+
+                                // Catch events in the top-left button area
+                                $(".esri-ui-top-left").each(function (ignore, node) {
+                                    node.addEventListener("click", checkedUpdate, true);
+                                });
                             });
 
                         // Create the slide gallery
@@ -503,10 +508,6 @@ define([
                             canvasCheckedUpdate, true);
 
                         node.addEventListener("wheel", checkedUpdate, true);
-                    });
-
-                    $(".esri-ui-top-left").each(function (ignore, node) {
-                        node.addEventListener("click", checkedUpdate, true);
                     });
                 });
         },
