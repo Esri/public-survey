@@ -143,7 +143,7 @@ define([], function () {
 
         setFormReadOnly: function (isReadOnly) {
             $.each(survey._questions, function (iQuestion, question) {
-                var value;
+                var node;
                 if (question.surveyFieldStyle === "button") {
                     $.each(question.surveyValues, function (i, uiValue) {
                         $("#" + question.surveyId + ">:nth-child(" + (i + 1) + ")").attr("disabled", isReadOnly);
@@ -152,19 +152,32 @@ define([], function () {
                 }
                 else if (question.surveyFieldStyle === "list") {
                     $.each(question.surveyValues, function (i, uiValue) {
-                        $("input[name=" + question.surveyId + "][value=" + i + "]").attr("disabled", isReadOnly);
-                    });
+                        node = $("input[name=" + question.surveyId + "][value=" + i + "]");
+                        node.attr("disabled", isReadOnly);
 
+                        // Emulate disabled appearance for nodes that bootstrap misses
+                        node = $(node[0].parentNode);
+                        if (isReadOnly) {
+                            node.css("cursor", "default");
+                            node.addClass("disabled-appearance");
+                        }
+                        else {
+                            node.css("cursor", "pointer");
+                            node.removeClass("disabled-appearance");
+                        }
+
+                    });
                 }
                 else {
-                    value = $("#" + question.surveyId).attr("disabled", isReadOnly);
+                    node = $("#" + question.surveyId);
+                    node.attr("disabled", isReadOnly);
 
-                    // Emulate disabled appearance; bootstrap does this for buttons and lists
+                    // Emulate disabled appearance for nodes that bootstrap misses
                     if (isReadOnly) {
-                        value.addClass("disabled-appearance");
+                        node.addClass("disabled-appearance");
                     }
                     else {
-                        value.removeClass("disabled-appearance");
+                        node.removeClass("disabled-appearance");
                     }
                 }
             });
