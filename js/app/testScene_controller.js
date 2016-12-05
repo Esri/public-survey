@@ -160,7 +160,12 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder", 
 
                     scene_controller.init(controller._config, "mainContent",
                             clusterViewBuilder.builder, controller._okToNavigate)
-                        .then(controllerComponentsReady.resolve);
+                        .then(function () {
+                            $("#scrim").fadeOut("fast");
+                            console.log("webscene ready");
+
+                            controllerComponentsReady.resolve();
+                        });
                 });
 
                 return controllerComponentsReady;
