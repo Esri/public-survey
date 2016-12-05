@@ -121,12 +121,14 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder", 
                     $.subscribe("_survey_form_in_progress", function () {
                         controller._surveyInProgress = true;
                         console.log("survey in progress: " + controller._surveyInProgress);
+                        controller._echoFormState();
                     });
 
                     testing.activateButton("_survey_form_is_empty", "Clear survey");
                     $.subscribe("_survey_form_is_empty", function () {
                         controller._surveyInProgress = false;
                         console.log("survey in progress: " + controller._surveyInProgress);
+                        controller._echoFormState();
                     });
 
                     testing.activateButton("request-signOut", i18n.labels.signOut);
@@ -134,7 +136,11 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder", 
 
                     // Monitoring pub/subs
                     $.subscribe("signedIn-user", testing.logSubscribedEvent);
-                    $.subscribe("request-signOut", testing.logSubscribedEvent);
+                    $.subscribe("request-signOut", function () {
+                        controller._surveyInProgress = false;
+                        controller._echoFormState();
+                        testing.logSubscribedEvent();
+                    });
                     $.subscribe("signedOut-user", testing.logSubscribedEvent);
                     $.subscribe("goto-response-site", testing.logSubscribedEvent);
                     $.subscribe("update-current-response-site", testing.logSubscribedEvent);
@@ -202,6 +208,15 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder", 
 
             //----- Procedures meant for internal module use only ----------------------------------------------------//
 
+            _echoFormState: function () {
+                if (controller._surveyInProgress) {
+                    $("#_survey_form_in_progress").addClass("highlight-btn");
+                }
+                else {
+                    $("#_survey_form_in_progress").removeClass("highlight-btn");
+                }
+            },
+
             _loadCSS: function (url) {
                 var stylesheet = document.createElement("link");
                 stylesheet.href = url;
@@ -221,6 +236,7 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder", 
                 if (controller._surveyInProgress) {
                     if (confirm(i18n.prompts.currentResponsesWillBeCleared)) {
                         controller._surveyInProgress = false;
+                        controller._echoFormState();
                         $.publish("clear-survey-form");
                     }
                     else {
