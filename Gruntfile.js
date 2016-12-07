@@ -8,12 +8,13 @@ module.exports = function(grunt) {
       options: {
         config: './.jsbeautifyrc'
       },
-      files : ['config/**/*.json', 'js/app/**/*.js']
+      files : ['config/**/*.json', 'js/app/**/*.js', '!js/**/__*.js']
     },
 
     jshint: {
       options: {
-        jshintrc: true
+        jshintrc: true,
+        ignores: ['js/**/__*.js']
       },
       src: ['config/**/*.json', 'js/app/**/*.js']
     }
