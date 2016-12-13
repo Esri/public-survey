@@ -10,20 +10,17 @@ This application includes data management tools designed to publish pre-authored
 
 ## Features
 
-* Conduct focused property surveys (for example: identify blight, damaged structures, or construction activity.)
-* Leverage location-enabled photos produced by commercially available cameras and simplify data processing so street-level photo collections can be gathered on a regular basis
-
+* Conduct focused 3D public surveys (for example: ask structured questions to the public about a new proposed development in the community)
 
 ## Requirements
 
 **Start now using Esri-supplied sample services and maps**
 
-You can start using the application now by setting it up on a web server running Microsoft Internet Information Services (IIS) and using sample services supplied by Esri.
-You'll need to convert to an application in IIS and use the ASP .NET 4.0 or 4.5. application pool.
+You can start using the application now by setting it up on a web server and using sample services supplied by Esri.
 
 **Start now using your own services and maps**
 
-For more information on requirements and publication steps, see [Photo Survey for Local Government](http://links.esri.com/localgovernment/help/PhotoSurvey/) help or the [Photo Survey for State Government](http://solutions.arcgis.com/state-government/help/photo-survey/) help.
+For more information on requirements and publication steps, see [3D Public Survey for Local Government](http://links.esri.com/localgovernment/help/3DPublicSurvey/) help.
 
 ## Resources
 
@@ -32,15 +29,9 @@ Learn more about Esri's ArcGIS for [Local Government](http://solutions.arcgis.co
 * Show me a [list] (http://esri.github.io/#Local-Government) of other Local Government GitHub repositories.
 * Show me a [list] (http://esri.github.io/#State-Government) of other State Government GitHub repositories.
 
-##Selecting Your Configuration
+##Changing Your Configuration
 
-The photo-survey repo contains three unique application configurations: Property Survey, Damage Assessment Survey, and Wildlife Photo Survey.
-
-To get the Property Survey configuration, use the default configuration.json.
-
-To get the Damage Assessment Survey configuration, rename the configurationDamage.json to configuration.json.
-
-To get the Wildlife Photo Survey configuration, rename the configurationWildlife.json to configuration.json.
+You can change the configuration of the 3DPublic-survey app in the configuration.json.
 
 
 ## Issues
@@ -72,5 +63,5 @@ limitations under the License.
 A copy of the license is available in the repository's
 [LICENSE.txt](https://github.com/Esri/photo-survey/blob/master/License.txt) file.
 
-[](Esri Tags: ArcGISSolutions State-Government Local-Government Emergency-Management State Local Government Online Apps Python)
+[](Esri Tags: ArcGISSolutions Local-Government Local Government Online Apps)
 [](Esri Language: JavaScript)
