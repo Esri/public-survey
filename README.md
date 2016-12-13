@@ -6,7 +6,7 @@ This application includes data management tools designed to publish pre-authored
 
 * Try the [3D Public Survey (Local Government) application](http://links.esri.com/localgovernment/tryit/3DPublicSurvey/)
 
-[![Image of the Photo Survey application](3DPublic-survey.png "3D Public Survey application")](http://links.esri.com/localgovernment/tryit/3DPublicSurvey/)
+[![Image of the Photo Survey application](public-survey.png "3D Public Survey application")](http://links.esri.com/localgovernment/tryit/3DPublicSurvey/)
 
 ## Features
 
@@ -63,6 +63,6 @@ limitations under the License.
 A copy of the license is available in the repository's
 [LICENSE.txt](https://github.com/Esri/public-survey/blob/master/License.txt) file.
 
-[](Esri Tags: ArcGISSolutions Local-Government Local Government Online Apps)
+[](Esri Tags: ArcGISSolutions State-Government Local-Government State Local Government 3D)
 [](Esri Language: JavaScript)
 
