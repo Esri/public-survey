@@ -14,11 +14,11 @@ This application includes data management tools designed to publish pre-authored
 
 ## Requirements
 
-**Start now using Esri-supplied sample services and maps**
+**Start now using Esri-supplied sample services and scenes**
 
 You can start using the application now by setting it up on a web server and using sample services supplied by Esri.
 
-**Start now using your own services and maps**
+**Start now using your own services and scenes**
 
 For more information on requirements and publication steps, see [3D Public Survey for Local Government](http://links.esri.com/localgovernment/help/3DPublicSurvey/) help.
 
