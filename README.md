@@ -61,7 +61,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 A copy of the license is available in the repository's
-[LICENSE.txt](https://github.com/Esri/photo-survey/blob/master/License.txt) file.
+[LICENSE.txt](https://github.com/Esri/public-survey/blob/master/License.txt) file.
 
 [](Esri Tags: ArcGISSolutions Local-Government Local Government Online Apps)
 [](Esri Language: JavaScript)
