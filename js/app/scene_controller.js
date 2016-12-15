@@ -1,4 +1,5 @@
-﻿/** @license
+/*global $,requirejs */
+/** @license
  | Copyright 2016 Esri
  |
  | Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +24,7 @@
  * @property {number} numResponseSites - Number of slides in slide gallery
  */
 define([
-    "lib/i18n.min!nls/scene_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/diag"
 ], function (
     i18n,
@@ -59,10 +60,10 @@ define([
          * @property {ResponsesHash} - Survey responses
          */
 
-         // Consumed
-         // survey_controller#cluster-clicked
-         // survey_controller#goto-camera-pos
-         // survey_controller#goto-response-site
+        // Consumed
+        // survey_controller#cluster-clicked
+        // survey_controller#goto-camera-pos
+        // survey_controller#goto-response-site
 
         //----- Module variables -------------------------------------------------------------------------------------//
 
@@ -77,6 +78,7 @@ define([
         _currentSlideNum: 0,
         _featureLayerOptions: null,
         _featureServiceUrl: null,
+        _gallery: null,
         _multipleChoiceQuestions: null,
         _okToNavigate: true,
         _pieChartTheme: "GreySkies",
@@ -106,8 +108,7 @@ define([
             scene_controller.mapParamsReady = $.Deferred();
 
             // Instantiate the scene_controller template
-            scene_controller._container.loadTemplate("js/app/scene_controller.html", {
-            }, {
+            scene_controller._container.loadTemplate("js/app/scene_controller.html", {}, {
                 prepend: true,
                 complete: function () {
 
@@ -116,9 +117,6 @@ define([
 
                     scene_controller.mapParamsReady.then(function (response) {
                         // Loads once visuals panel becomes visible
-                        $("#viewDiv").removeClass("loading-indicator");
-                        console.log("webscene ready");
-
                         clusterViewBuilder(scene_controller.view).then(function (clustering) {
                             scene_controller._clusterer = clustering.clusterer;
                             scene_controller._clustererView = clustering.clustererView;
@@ -127,8 +125,9 @@ define([
                             if (scene_controller._config.appParams.numResponseSites > 0) {
                                 scene_controller._goToSlide(0);
 
-                            // Make sure that the cluster layer is visible and its underlying data layer is not
-                            } else {
+                                // Make sure that the cluster layer is visible and its underlying data layer is not
+                            }
+                            else {
                                 scene_controller._fixLayerVisibility();
                             }
                         });
@@ -145,7 +144,7 @@ define([
 
         launch: function () {
             // Display gallery now that we're closer to it being usable
-            scene_controller._showItem($(gallery), true);
+            scene_controller._showItem($(scene_controller._gallery), true);
             //$(gallery).css("visibility", "visible");
         },
 
@@ -169,15 +168,15 @@ define([
                 heading: camera.heading,
                 tilt: camera.tilt,
                 roll: 0
-            }
+            };
             positionReady = $.Deferred();
 
             if (position.spatialReference.wkid !== scene_controller._config.featureSvcParams.spatialReference.wkid) {
                 require([
-                  "esri/tasks/GeometryService",
-                  "esri/tasks/support/ProjectParameters",
-                  "esri/geometry/SpatialReference"
-                 ], function (GeometryService, ProjectParameters, SpatialReference) {
+                    "esri/tasks/GeometryService",
+                    "esri/tasks/support/ProjectParameters",
+                    "esri/geometry/SpatialReference"
+                ], function (GeometryService, ProjectParameters, SpatialReference) {
                     var geomSer = new GeometryService({
                         url: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
                     });
@@ -200,7 +199,8 @@ define([
                         console.log("GeometryService error " + JSON.stringify(error));
                     });
                 });
-            } else {
+            }
+            else {
                 surveyPoint = {
                     geometry: {
                         x: position.x,
@@ -238,7 +238,8 @@ define([
                 item.fadeIn("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
-            } else {
+            }
+            else {
                 item.fadeOut("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
@@ -257,9 +258,10 @@ define([
          * @private
          */
         _loadWebScene: function (webId, mapParamsReady) {
+            var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
-                baseUrl: "//js.arcgis.com/4.0/",
+                baseUrl: "//js.arcgis.com/4.1/",
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"
@@ -281,217 +283,237 @@ define([
 
             require(["esri/config", "esri/WebScene", "esri/views/SceneView"],
                 function (esriConfig, WebScene, SceneView) {
-                var clusterSurveys = [];
+                    var clusterSurveys = [];
 
-                // Create the map (WebScene) and its view (SceneView)
-                // N.B.: The view must be visible for it to load and to resolve its event
-                esriConfig.portalUrl = scene_controller._config.appParams.portalurl;
+                    // Create the map (WebScene) and its view (SceneView)
+                    // N.B.: The view must be visible for it to load and to resolve its event
+                    esriConfig.portalUrl = scene_controller._config.appParams.portalurl;
 
-                scene_controller.map = new WebScene({
-                    portalItem: {
-                        id: webId
-                    }
-                });
-
-                scene_controller.view = new SceneView({
-                    map: scene_controller.map,
-                    container: "viewDiv"
-                });
-
-                // Once the map and view are loaded, we can adjust the view
-                scene_controller.view.then(function () {
-
-                    // Disable popups on all webscene layers
-                    scene_controller.map.allLayers.forEach(function (layer) {
-                        layer.popupEnabled = false;
-                    });
-
-                    // Are we displaying slides?
-                    scene_controller._config.appParams.numResponseSites =
-                        scene_controller.map.presentation && scene_controller.map.presentation.slides
-                        ? scene_controller.map.presentation.slides.length : 0;
-                    if (scene_controller._config.appParams.numResponseSites > 0) {
-                        scene_controller._slides = scene_controller.map.presentation.slides.items;
-                    }
-
-                    // Reset the top-left widgets set
-                    scene_controller.view.ui.empty("top-left");
-
-                    // Disable popups on all webscene layers
-                    scene_controller.map.allLayers.forEach(function (layer) {
-                        layer.popupEnabled = false;
-                    });
-
-                    // Replace zoom action on scene view's popup with our action
-                    var goToResponse = {
-                        title: i18n.prompts.goToResponses,
-                        id: "goto-response",
-                        image: "images/blank.png"
-                    };
-                    scene_controller.view.popup.actions = [goToResponse];
-
-                    scene_controller.view.popup.on("trigger-action", function (evt) {
-                        if (evt.action.id === "goto-response") {
-                            scene_controller.view.popup.clear();
-                            scene_controller.view.popup.close();
-
-                            // Package array because lightweight pub/sub only passes first element of arrays
-                            $.publish("update-current-responses-set", {responses: clusterSurveys});
+                    scene_controller.map = new WebScene({
+                        portalItem: {
+                            id: webId
                         }
                     });
 
-                    // Remove dock option from popup
-                    scene_controller.view.popup.dockEnabled = true;
-                    scene_controller.view.popup.dockOptions = {
-                        position: "top-left",
-                        buttonEnabled: false,
-                        breakpoint: false
-                    };
-
-                    // Add navigation widgets
-                    require(["esri/widgets/Zoom", "esri/widgets/NavigationToggle", "esri/widgets/Compass"],
-                        function (Zoom, NavigationToggle, Compass) {
-                        var zoomWidget = new Zoom({view: scene_controller.view, className: "iconContainer"});
-                        zoomWidget.startup();
-                        scene_controller.view.ui.add(zoomWidget, "top-left");
-
-                        var navigationToggle = new NavigationToggle({view: scene_controller.view});
-                        navigationToggle.startup();
-                        scene_controller.view.ui.add(navigationToggle, "top-left");
-
-                        var compassWidget = new Compass({view: scene_controller.view, className: "iconContainer"});
-                        compassWidget.startup();
-                        scene_controller.view.ui.add(compassWidget, "top-left");
+                    scene_controller.view = new SceneView({
+                        map: scene_controller.map,
+                        container: "viewDiv"
                     });
 
-                    // Create the slide gallery
-                    if (scene_controller._config.appParams.numResponseSites > 0) {
-                        // Create gallery frame, its label tab, and its slides container
-                        var gallery = $("<div id='gallery' class='gallery absent'></div>");
-                        $("#viewDiv").append(gallery);
-                        scene_controller.view.ui.add(gallery[0], "manual");
+                    // Once the map and view are loaded, we can adjust the view
+                    scene_controller.view.then(function () {
 
-                        $(gallery).append("<div class='galleryTab'>Take a tour</div>");
+                        // Disable popups on all webscene layers
+                        scene_controller.map.allLayers.forEach(function (layer) {
+                            layer.popupEnabled = false;
+                        });
 
-                        var slidesHolder = $("<div id='slidesHolder'></div>");
-                        $(gallery).append(slidesHolder);
+                        // Are we displaying slides?
+                        scene_controller._config.appParams.numResponseSites =
+                            scene_controller.map.presentation && scene_controller.map.presentation.slides ?
+                            scene_controller.map.presentation.slides.length : 0;
+                        if (scene_controller._config.appParams.numResponseSites > 0) {
+                            scene_controller._slides = scene_controller.map.presentation.slides.items;
+                        }
 
-                        // Fill the slides container with the map's slides
-                        var slides = scene_controller.map.presentation.slides;
-                        slides.forEach(function (slide, slideNum) {
-                            console.log("// Slide #" + slideNum + ": " + slide.id);
-                            console.log("   title = " + JSON.stringify(slide.title) + ";");
-                            console.log("   scale = " + slide.viewpoint.scale + ";");
-                            console.log("   camera = " + JSON.stringify(slide.viewpoint.camera) + ";");
+                        // Reset the top-left widgets set
+                        scene_controller.view.ui.empty("top-left");
 
-                            // Slide frame and title; change the cursor to a pointer style when hovering
-                            // the mouse over the slide frame
-                            var slideObj = $("<span id='" + slide.id + "' class='slideDiv'></span>");
-                            $(slidesHolder).append(slideObj);
-                            $(slideObj).append("<span class='slideTitle'>" + slide.title.text + "<br></span>");
+                        // Disable popups on all webscene layers
+                        scene_controller.map.allLayers.forEach(function (layer) {
+                            layer.popupEnabled = false;
+                        });
 
-                            $("#" + slide.id).on("mouseover", function () {
-                                $("#" + slide.id).css("cursor", "pointer");
+                        // Replace zoom action on scene view's popup with our action
+                        var goToResponse = {
+                            title: i18n.prompts.goToResponses,
+                            id: "goto-response",
+                            image: "images/blank.png"
+                        };
+                        scene_controller.view.popup.actions = [goToResponse];
+
+                        scene_controller.view.popup.on("trigger-action", function (evt) {
+                            if (evt.action.id === "goto-response") {
+                                scene_controller.view.popup.clear();
+                                scene_controller.view.popup.close();
+
+                                // Package array because lightweight pub/sub only passes first element of arrays
+                                $.publish("update-current-responses-set", {
+                                    responses: clusterSurveys
+                                });
+                            }
+                        });
+
+                        // Remove dock option from popup
+                        scene_controller.view.popup.dockEnabled = true;
+                        scene_controller.view.popup.dockOptions = {
+                            position: "top-left",
+                            buttonEnabled: false,
+                            breakpoint: false
+                        };
+
+                        // Add navigation widgets
+                        require(["esri/widgets/Zoom", "esri/widgets/NavigationToggle", "esri/widgets/Compass"],
+                            function (Zoom, NavigationToggle, Compass) {
+                                var zoomWidget = new Zoom({
+                                    view: scene_controller.view,
+                                    className: "iconContainer"
+                                });
+                                zoomWidget.startup();
+                                scene_controller.view.ui.add(zoomWidget, "top-left");
+
+                                var navigationToggle = new NavigationToggle({
+                                    view: scene_controller.view
+                                });
+                                navigationToggle.startup();
+                                scene_controller.view.ui.add(navigationToggle, "top-left");
+
+                                var compassWidget = new Compass({
+                                    view: scene_controller.view,
+                                    className: "iconContainer"
+                                });
+                                compassWidget.startup();
+                                scene_controller.view.ui.add(compassWidget, "top-left");
                             });
 
-                            // Slide image
-                            $(slideObj).append("<img id='image_" + slideNum + "' title='" + slide.title.text
-                                + "' src='" + slide.thumbnail.url + "' class='slideFrame'>");
+                        // Create the slide gallery
+                        if (scene_controller._config.appParams.numResponseSites > 0) {
+                            // Create gallery frame, its label tab, and its slides container
+                            scene_controller._gallery = $("<div id='gallery' class='gallery absent'></div>");
+                            $("#viewDiv").append(scene_controller._gallery);
+                            scene_controller.view.ui.add(scene_controller._gallery[0], "manual");
 
-                            // Slide click behavior
-                            $("#" + slide.id).on("click", function () {
-                                scene_controller._goToSlide(slideNum);
+                            $(scene_controller._gallery).append("<div class='galleryTab'>Take a tour</div>");
+
+                            var slidesHolder = $("<div id='slidesHolder'></div>");
+                            $(scene_controller._gallery).append(slidesHolder);
+
+                            // Fill the slides container with the map's slides
+                            var slides = scene_controller.map.presentation.slides;
+                            slides.forEach(function (slide, slideNum) {
+                                console.log("// Slide #" + slideNum + ": " + slide.id);
+                                console.log("   title = " + JSON.stringify(slide.title) + ";");
+                                console.log("   scale = " + slide.viewpoint.scale + ";");
+                                console.log("   camera = " + JSON.stringify(slide.viewpoint.camera) + ";");
+
+                                // Slide frame and title; change the cursor to a pointer style when hovering
+                                // the mouse over the slide frame
+                                var slideObj = $("<span id='" + slide.id + "' class='slideDiv'></span>");
+                                $(slidesHolder).append(slideObj);
+                                $(slideObj).append("<span class='slideTitle'>" + slide.title.text + "<br></span>");
+
+                                $("#" + slide.id).on("mouseover", function () {
+                                    $("#" + slide.id).css("cursor", "pointer");
+                                });
+
+                                // Slide image
+                                $(slideObj).append("<img id='image_" + slideNum + "' title='" + slide.title.text +
+                                    "' src='" + slide.thumbnail.url + "' class='slideFrame'>");
+
+                                // Slide click behavior
+                                $("#" + slide.id).on("click", function () {
+                                    scene_controller._goToSlide(slideNum);
+                                });
                             });
-                        });
 
-                        // Start with first slide whenever we have a login
-                        $.subscribe("signedIn-user", function (ignore, loginInfo) {
-                            scene_controller._goToSlide(0);
-                        });
+                            // Start with first slide whenever we have a login
+                            $.subscribe("signedIn-user", function (ignore, loginInfo) {
+                                scene_controller._goToSlide(0);
+                            });
 
-                    } else {
-                        // Otherwise, add a Home widget
-                        require(["esri/widgets/Home"],
-                            function (Home) {
-                            var homeWidget = new Home({view: scene_controller.view, className: "iconContainer"});
-                            homeWidget.startup();
-                            scene_controller.view.ui.add(homeWidget, "top-left");
-                        });
+                        }
+                        else {
+                            // Otherwise, add a Home widget
+                            require(["esri/widgets/Home"],
+                                function (Home) {
+                                    var homeWidget = new Home({
+                                        view: scene_controller.view,
+                                        className: "iconContainer"
+                                    });
+                                    homeWidget.startup();
+                                    scene_controller.view.ui.add(homeWidget, "top-left");
+                                });
 
-                        if (scene_controller.map.initialViewProperties) {
-                            console.log("// Scene initial view:");
-                            console.log("   scale = " + scene_controller.map.initialViewProperties.viewpoint.scale + ";");
-                            console.log("   camera = "
-                                + JSON.stringify(scene_controller.map.initialViewProperties.viewpoint.camera) + ";");
+                            if (scene_controller.map.initialViewProperties) {
+                                console.log("// Scene initial view:");
+                                console.log("   scale = " +
+                                    scene_controller.map.initialViewProperties.viewpoint.scale + ";");
+                                console.log("   camera = " +
+                                    JSON.stringify(scene_controller.map.initialViewProperties.viewpoint.camera) + ";");
+                            }
+                        }
+
+                        mapParamsReady.resolve();
+                    });
+
+                    // Wire up app
+                    $.subscribe("goto-response-site", function (ignore, iSite) {
+                        scene_controller._goToSlide(iSite);
+                    });
+
+                    require(["esri/Camera"],
+                        function (Camera) {
+                            $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
+                                console.log("goto " + JSON.stringify(cameraOptions.position) + ", " +
+                                    cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
+                                var camera = new Camera(cameraOptions);
+                                scene_controller.view.goTo(camera);
+                                scene_controller._updateCurrentSlide(scene_controller._getMatchingSlide(camera), true);
+                            });
+                        }
+                    );
+
+                    // Save cluster features list when one clicks on a cluster
+                    $.subscribe("cluster-clicked", function (ignore, clusterClickInfo) {
+                        var cluster = scene_controller._clusterer.getClusterById(clusterClickInfo.attributes.id);
+                        clusterSurveys = cluster.features;
+                    });
+
+                    // Set up some event handlers to intercept navigation via nav widgets and mouse actions on scene
+                    // canvas. Has to be done during event capturing, which Dojo's 'on' doesn't yet support, hence
+                    // use of addEventListener. Interception is to prevent navigation if there is a partial survey
+                    // completed. For mousedown, we have to cancel navigation if there's a partial survey even
+                    // if the user agrees to cancel the survey because otherwise we don't really have a cancellation.
+                    // We have an unmatched mousedown event that can only be cleared by another click, but that click
+                    // is interpreted as a zoom in.
+
+                    function checkedUpdate(evt) {
+                        if (!scene_controller._okToNavigate()) {
+                            evt.stopPropagation();
+                            evt.preventDefault();
+                        }
+                        else {
+                            scene_controller._updateCurrentSlide();
                         }
                     }
 
-                    mapParamsReady.resolve();
-                });
-
-                // Wire up app
-                $.subscribe("goto-response-site", function (ignore, iSite) {
-                    scene_controller._goToSlide(iSite);
-                });
-
-                require(["esri/Camera"],
-                    function (Camera) {
-                        $.subscribe("goto-camera-pos", function (ignore, cameraOptions) {
-                            console.log("goto " + JSON.stringify(cameraOptions.position) + ", "
-                                + cameraOptions.heading + "° CW, " + cameraOptions.tilt + "° up");
-                            var camera = new Camera(cameraOptions);
-                            scene_controller.view.goTo(camera);
-                            scene_controller._updateCurrentSlide(scene_controller._getMatchingSlide(camera), true);
-                        });
+                    function canvasCheckedUpdate(evt) {
+                        if (evt.target.nodeName.toLowerCase() === "canvas") {
+                            checkedUpdate(evt);
+                        }
                     }
-                );
 
-                // Save cluster features list when one clicks on a cluster
-                $.subscribe("cluster-clicked", function (ignore, clusterClickInfo) {
-                    var cluster = scene_controller._clusterer.getClusterById(clusterClickInfo.attributes.id);
-                    clusterSurveys = cluster.features;
+                    $("#viewDiv").each(function (ignore, node) {
+                        node.addEventListener(
+                            ((typeof PointerEvent !== "undefined") // W3C recommendation
+                                ?
+                                "pointerdown" // IE 11
+                                :
+                                "mousedown"), // Chrome, Firefox
+                            canvasCheckedUpdate, true);
+
+                        node.addEventListener("wheel", checkedUpdate, true);
+                    });
+
+                    $(".esri-ui-top-left").each(function (ignore, node) {
+                        node.addEventListener("click", checkedUpdate, true);
+                    });
                 });
-
-                // Set up some event handlers to intercept navigation via nav widgets and mouse actions on scene
-                // canvas. Has to be done during event capturing, which Dojo's 'on' doesn't yet support, hence
-                // use of addEventListener. Interception is to prevent navigation if there is a partial survey
-                // completed. For mousedown, we have to cancel navigation if there's a partial survey even
-                // if the user agrees to cancel the survey because otherwise we don't really have a cancellation.
-                // We have an unmatched mousedown event that can only be cleared by another click, but that click
-                // is interpreted as a zoom in.
-
-                function checkedUpdate (evt) {
-                    if (!scene_controller._okToNavigate()) {
-                        evt.stopPropagation();
-                        evt.preventDefault();
-                    } else {
-                        scene_controller._updateCurrentSlide();
-                    }
-                }
-
-                function canvasCheckedUpdate (evt) {
-                    if (evt.target.nodeName.toLowerCase() === "canvas") {
-                        checkedUpdate(evt);
-                    }
-                }
-
-                $("#viewDiv").each(function (ignore, node) {
-                    node.addEventListener(
-                        ((typeof PointerEvent !== "undefined")  // W3C recommendation
-                            ? "pointerdown"  // IE 11
-                            : "mousedown"),  // Chrome, Firefox
-                        canvasCheckedUpdate, true);
-
-                    node.addEventListener("wheel", checkedUpdate, true);
-                });
-
-                $(".esri-ui-top-left").each(function (ignore, node) {
-                    node.addEventListener("click", checkedUpdate, true);
-                });
-            });
         },
 
         _fixLayerVisibility: function (slide) {
+            var clusterViewLayerId;
+
             // Is the survey layer visible in this slide?  If so, hide it because we'll replace it with a clustered form
             if (slide !== undefined) {
                 slide.visibleLayers.items.some(function (visibleLayer, iVisibleLayer) {
@@ -502,7 +524,7 @@ define([
                 });
 
                 // Similarly, if the cluster view's graphics layer is not visible, add it to the visible layers
-                var clusterViewLayerId = scene_controller._clustererView.layerId();
+                clusterViewLayerId = scene_controller._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
                     var clusterLayerVisible = slide.visibleLayers.some(function (visibleLayer, iVisibleLayer) {
                         if (clusterViewLayerId === visibleLayer.id) {
@@ -510,13 +532,16 @@ define([
                         }
                     });
                     if (!clusterLayerVisible) {
-                        slide.visibleLayers.add({id: clusterViewLayerId});
+                        slide.visibleLayers.add({
+                            id: clusterViewLayerId
+                        });
                     }
                 }
-            } else {
+            }
+            else {
                 scene_controller.map.findLayerById(
                     scene_controller._config.featureSvcParams.id).visible = false;
-                var clusterViewLayerId = scene_controller._clustererView.layerId();
+                clusterViewLayerId = scene_controller._clustererView.layerId();
                 if (clusterViewLayerId !== null) {
                     scene_controller.map.findLayerById(clusterViewLayerId).visible = true;
                 }
@@ -524,8 +549,8 @@ define([
         },
 
         _goToSlide: function (slideNum) {
-            if (!scene_controller._okToNavigate() || !scene_controller._slides
-                || scene_controller._slides.length === 0) {
+            if (!scene_controller._okToNavigate() || !scene_controller._slides ||
+                scene_controller._slides.length === 0) {
                 return;
             }
             var slide = scene_controller._slides[slideNum];
@@ -561,7 +586,8 @@ define([
                 if (slideNum === undefined) {
                     $.publish("update-current-response-site");
 
-                } else {
+                }
+                else {
                     scene_controller._currentSlideNum = slideNum;
                     scene_controller._currentSlideTitle = scene_controller._slides[slideNum].title.text;
                     $.publish("update-current-response-site", {
@@ -580,7 +606,7 @@ define([
 
             if (!isNaN(slideNum)) {
                 // Set a border to the selected slide to indicate it has been selected
-                $("#image_"+slideNum).addClass("slideFrameHighlight");
+                $("#image_" + slideNum).addClass("slideFrameHighlight");
             }
         },
 

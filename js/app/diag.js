@@ -1,4 +1,4 @@
-﻿/*global define,$ */
+/*global define,$ */
 /*jslint browser:true */
 /** @license
  | Copyright 2015 Esri
@@ -15,27 +15,31 @@
  | See the License for the specific language governing permissions and
  | limitations under the License.
  */
-//============================================================================================================================//
+//====================================================================================================================//
 define([], function () {
     "use strict";
-    var showDiag = false, diag;
+    var showDiag = false,
+        diag;
     diag = {
 
-        //--------------------------------------------------------------------------------------------------------------------//
+        //------------------------------------------------------------------------------------------------------------//
 
         /**
          * Initializes the module by creating the diagnostic modal display and its trigger button.
          */
         init: function () {
             // Create the display modal box and the button to trigger it
-            $("body").append("<button id='diagnosticButton' style='z-index:2000;position:absolute;left:0;top:0;width:32px;"
-                    + "height:32px;background-color:transparent' data-toggle='modal' data-target='#diagnosticPanel' class='iconButton'></button>"
-                    + "<div id='diagnosticPanel' class='modal fade' role='dialog'>"
-                    + "  <div class='modal-dialog'>"
-                    + "    <div id='diagnosticLog' class='modal-content' style='padding:8px;word-wrap:break-word;'></div>"
-                    + "  </div>"
-                    + "</div>");
-            $("#diagnosticPanel").modal({show: false});
+            $("body").append("<button id='diagnosticButton' style='z-index:2000;" +
+                "position:absolute;left:0;top:0;width:32px;height:32px;background-color:transparent' " +
+                "data-toggle='modal' data-target='#diagnosticPanel' class='iconButton'></button>" +
+                "<div id='diagnosticPanel' class='modal fade' role='dialog'>" +
+                "  <div class='modal-dialog'>" +
+                "    <div id='diagnosticLog' class='modal-content' style='padding:8px;word-wrap:break-word;'></div>" +
+                "  </div>" +
+                "</div>");
+            $("#diagnosticPanel").modal({
+                show: false
+            });
             showDiag = true;
         },
 
@@ -64,6 +68,7 @@ define([], function () {
             diag.append("<hr>");
         }
 
+        //------------------------------------------------------------------------------------------------------------//
     };
     return diag;
 });

@@ -1,3 +1,6 @@
+/*global $ */
+/* jshint -W098 */
+/* 'ENABLED'/'DISABLED'/'INVISIBLE'/'DISEMBODIED' is defined but never used */
 /** @license
  | Copyright 2016 Esri
  |
@@ -21,7 +24,7 @@
  * @version 0.1
  */
 define([
-    "lib/i18n.min!nls/survey_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/survey",
     "app/diag"
 ], function (
@@ -34,11 +37,11 @@ define([
         //----- Events -----------------------------------------------------------------------------------------------//
 
         // Published
-/**
- * Requests to go to a location with its collection of survey responses.
- * @event survey_controller#cluster-clicked
- * @property {number} iSite - Zero-based slide number
- */
+        /**
+         * Requests to go to a location with its collection of survey responses.
+         * @event survey_controller#cluster-clicked
+         * @property {number} iSite - Zero-based slide number
+         */
 
         /**
          * Forwards request for help display.
@@ -98,9 +101,9 @@ define([
          * @property {ClusterAttrsHash} -
          */
 
-         // Consumed
-         // survey#survey-form-policy-not-satisfied
-         // survey#survey-form-policy-satisfied
+        // Consumed
+        // survey#survey-form-policy-not-satisfied
+        // survey#survey-form-policy-satisfied
 
 
         //----- Module variables -------------------------------------------------------------------------------------//
@@ -135,14 +138,14 @@ define([
             survey_controller._container = $("#" + containerName + "");
 
             // Instantiate the survey_controller template
-            survey_controller._container.loadTemplate("js/app/survey_controller.html", {
-            }, {
+            survey_controller._container.loadTemplate("js/app/survey_controller.html", {}, {
                 prepend: true,
                 complete: function () {
 
                     //----- UI setup: page title, help, branding -----------------------------------------------------//
                     $("#page-title")[0].innerHTML = survey_controller._config.appParams.titleText;
-                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.signOut;
+                    $("#userSignoutSelection")[0].innerHTML = i18n.labels.exit;
+                    $("#action-bar-message")[0].innerHTML = i18n.messages.surveySubmitted;
 
                     if (survey_controller._config.appParams.helpText) {
                         $("#helpButton")[0].title = i18n.tooltips.helpTip;
@@ -176,6 +179,15 @@ define([
                         }
 
                         survey.clearForm();
+
+                        // Provide a message that the survey has been submitted
+                        survey_controller._showItem($("#action-group-1"), false, function () {
+                            survey_controller._showItem($("#action-bar-message"), true);
+                            setTimeout(function () {
+                                survey_controller._showItem($("#action-bar-message"), false,
+                                    survey_controller._showItem, [$("#action-group-1"), true]);
+                            }, 2000);
+                        });
                     });
 
                     survey_controller._clearBtn = activateButton("_clear_survey_form", i18n.prompts.clearBtn);
@@ -188,12 +200,14 @@ define([
                     $.subscribe("_goto_next_todo_response_site", function () {
                         var iToDo;
 
+                        // Provide some feedback for the switch
+                        survey_controller.clearSurveyForm();
+
                         if (survey_controller._iCurrentResponseSite !== undefined) {
                             // Check sites after the current one
-                            for (iToDo = survey_controller._iCurrentResponseSite + 1;
-                                iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
-                                if(survey_controller._responseSitesToDo[iToDo] === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                            for (iToDo = survey_controller._iCurrentResponseSite + 1; iToDo < survey_controller._responseSitesToDo.length; ++iToDo) {
+                                if (survey_controller._responseSitesToDo[iToDo] === 1) {
+                                    $.publish("goto-response-site", iToDo);
                                     return;
                                 }
                             }
@@ -201,19 +215,20 @@ define([
                             // If all sites after the current one are completed, wrap around
                             // and start from the beginning
                             for (iToDo = 0; iToDo < survey_controller._iCurrentResponseSite; ++iToDo) {
-                                if(survey_controller._responseSitesToDo[iToDo] === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                                if (survey_controller._responseSitesToDo[iToDo] === 1) {
+                                    $.publish("goto-response-site", iToDo);
                                     return;
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             // Use first uncompleted site starting from beginning of todo list
                             $.each(survey_controller._responseSitesToDo, function (iToDo, status) {
                                 if (status === 1) {
-                                    $.publish("goto-response-site", iToDo)
+                                    $.publish("goto-response-site", iToDo);
                                     return false;
                                 }
-                            })
+                            });
                         }
                     });
 
@@ -284,9 +299,10 @@ define([
                     // Update what we know about the current response site (for submitting surveys),
                     // current responses set (for viewing survey results)
                     $.subscribe("update-current-response-site", function (ignore, responseSite) {
-                        if (responseSite && (responseSite.slide != undefined)) {
+                        if (responseSite && (responseSite.slide !== undefined)) {
                             survey_controller._iCurrentResponseSite = responseSite.slide;
-                        } else {
+                        }
+                        else {
                             survey_controller._iCurrentResponseSite = undefined;
                         }
                         survey_controller._updatePageOneActions();
@@ -302,20 +318,21 @@ define([
                         // Update the survey control buttons
                         if (survey_controller._currentPage === 1) {
                             survey_controller._updatePageOneActions();
-                        } else if (survey_controller._currentPage === 2) {
+                        }
+                        else if (survey_controller._currentPage === 2) {
                             survey_controller._updatePageTwoActions();
                             survey_controller._showCurrentResponse();
                         }
                     });
 
                     // Activate the action-bar buttons
-                    function buttonPublish (evt) {
+                    function buttonPublish(evt) {
                         var btn = evt.currentTarget;
-                        btn.blur();  // Allow button to be defocused without clicking elsewhere
+                        btn.blur(); // Allow button to be defocused without clicking elsewhere
                         $.publish(btn.id);
                     }
 
-                    function activateButton (id, label) {
+                    function activateButton(id, label) {
                         var btn = $("#" + id);
                         btn.on("click", buttonPublish);
 
@@ -347,7 +364,8 @@ define([
             if (survey_controller._config.appParams.numResponseSites === undefined) {
                 survey_controller._config.appParams.numResponseSites = 0;
                 survey_controller._iCurrentResponseSite = undefined;
-            } else {
+            }
+            else {
                 survey_controller._iCurrentResponseSite = 0;
             }
             survey_controller._initialized = true;
@@ -364,7 +382,10 @@ define([
         //----- Procedures meant for internal module use only --------------------------------------------------------//
 
         _startSurveying: function () {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+            var ENABLED = 3,
+                DISABLED = 2,
+                INVISIBLE = 1,
+                DISEMBODIED = 0;
 
             // Set up a map to keep track of response sites; indicate that none has a survey completed for it
             survey_controller._responseSitesToDo =
@@ -395,8 +416,10 @@ define([
         _updateUser: function (loginInfo) {
             survey_controller._currentUser = loginInfo;
 
-            // Heading on survey/profile page
+            // Heading and how to label signout on survey/profile page
             $("#name")[0].innerHTML = loginInfo.name;
+            $("#userSignoutSelection")[0].innerHTML = survey_controller._currentUser.org === "_guest_" ?
+                i18n.labels.exit : i18n.labels.signOut;
         },
 
         _showPageOne: function () {
@@ -413,7 +436,10 @@ define([
         },
 
         _updatePageOneActions: function () {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0,
+            var ENABLED = 3,
+                DISABLED = 2,
+                INVISIBLE = 1,
+                DISEMBODIED = 0,
                 enableIfNotInProgress;
 
             // Submit button
@@ -431,21 +457,25 @@ define([
                 if (remainingToDo === 0) {
                     survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
                     survey_controller._showState(survey_controller._finishBtn, enableIfNotInProgress);
-                } else if (remainingToDo === 1) {
+                }
+                else if (remainingToDo === 1) {
                     if (survey_controller._iCurrentResponseSite !== undefined &&
                         survey_controller._responseSitesToDo[survey_controller._iCurrentResponseSite] === 1) {
                         // Next button not needed: we are at the only site remaining to do
                         survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
-                    } else {
+                    }
+                    else {
                         // Next button needed: we are either not at a site or are at a completed site
                         survey_controller._showState(survey_controller._nextToDoBtn, enableIfNotInProgress);
                     }
                     survey_controller._showState(survey_controller._finishBtn, DISEMBODIED);
-                } else {
+                }
+                else {
                     survey_controller._showState(survey_controller._nextToDoBtn, enableIfNotInProgress);
                     survey_controller._showState(survey_controller._finishBtn, DISEMBODIED);
                 }
-            } else {
+            }
+            else {
                 survey_controller._showState(survey_controller._nextToDoBtn, DISEMBODIED);
                 survey_controller._showState(survey_controller._finishBtn,
                     (survey_controller._numSubmissions > 0 ? enableIfNotInProgress : DISEMBODIED));
@@ -453,9 +483,9 @@ define([
 
             // See responses button
             survey_controller._showState(survey_controller._seeResponsesBtn,
-                (survey_controller._current_responses.length > 0
-                && survey_controller._config.appParams.showSeeResponsesButton ?
-                enableIfNotInProgress : DISEMBODIED));
+                (survey_controller._current_responses.length > 0 &&
+                    survey_controller._config.appParams.showSeeResponsesButton ?
+                    enableIfNotInProgress : DISEMBODIED));
         },
 
         _showPageTwo: function () {
@@ -474,7 +504,10 @@ define([
         },
 
         _updatePageTwoActions: function () {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+            var ENABLED = 3,
+                DISABLED = 2,
+                INVISIBLE = 1,
+                DISEMBODIED = 0;
 
             // Next response button
             survey_controller._showState(survey_controller._nextResponseBtn,
@@ -501,7 +534,8 @@ define([
                 item.fadeIn("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
-            } else {
+            }
+            else {
                 item.fadeOut("fast", function () {
                     thenDo && thenDo(thenDoArg);
                 });
@@ -519,33 +553,36 @@ define([
          * @memberof survey_controller
          */
         _showState: function (item, level) {
-            var ENABLED = 3, DISABLED = 2, INVISIBLE = 1, DISEMBODIED = 0;
+            var ENABLED = 3,
+                DISABLED = 2,
+                INVISIBLE = 1,
+                DISEMBODIED = 0;
 
             switch (level) {
-            case ENABLED:
-                // visibility: visible; display: inline-block; disabled: false
-                $(item).removeClass("invisible").addClass("visible");
-                $(item).removeClass("absent").addClass("present");
-                item.disabled = false;
-                break;
-            case DISABLED:
-                // visibility: visible; display: inline-block; disabled: true
-                $(item).removeClass("invisible").addClass("visible");
-                $(item).removeClass("absent").addClass("present");
-                item.disabled = true;
-                break;
-            case INVISIBLE:
-                // visibility: hidden; display: inline-block; disabled: true
-                $(item).removeClass("visible").addClass("invisible");
-                $(item).removeClass("absent").addClass("present");
-                item.disabled = true;
-                break;
-            default:  // DISEMBODIED
-                // visibility: hidden; display: none; disabled: true
-                $(item).removeClass("visible").addClass("invisible");
-                $(item).removeClass("present").addClass("absent");
-                item.disabled = true;
-                break;
+                case ENABLED:
+                    // visibility: visible; display: inline-block; disabled: false
+                    $(item).removeClass("invisible").addClass("visible");
+                    $(item).removeClass("absent").addClass("present");
+                    item.disabled = false;
+                    break;
+                case DISABLED:
+                    // visibility: visible; display: inline-block; disabled: true
+                    $(item).removeClass("invisible").addClass("visible");
+                    $(item).removeClass("absent").addClass("present");
+                    item.disabled = true;
+                    break;
+                case INVISIBLE:
+                    // visibility: hidden; display: inline-block; disabled: true
+                    $(item).removeClass("visible").addClass("invisible");
+                    $(item).removeClass("absent").addClass("present");
+                    item.disabled = true;
+                    break;
+                default: // DISEMBODIED
+                    // visibility: hidden; display: none; disabled: true
+                    $(item).removeClass("visible").addClass("invisible");
+                    $(item).removeClass("present").addClass("absent");
+                    item.disabled = true;
+                    break;
             }
         },
 
@@ -577,7 +614,7 @@ define([
             }
         },
 
-        _accumulate: function(sum, num) {
+        _accumulate: function (sum, num) {
             return sum + num;
         },
 
