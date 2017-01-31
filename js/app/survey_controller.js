@@ -24,7 +24,7 @@
  * @version 0.1
  */
 define([
-    "lib/i18n.min!nls/survey_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/survey",
     "app/diag"
 ], function (

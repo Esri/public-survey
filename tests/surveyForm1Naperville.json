@@ -1,0 +1,135 @@
+{
+    "canBeUpdated": true,
+    "description": "<div><p><span>Answer the survey question based on what you see</span></p><p><span>Does this development fit the character of the community? {question1} {button}</span></p><p><span>Is this development good for the community? {question2} {list}</span></p><p><span>Do you have any additional comments? {comments} {text}</span></p></div>",
+    "fields": [{
+        "name": "objectid",
+        "type": "esriFieldTypeOID",
+        "alias": "OBJECTID",
+        "domain": null,
+        "nullable": false,
+        "editable": false,
+        "length": 4
+    }, {
+        "name": "surveyor",
+        "type": "esriFieldTypeString",
+        "alias": "surveyor",
+        "domain": null,
+        "editable": true,
+        "nullable": true,
+        "length": 100
+    }, {
+        "name": "slidename",
+        "type": "esriFieldTypeString",
+        "alias": "slidename",
+        "domain": null,
+        "editable": true,
+        "nullable": true,
+        "length": 100
+    }, {
+        "name": "heading",
+        "type": "esriFieldTypeDouble",
+        "alias": "heading",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "tilt",
+        "type": "esriFieldTypeDouble",
+        "alias": "tilt",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "roll",
+        "type": "esriFieldTypeDouble",
+        "alias": "roll",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "question1",
+        "type": "esriFieldTypeString",
+        "alias": "question1",
+        "domain": {
+            "type": "codedValue",
+            "name": "YesNoNotSure",
+            "codedValues": [{
+                "name": "Yes",
+                "code": "Yes"
+            }, {
+                "name": "No",
+                "code": "No"
+            }, {
+                "name": "Not sure",
+                "code": "Not sure"
+            }]
+        },
+        "editable": true,
+        "nullable": true,
+        "length": 50
+    }, {
+        "name": "question2",
+        "type": "esriFieldTypeString",
+        "alias": "question2",
+        "domain": {
+            "type": "codedValue",
+            "name": "Character",
+            "codedValues": [{
+                "name": "Totally agree",
+                "code": "Totally agree"
+            }, {
+                "name": "Agree",
+                "code": "Agree"
+            }, {
+                "name": "Indifferent",
+                "code": "Indifferent"
+            }, {
+                "name": "Disagree",
+                "code": "Disagree"
+            }, {
+                "name": "Totally Disagree",
+                "code": "Totally Disagree"
+            }]
+        },
+        "editable": true,
+        "nullable": true,
+        "length": 50
+    }, {
+        "name": "z",
+        "type": "esriFieldTypeDouble",
+        "alias": "z",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "elevation",
+        "type": "esriFieldTypeDouble",
+        "alias": "elevation",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "comments",
+        "type": "esriFieldTypeString",
+        "alias": "Comments",
+        "domain": null,
+        "editable": true,
+        "nullable": true,
+        "length": 255
+    }, {
+        "name": "z_m",
+        "type": "esriFieldTypeDouble",
+        "alias": "Z_m",
+        "domain": null,
+        "editable": true,
+        "nullable": true
+    }, {
+        "name": "globalid",
+        "type": "esriFieldTypeGlobalID",
+        "alias": "globalid",
+        "domain": null,
+        "editable": false,
+        "nullable": false,
+        "length": 38
+    }]
+}

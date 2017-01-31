@@ -1,0 +1,71 @@
+{
+    "webscene": "9eba0390d6064e7e9334bea7d3f6c5ed",
+    "portalurl": "https://www.arcgis.com",
+    "survey": "SurveyResponses_np2",
+
+    "titleText": "Public Survey",
+    "splashText": "Public survey is used to gather comments from various perspectives",
+    "helpText": "3D survey is used to gather comments from various 3D perspectives",
+    "finishText": "Thank you for participating in this survey. If you wish to do another survey, please login again.",
+
+    "showGuest": true,
+    "allowGuestSubmissions": true,
+
+    "showFacebook": false,
+    "facebookAppId": "",
+
+    "showGooglePlus": false,
+    "googleplusClientId": "",
+
+    "showTwitter": false,
+
+    "headingFieldName": "heading",
+    "tiltFieldName": "tilt",
+    "rollFieldName": "roll",
+    "slidenameFieldName": "slidename",
+    "surveyorFieldName": "surveyor",
+    "socialMediaFieldName": "socialmedia",
+
+    "surveyNotificationPolicy": "allImportant",
+    "showSeeResponsesButton": true,
+    "useWebmapOrigImg": true,
+    "splashBackgroundUrl": "images/splash.jpg",
+    "brandingIconUrl": "images/esri3.png",
+
+    "clusterSymDisplay": {
+        "averagingFieldName": "question2",
+        "averagingColorStops": [{
+            "value": 0,
+            "color": "#00ff00"
+        }, {
+            "value": 1,
+            "color": "#80ff00"
+        }, {
+            "value": 2,
+            "color": "#ffff00"
+        }, {
+            "value": 3,
+            "color": "#ff8000"
+        }, {
+            "value": 4,
+            "color": "#ff0000"
+        }],
+        "featureCountSizeStops": [{
+            "value": 1,
+            "size": 20
+        }, {
+            "value": 10,
+            "size": 60
+        }]
+    },
+    "pieChartColors": {
+        "question1": ["#00ff00", "#ff0000", "#ffff00"],
+        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"]
+    },
+
+    "urlParamsFilter": ["webscene", "portalurl", "survey", "locale", "app", "diag"],
+    "app": "publicSurvey",
+    "twitterSigninUrl": "https://utility.arcgis.com/tproxy/signin",
+    "twitterUserUrl": "https://utility.arcgis.com/tproxy/proxy/1.1/account/verify_credentials.json?q=&include_entities=true&skip_status=true&locale=en",
+    "twitterCallbackUrl": "/oauth-callback-twitter.html"
+}

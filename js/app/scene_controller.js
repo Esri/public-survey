@@ -24,7 +24,7 @@
  * @property {number} numResponseSites - Number of slides in slide gallery
  */
 define([
-    "lib/i18n.min!nls/scene_resources.js",
+    "lib/i18n.min!nls/resources.js",
     "app/diag"
 ], function (
     i18n,
@@ -261,7 +261,7 @@ define([
             var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
-                baseUrl: "//js.arcgis.com/4.0/",
+                baseUrl: "//js.arcgis.com/4.1/",
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"
@@ -436,7 +436,8 @@ define([
 
                             if (scene_controller.map.initialViewProperties) {
                                 console.log("// Scene initial view:");
-                                console.log("   scale = " + scene_controller.map.initialViewProperties.viewpoint.scale + ";");
+                                console.log("   scale = " +
+                                    scene_controller.map.initialViewProperties.viewpoint.scale + ";");
                                 console.log("   camera = " +
                                     JSON.stringify(scene_controller.map.initialViewProperties.viewpoint.camera) + ";");
                             }

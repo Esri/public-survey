@@ -1,0 +1,545 @@
+/** @license
+ | Copyright 2015 Esri
+ |
+ | Licensed under the Apache License, Version 2.0 (the "License");
+ | you may not use this file except in compliance with the License.
+ | You may obtain a copy of the License at
+ |
+ |    http://www.apache.org/licenses/LICENSE-2.0
+ |
+ | Unless required by applicable law or agreed to in writing, software
+ | distributed under the License is distributed on an "AS IS" BASIS,
+ | WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ | See the License for the specific language governing permissions and
+ | limitations under the License.
+ */
+
+
+/* ========== common ========== */
+
+/* ---------- bootstrap overrides ---------- */
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial, Helvetica, sans-serif !important;
+}
+
+body {
+    -ms-overflow-style: scrollbar;
+}
+
+/* ---------- general page ---------- */
+
+header, section, footer, aside, nav, main, article, figure {
+    display: block;
+}
+
+.fillHeight {
+    height: 100%;
+    min-height: 100%;
+}
+.fillWidth {
+    width: 100%;
+    min-width: 100%;
+}
+
+.visible {
+    visibility: visible;
+}
+.invisible {
+    visibility: hidden;
+}
+.present {
+    display: inline-block;
+}
+.absent {
+    display: none;
+}
+
+.iconButton, .iconButton:focus, .iconButton:hover {
+    border: none;
+    outline-style: none;
+}
+
+/* ---------- splash ---------- */
+
+.fullBackground {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+.smallSidebar {
+    background-color: white;
+    background-color: rgba(255,255,255,0.94);
+    text-align: center;
+    margin-top: 10%;
+    max-height: 90%;
+    overflow-y: auto;
+    padding: 24px;
+    float: right;
+}
+@media only screen and (min-width: 769px) {
+    .smallSidebar {
+        width: 400px;
+    }
+}
+@media only screen and (max-width: 768px) {
+    #splashPage {
+        padding: 10px;
+    }
+    .smallSidebar {
+        margin: 10px;
+        float: none;
+    }
+}
+@media only screen and (max-height: 500px) {
+    #splashPage {
+        padding: 10px;
+    }
+    .smallSidebar {
+        margin: 10px;
+    }
+}
+#splashInfoTitle {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+}
+#splashInfoBody {
+    font-size: 14px;
+    color: #555;
+    margin: 20px 0;
+}
+#splashInfoPrompt {
+    font-size: 16px;
+    font-weight: bold;
+    color: #555;
+}
+#splashInfoActions {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.splashInfoActionButton {
+    width: 80px;
+    height: 60px;
+    margin: 4px;
+    cursor: pointer;
+    display: inline-block;
+    padding-top: 8px;
+}
+.socialMediaIcon {
+    display: block;
+    margin-left: 26px;
+}
+.guestOfficialColor {
+    color: black;
+}
+.facebookOfficialColor {
+    color: #3b579d;
+}
+.googlePlusOfficialColor {
+    color: #dd4b39;
+}
+.twitterOfficialColor {
+    color: #5ea9dd;
+}
+
+
+/* ========== app ========== */
+
+/* ---------- sprites ---------- */
+/* Generated using http://zerosprites.com/ */
+.sprites { background: url(../images/sprites.png) no-repeat; }
+.FB-f-Logo__blue_29 { width: 29px; height: 29px; background-position: 0 0; }
+.Twitter_logo_blue_29 { width: 29px; height: 29px; background-position: -30px 0; }
+.gp-29 { width: 29px; height: 29px; background-position: -60px 0; }
+.guest-user_29 { width: 29px; height: 29px; background-position: -90px 0; }
+.question-sign { width: 18px; height: 18px; background-position: -120px 0; }
+.star { width: 12px; height: 11px; background-position: -122px -19px; }
+
+/* ---------- general page ---------- */
+
+.mainContent {
+    min-height: 200px;
+    background-color: lightgray;
+    overflow: auto;
+}
+.sidebarContent {
+    overflow-y: auto;
+}
+
+.repad {
+    padding: 8px !important;
+}
+
+@media only screen and (min-width: 768px) {
+    .conditionalPageFill {
+        height: 100%;
+        min-height: 100%;
+    }
+}
+
+#scrim {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+.scrimBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity: 0.5;
+}
+.loading-indicator {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(../images/loading.gif);
+}
+
+/* ---------- bootstrap overrides ---------- */
+
+.btn {
+    margin: 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    border-radius: 0px;
+    max-width: 100%;
+    white-space: normal;
+    word-wrap: break-word;
+}
+.btn:hover, .btn:focus {
+    color: #007ac2;
+    background-color: #e2f1fb;
+}
+.btn.active {
+    color: #fff;
+    background-color: #007ac2;
+    border: 1px solid #007ac2;
+    box-shadow: none;
+    cursor: default;
+}
+.btn.active.focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn:active:focus, .btn:focus, input[type="radio"]:focus {
+    outline: none;
+}
+.checkbox, .radio {
+    margin-top: 0px;
+}
+.importantQuestion {
+    display: inline-block;
+    vertical-align: text-top;
+}
+.radio {
+    margin-bottom: 5px;
+}
+.radio+.radio {
+    margin-top: 0px;
+}
+.dropdown-group {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+    width: 100%;
+}
+.number-input {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+    padding-left: 4px;
+    width: 100%;
+}
+.text-input {
+    font-size: 12px;
+    font-weight: bold;
+    color: #007ac2;
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    white-space: normal;
+    min-height: 2.6em;
+    padding-left: 4px;
+    width: 100%;
+}
+.modal-header {
+    font-weight: bolder;
+    border-bottom: none;
+}
+.modal-footer {
+    border-top: none;
+}
+
+.image-before {
+    padding-bottom: 4px;
+    max-width: 100%;
+}
+.image-after {
+    padding-top: 4px;
+    max-width: 100%;
+}
+
+/* ---------- buttons ---------- */
+
+.half-width-btn {
+    width: 46%;
+}
+
+.full-width-btn {
+    width: 98%;
+}
+
+.link-btn {
+    color: #007ac2;
+    font-size: 14px;
+    font-weight: bold;
+    background: none;
+    border-style: none;
+}
+.link-btn:hover, .link-btn:focus {
+    color: #007ac2;
+    background-color: #d0e3fd;
+}
+
+.highlight-btn {
+    color: #fff;
+    background-color: #007ac2;
+}
+
+.pull-right {
+    float: right;
+}
+
+.full-width-textarea {
+    width: 98%;
+    margin: 2px;
+}
+
+/* ---------- scene ---------- */
+
+.viewDivMinHeight {
+    height: 100%;
+    min-height: 100%;
+}
+@media only screen and (max-width: 767px) {
+    .viewDivMinHeight {
+        height: 300px;
+    }
+}
+
+/* ---------- gallery ---------- */
+
+#gallery {
+    bottom: 16px;
+    left: 0px;
+    right: 0px;
+    background-color: #888888;
+    background-color: rgba(136,136,136,0.8);
+    font-size: small;
+    color: white;
+}
+
+.galleryTab {
+    position: absolute;
+    left: 0px;
+    top: -26px;
+    text-align: left;
+    padding: 4px 12px 4px 12px;
+    background-color: rgba(136,136,136,0.8);
+}
+
+#slidesHolder {
+    padding: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.slideDiv {
+    padding: 0 4px 0 4px;
+}
+
+.slideTitle {
+    white-space: nowrap;
+}
+
+.slideFrame {
+    border: thin solid transparent;
+}
+
+.slideFrameHighlight {
+    box-shadow: 0px 0px 12px #ffffff;
+    border: thin solid white;
+}
+
+/* ---------- popup ---------- */
+
+.popupWidget {
+    position: absolute;
+    display: none;
+    z-index:50;
+    border: 1px solid #CCC;
+    background-color: white;
+    overflow: hidden;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    font-size: 17px;
+}
+.popupTitleContainer {
+    height: 32px;
+    line-height: 32px;
+}
+.popupTitleContainerEmpty {
+    height: 20px;
+    line-height: 20px;
+}
+.popupTitle {
+    padding-left: 12px;
+    margin-right: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.popupContent {
+    margin: 10px;
+    overflow: auto;
+}
+.popupImgContent {
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-direction: column; /* Safari 6.1+ */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+img {
+    object-fit: contain;
+}
+.popupClose {
+    display: none;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    width: 28px;
+    height: 32px;
+    margin: 4px;
+    cursor: pointer;
+}
+
+/* ---------- survey frame ---------- */
+
+.help-icon {
+    cursor: pointer;
+    z-index: 10;
+}
+#survey {
+    width: 100%;
+}
+.dropdown.open>span.lg-a {
+    background-color: #e2f1fb;
+}
+.dropdown-menu {
+    background-color: #fff;
+    border: 1px solid #007ac2;
+    border-radius: 0px;
+}
+.dropdown-menu>li {
+    color: #007ac2;
+    padding: 3px 20px;
+    clear: both;
+}
+.dropdown-menu>li:hover {
+    color: #007ac2;
+    background-color: #e2f1fb;
+    cursor: pointer;
+}
+.dropdown-menu>li>span:focus {
+    outline: none;
+}
+.radio-group {
+    padding-left: 12px;
+}
+
+.page-title {
+    margin: 12px 0 !important;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 22px;
+    color: #333;
+    text-align: center;
+    overflow-x: hidden;
+}
+.lg-a {
+    font-family: Arial;
+    font-size: 16px;
+    color: #007ac2;
+    cursor: pointer;
+    padding: 4px;
+}
+
+label {
+    font-family: Arial;
+    font-size: 16px;
+    font-weight: normal;
+    color: #555;
+}
+label+.btn-group {
+    margin-top: -6px;
+}
+label+.radio {
+    margin-top: 0px;
+}
+.radio label {
+    font-size: 14px;
+}
+
+.form-heading {
+    padding: 12px 0px 12px 0px;
+    font-size: 16px;
+    font-weight: 700;
+}
+.form-frame {
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    margin: 0px -6px;
+    padding: 8px;
+}
+.action-bar {
+    margin: 12px 0px;
+    font-size: 14px;
+}
+#action-bar-message {
+    text-align: center;
+    font-size: 16px;
+}
+.brandingIcon {
+    max-width: 100%;
+    display: block;
+    margin-top: 4px;
+    margin-left: auto;
+    margin-right: auto;
+}
+

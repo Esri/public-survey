@@ -15,7 +15,7 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define([], function () {
+define(["lib/i18n.min!nls/resources.js"], function (i18n) {
     "use strict";
     var fetchConfigInfo;
     fetchConfigInfo = {
@@ -77,11 +77,18 @@ define([], function () {
             deferreds.origImageUrl = origImageUrlDeferred || $.Deferred();
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
-                $.getJSON(arcgisUrl + webmapId + "?f=json&callback=?", function (data) {
+                $.getJSON(arcgisUrl + webmapId + "?f=json", function (data) {
                     var normalizedData = {},
-                        imageUrl, iExt;
+                        imageUrl, iExt, details;
+
                     if (!data || data.error) {
-                        deferreds.params.reject(data && data.error);
+                        if (data.error) {
+                            details = webmapId + "<br>" + data.error.message;
+                        }
+                        else {
+                            details = i18n.messages.notFound.replace("{item}", webmapId);
+                        }
+                        deferreds.params.reject(details);
                         deferreds.origImageUrl.resolve();
                         return;
                     }
@@ -123,7 +130,10 @@ define([], function () {
                     else {
                         deferreds.origImageUrl.resolve();
                     }
-                }).fail(deferreds.params.reject);
+                }).fail(function (error) {
+                    error.message = webmapId + "<br>" + error.message;
+                    deferreds.params.reject(error);
+                });
             }
             else {
                 deferreds.params.resolve({});
@@ -149,9 +159,10 @@ define([], function () {
             }
 
             if (fetchConfigInfo._isUsableString(webmapId)) {
-                $.getJSON(arcgisUrl + webmapId + "/data?f=json&callback=?", function (data) {
+                $.getJSON(arcgisUrl + webmapId + "/data?f=json", function (data) {
                     var featureSvcData = {},
-                        iOpLayer = 0;
+                        iOpLayer = 0,
+                        details;
 
                     if (data && data.operationalLayers && data.operationalLayers.length > 0) {
                         // If we have a feature layer title, find it in the operational layers; otherwise, use first
@@ -167,38 +178,45 @@ define([], function () {
                             });
                         }
                         if (iOpLayer < 0) {
-                            console.log("Operational layer \"" + featureLayerTitle + "\" not found");
-                            deferred.reject();
+                            details = i18n.messages.notFound.replace("{item}", featureLayerTitle);
+                            deferred.reject(details);
                             return;
                         }
                         else {
-                            console.log("Survey responses into layer \"" + featureLayerTitle + "\"");
+                            console.log("Survey responses will be written into layer \"" + featureLayerTitle + "\"");
                         }
                         featureSvcData.opLayerParams = data.operationalLayers[iOpLayer];
 
                         // Get the app's webmap's feature service's data
                         fetchConfigInfo.getFeatureSvcData(featureSvcData.opLayerParams.url).done(function (data) {
                             if (!data || data.error) {
-                                deferred.reject();
+                                deferred.reject(data && data.error);
                                 return;
                             }
                             featureSvcData.featureSvcParams = data;
 
                             if (data.serviceItemId) {
-                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json&callback=?", function (serviceData) {
-                                    featureSvcData.serviceData = serviceData;
-                                    deferred.resolve(featureSvcData);
-                                });
+                                $.getJSON(arcgisUrl + data.serviceItemId + "/data?f=json",
+                                    function (serviceData) {
+                                        featureSvcData.serviceData = serviceData;
+                                        deferred.resolve(featureSvcData);
+                                    }).fail(deferred.reject);
                             }
                             else {
                                 deferred.resolve(featureSvcData);
                             }
-                        }).fail(deferred.reject);
+                        }).fail(function (error) {
+                            error.message = webmapId + "<br>" + error.message;
+                            deferred.reject(error);
+                        });
                     }
                     else {
                         deferred.resolve({});
                     }
-                }).fail(deferred.reject);
+                }).fail(function (error) {
+                    error.message = webmapId + "<br>" + error.message;
+                    deferred.reject(error);
+                });
             }
             else {
                 deferred.resolve({});
@@ -222,7 +240,7 @@ define([], function () {
             }
 
             if (fetchConfigInfo._isUsableString(featureSvcUrl)) {
-                $.getJSON(featureSvcUrl + "?f=json&callback=?", function (data) {
+                $.getJSON(featureSvcUrl + "?f=json", function (data) {
                     data.canBeUpdated = data.capabilities && data.capabilities.indexOf("Update") >= 0;
                     deferred.resolve(data);
                 }).fail(deferred.reject);

@@ -15,11 +15,11 @@
  | limitations under the License.
  */
 //====================================================================================================================//
-define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
+define(["lib/i18n.min!nls/resources.js", "app/diag"],
     function (i18n, diag) {
         "use strict";
         var splash = {
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             init: function (config) {
                 var splashInfoPanelReady = $.Deferred();
@@ -49,13 +49,13 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                                 });
                             }
 
-                            // Test browser level and proxy availability for older IE
-                            splash._testProxy(config).then(
-                                splashInfoPanelReady.resolve,
-                                function (error) {
-                                    splashInfoPanelReady.reject(error);
-                                }
-                            );
+                            // Test for supported browser
+                            if (splash._testBrowser()) {
+                                splashInfoPanelReady.resolve();
+                            }
+                            else {
+                                splashInfoPanelReady.reject();
+                            }
                         }
                     });
                 });
@@ -100,7 +100,7 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                 return $("#splashInfoActions")[0];
             },
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
 
             _replaceText: function (item, text, thenDo, thenDoArg) {
                 item.fadeOut("fast", function () {
@@ -116,35 +116,13 @@ define(["lib/i18n.min!nls/main_resources.js", "app/diag"],
                 });
             },
 
-            _testProxy: function (config) {
-                var proxyReady = $.Deferred(),
-                    unsupported = false,
-                    needProxy = false;
-
-                // Check for obsolete IE
-                if ($("body").hasClass("unsupportedIE")) {
-                    unsupported = true;
-                }
-                else if ($("body").hasClass("IE9")) {
-                    needProxy = true;
-                }
-
-                // If a proxy is needed, launch the test for a usable proxy
-                if (unsupported) {
-                    proxyReady.reject("Unsupported browser");
-                }
-                else if (needProxy) {
-                    $.getJSON(config.appParams.proxyProgram + "?ping", proxyReady.resolve).fail(proxyReady.reject);
-                }
-                else {
-                    config.appParams.proxyProgram = null;
-                    proxyReady.resolve();
-                }
-
-                return proxyReady;
+            _testBrowser: function () {
+                var ok = !(/MSIE|Trident|Android|webOS|iPhone|iPad|iPod|BlackBerry|Opera Mini|IEMobile/i
+                    .test(navigator.userAgent));
+                return ok;
             }
 
-            //------------------------------------------------------------------------------------------------------------//
+            //--------------------------------------------------------------------------------------------------------//
         };
         return splash;
     });
