@@ -1,7 +1,7 @@
 git repository public-survey, branch 
-develop
-commit 8f79c735d3ef3631afc23c977b05e07ab206a774
+4.2
+commit ca1130c2f66cc60d6214b0ef7336db8743ad9879
 Author: MikeTschudi <mtschudi@esri.com>
-Date:   Wed Nov 9 14:30:10 2016 -0800
+Date:   Tue Mar 14 12:38:37 2017 -0700
 
-    Replaced loading dialog box with busy GIF atop a scrim
+    Overrode JSAPI 4.2 popup CSS

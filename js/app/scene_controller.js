@@ -117,7 +117,7 @@ define([
 
                     scene_controller.mapParamsReady.then(function (response) {
                         // Loads once visuals panel becomes visible
-                        clusterViewBuilder(scene_controller.view).then(function (clustering) {
+                        clusterViewBuilder(scene_controller.view, scene_controller._config).then(function (clustering) {
                             scene_controller._clusterer = clustering.clusterer;
                             scene_controller._clustererView = clustering.clustererView;
 
@@ -178,7 +178,7 @@ define([
                     "esri/geometry/SpatialReference"
                 ], function (GeometryService, ProjectParameters, SpatialReference) {
                     var geomSer = new GeometryService({
-                        url: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
+                        url: scene_controller._config.appParams.geometryServer
                     });
                     var params = new ProjectParameters({
                         geometries: [position],
@@ -261,7 +261,7 @@ define([
             var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
-                baseUrl: "//js.arcgis.com/4.1/",
+                baseUrl: scene_controller._config.appParams.jsapi,
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"
@@ -374,6 +374,11 @@ define([
                                 });
                                 compassWidget.startup();
                                 scene_controller.view.ui.add(compassWidget, "top-left");
+
+                                // Catch events in the top-left button area
+                                $(".esri-ui-top-left").each(function (ignore, node) {
+                                    node.addEventListener("click", checkedUpdate, true);
+                                });
                             });
 
                         // Create the slide gallery
@@ -503,10 +508,6 @@ define([
                             canvasCheckedUpdate, true);
 
                         node.addEventListener("wheel", checkedUpdate, true);
-                    });
-
-                    $(".esri-ui-top-left").each(function (ignore, node) {
-                        node.addEventListener("click", checkedUpdate, true);
                     });
                 });
         },

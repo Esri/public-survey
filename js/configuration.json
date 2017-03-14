@@ -1,6 +1,6 @@
 {
     "webscene": "9eba0390d6064e7e9334bea7d3f6c5ed",
-    "portalurl": "https://www.arcgis.com",
+    "portalurl": "//www.arcgis.com",
     "survey": "SurveyResponses_np2",
 
     "titleText": "Public Survey",
@@ -60,12 +60,15 @@
     },
     "pieChartColors": {
         "question1": ["#00ff00", "#ff0000", "#ffff00"],
-        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"]
+        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"],
+        "question3": ["#00ff00", "#ff0000", "#ffff00"]
     },
 
+    "jsapi": "//js.arcgis.com/4.2/",
+    "geometryServer": "//utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer",
     "urlParamsFilter": ["webscene", "portalurl", "survey", "locale", "app", "diag"],
     "app": "publicSurvey",
-    "twitterSigninUrl": "https://utility.arcgis.com/tproxy/signin",
-    "twitterUserUrl": "https://utility.arcgis.com/tproxy/proxy/1.1/account/verify_credentials.json?q=&include_entities=true&skip_status=true&locale=en",
+    "twitterSigninUrl": "//utility.arcgis.com/tproxy/signin",
+    "twitterUserUrl": "//utility.arcgis.com/tproxy/proxy/1.1/account/verify_credentials.json?q=&include_entities=true&skip_status=true&locale=en",
     "twitterCallbackUrl": "/oauth-callback-twitter.html"
 }
