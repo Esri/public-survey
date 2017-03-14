@@ -178,7 +178,7 @@ define([
                     "esri/geometry/SpatialReference"
                 ], function (GeometryService, ProjectParameters, SpatialReference) {
                     var geomSer = new GeometryService({
-                        url: "https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer"
+                        url: scene_controller._config.appParams.geometryServer
                     });
                     var params = new ProjectParameters({
                         geometries: [position],
@@ -261,7 +261,7 @@ define([
             var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf("/"));
 
             requirejs.config({
-                baseUrl: "//js.arcgis.com/4.2/",
+                baseUrl: scene_controller._config.appParams.jsapi,
                 paths: {
                     app: package_path + "/js/app",
                     lib: package_path + "/js/lib"
