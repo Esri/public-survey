@@ -38,3 +38,6 @@
     outline: none;
 }
 
+.esri-view-width-less-than-large .esri-popup__action-text {
+    display: block;
+}
