@@ -60,7 +60,8 @@
     },
     "pieChartColors": {
         "question1": ["#00ff00", "#ff0000", "#ffff00"],
-        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"]
+        "question2": ["#00ff00", "#80ff00", "#ffff00", "#ff8000", "#ff0000"],
+        "question3": ["#00ff00", "#ff0000", "#ffff00"]
     },
 
     "jsapi": "//js.arcgis.com/4.2/",
