@@ -62,7 +62,3 @@ limitations under the License.
 
 A copy of the license is available in the repository's
 [LICENSE.txt](https://github.com/Esri/public-survey/blob/master/License.txt) file.
-
-[](Esri Tags: ArcGISSolutions State-Government Local-Government State Local Government 3D)
-[](Esri Language: JavaScript)
-
