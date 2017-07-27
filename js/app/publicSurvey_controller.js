@@ -292,7 +292,7 @@ define(["lib/i18n.min!nls/resources.js", "app/publicSurvey_clusterViewBuilder"],
                     console.log("*** POST status: " + status + "; " + JSON.stringify(results) + " ***");
 
                     // Update the response clusters
-                    controller._clustererView.refresh();
+                    clusterViewBuilder.refresh();
                 });
             },
 

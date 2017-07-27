@@ -367,6 +367,12 @@ define(["lib/i18n.min!nls/resources.js"],
                 });
 
                 return clusterViewReady;
+            },
+
+            refresh: function () {
+                if (clusterViewBuilder._clustererView) {
+                    clusterViewBuilder._clustererView.refresh();
+                }
             }
 
             //----- Procedures meant for internal module use only ----------------------------------------------------//
