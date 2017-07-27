@@ -64,7 +64,7 @@
         "question3": ["#00ff00", "#ff0000", "#ffff00"]
     },
 
-    "jsapi": "//js.arcgis.com/4.2/",
+    "jsapi": "//js.arcgis.com/4.4/",
     "geometryServer": "//utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer",
     "urlParamsFilter": ["webscene", "portalurl", "survey", "locale", "app", "diag"],
     "app": "publicSurvey",

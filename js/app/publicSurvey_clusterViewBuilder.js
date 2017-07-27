@@ -63,7 +63,7 @@ define(["lib/i18n.min!nls/resources.js"],
                     "esri/PopupTemplate",
                     "esri/renderers/SimpleRenderer",
                     "esri/symbols/TextSymbol3DLayer",
-                    "lib/popupLabelsThemes_4.2_min"
+                    "lib/popupLabelsThemes_4.4_min"
                 ], function (
                     array,
                     lang,
