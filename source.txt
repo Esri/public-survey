@@ -1,7 +1,7 @@
 git repository public-survey, branch 
-4.2
-commit ca1130c2f66cc60d6214b0ef7336db8743ad9879
-Author: MikeTschudi <mtschudi@esri.com>
-Date:   Tue Mar 14 12:38:37 2017 -0700
+HEAD
+commit fd179d06009fbcf45e07e61281fc43ca74546ef5
+Author: Mike Tschudi <mtschudi@esri.com>
+Date:   Thu Jul 27 15:06:22 2017 -0700
 
-    Overrode JSAPI 4.2 popup CSS
+    Fixed post-survey refresh
